@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "glp-test",
+    "public": "leadershipplatform-158316",
+    "corporate": "glp-corporate"
+  }
+}

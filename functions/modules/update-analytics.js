@@ -445,9 +445,7 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
                         console.log("company: ",childKey, " year: ", x, " users: ",len);
 
                         let countActiveUserCompany = admin.database().ref('company-analytics').child(childKey).child(x).child("activeusers").set(len);
-                        // let companyActiveUserCount = countActiveUserCompany.transaction(function(current) {
-                        //     return (current || 0) + len;
-                        // });
+                        
                     }
                 }
 
@@ -457,20 +455,9 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
                         console.log("x: ", x," len: ", len, "company: ",childKey)
 
                         let countCompanyActiveUserYearMonth = admin.database().ref('company-analytics').child(childKey).child(x).child("activeusers").set(len);
-                        // let companyActiveUserYearMonthCount = countCompanyActiveUserYearMonth.transaction(function(current) {
-                        //     return (current || 0) + len;
-                        // });
+                        
                     }
                 }
-
-                
-
-                // var journalUserID = childData.journalUserID;
-                // var companyID = childData.companyID;
-        
-                // if((companyID != undefined) && (journalUserID != undefined)){
-                //     updateAppAnalytics.pldptasks(childData);
-                // }
 
             });
     
@@ -480,6 +467,73 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
     }else if(updateType == "reportadmin"){
         let countActiveUserCompany = admin.database().ref('users').child("-Kx8HDnAkFF5ErwaPBPg").child("reportadmin").set(true);
         console.log("done");
+    }else if(updateType == "noofusers"){
+        return admin.database().ref('/companies').once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+    
+                var childKey = childSnapshot.key;
+                var childData = childSnapshot.val();
+
+                admin.database().ref('/user').orderByChild('companyID').equalTo(childKey).once('value').then(function(snap){
+                    // http://localhost:5000/glp-test/us-central1/m08-updateAnalytics?type=noofusers
+                    if(snap.val() == null){
+                        var len = 0
+                    }else{
+                        var len = Object.keys(snap.val()).length;
+                    }
+                    
+                    console.log("company: "+childKey+" users: "+len);
+                    admin.database().ref('company-analytics').child(childKey).child('counts').child('noofusers').set(len);
+                })
+            });
+    
+            return snapshot;
+        });
+
+    }else if(updateType == "podcastowner"){
+        return admin.database().ref('/podcasts').orderByChild("company_status").equalTo("general_true").once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+    
+                var childKey = childSnapshot.key;
+                var childData = childSnapshot.val();
+
+                var updateOwner = {};
+                updateOwner['podcasts/'+childKey+'/postOwner'] = childData.userID;
+                admin.database().ref().update(updateOwner).then(postsupdate => {
+                    console.log('updateOwner podcasts');
+                }).catch(posts_err => {
+                    console.log('updateOwner podcasts error');
+                })
+
+                console.log("podcasts: ", childKey, " owner: ", childData.userID)
+                
+            });
+    
+            return snapshot;
+        });
+
+    }else if(updateType == "videoowner"){
+        return admin.database().ref('/videos').orderByChild("company_status").equalTo("general_true").once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+    
+                var childKey = childSnapshot.key;
+                var childData = childSnapshot.val();
+
+                var updateOwner = {};
+                updateOwner['videos/'+childKey+'/postOwner'] = childData.userID;
+                admin.database().ref().update(updateOwner).then(postsupdate => {
+                    console.log('updateOwner videos');
+                }).catch(posts_err => {
+                    console.log('updateOwner videos error');
+                })
+
+                console.log("video: ", childKey, " owner: ", childData.userID)
+                
+            });
+    
+            return snapshot;
+        });
+
     }
     
 });

@@ -414,12 +414,6 @@ module.exports = function (){
             console.log("Trans data 10: ");
         });
 
-        // // set active user data - Year
-        // let countActiveUserCompany = admin.database().ref('company-analytics').child(company).child(year).child("activeusers");
-        // let companyActiveUserCount = countActiveUserCompany.transaction(function(current) {
-        //     return (current || 0) + 1;
-        // });
-
         let countUserCompany = admin.database().ref('company-analytics').child(company).child('year-active-users').child(year).child(journalUserID).child(type);
         let companyUserCount = countUserCompany.transaction(function(current) {
             return (current || 0) + 1;
@@ -453,12 +447,6 @@ module.exports = function (){
             }
             console.log("Trans data 12: ");
         });
-
-        // // set active user data - Year, Month
-        // let countCompanyActiveUserYearMonth = admin.database().ref('company-analytics').child(company).child(year+"-"+month).child("activeusers");
-        // let companyActiveUserYearMonthCount = countCompanyActiveUserYearMonth.transaction(function(current) {
-        //     return (current || 0) + 1;
-        // });
 
         let countCompanyUserYearMonth = admin.database().ref('company-analytics').child(company).child('month-active-users').child(year+"-"+month).child(journalUserID).child(type);
 

@@ -28,6 +28,47 @@ module.exports = function (){
         "Content-Type": 'application/json'
     }
 
+    this.createNotifications = function(all, options, notificationData){
+        // create mailnotification
+        var mailUpdates = {};
+        var mailNotificationID = admin.database().ref().child('mailNotifications').push().key;
+        mailUpdates['mailNotifications/'+mailNotificationID+"/"+"mailNotificationID"] = mailNotificationID;
+        mailUpdates['mailNotifications/'+mailNotificationID+"/"+"options"] = options;
+        mailUpdates['mailNotifications/'+mailNotificationID+"/"+"all"] = all;
+
+        admin.database().ref().update(mailUpdates).then(postsupdate => {
+        console.log('creating mail notification');
+        }).catch(posts_err => {
+        console.log('creating mail error');
+        })
+
+        // create analytics update
+        var analyticsUpdates = {};
+        var analyticsNotificationID = admin.database().ref().child('analyticsNotifications').push().key;
+        analyticsUpdates['analyticsNotifications/'+analyticsNotificationID+"/"+"analyticsNotificationID"] = analyticsNotificationID;
+        analyticsUpdates['analyticsNotifications/'+analyticsNotificationID+"/"+"notificationData"] = notificationData;
+        analyticsUpdates['analyticsNotifications/'+analyticsNotificationID+"/"+"all"] = all;
+
+        admin.database().ref().update(analyticsUpdates).then(postsupdate => {
+        console.log('creating analytics notifications');
+        }).catch(posts_err => {
+        console.log('creating analytics error');
+        })
+
+        // create appNotifications
+        var appNotificationID = admin.database().ref().child('appNotifications').push().key;
+        notificationData.appNotificationID = appNotificationID;
+        notificationData.all = all;
+        // Write the new notification's data
+        var updates = {};
+        updates['appNotifications/'+appNotificationID] = notificationData;
+        admin.database().ref().update(updates).then(postsupdate => {
+        console.log('creating app notifications');
+        }).catch(posts_err => {
+        console.log('creating app notifications error');
+        })
+    }
+
     this.send = function(msg){
         var url = 'https://fcm.googleapis.com/fcm/send';
         // delete this.headers['project_id'];

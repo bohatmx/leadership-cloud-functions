@@ -47,6 +47,7 @@ var userUnsubscribed = require('./modules/user-unsubscribed');
 var appNotifications = require('./modules/app-notifications');
 var analyticsNotifications = require('./modules/analytics-notifications');
 var mailNotifications = require('./modules/mail-notifications');
+var userWelcomeEmail = require('./modules/welcome-email');
 
 // var removeBadAccounts = require('./modules/remove-badaccounts');
 
@@ -72,6 +73,7 @@ exports.m18 = mailNotifications
 
 var userToken = new handleNotifications();
 var updateAppAnalytics = new appAnalytics();
+var welcomeEmail = new userWelcomeEmail();
 
 // on create or update daily thoughts
 exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyThoughtID}').onCreate((snap, context) => {
@@ -231,7 +233,8 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
 
             var childKey = childSnapshot.key;
             var childData = childSnapshot.val();
-            var url = getCompanyURL(childData.companyName);
+            // var url = getCompanyURL(childData.companyName);
+            var url = userToken.getCompanyURL(companyID)
 
             var payload = {
               title: 'New Pending Thought',
@@ -1025,74 +1028,13 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
     let userType = userobj.userType;
     let userDescription = userobj.userDescription;
 
-    var url = getCompanyURL(companyName);
+    var url = userToken.getCompanyURL(companyID);
 
-    if(companyID == "-LDVbbRyIMhukVtTVQ0n"){
-      var msg = '<b>Dear '+firstName+',</b><br><br>';
-      msg += '<b>An important message from the CEO:</b><br><br>';
-      msg += 'Dear Colleague <br><br>';
-      msg += 'We have launched the Global Leadership Platform App inside OneConnect Group – your log in details are below. The App will be used for several purposes:<br><br>';
-      msg += '<ol>';
-      msg += '<li>More effective communication from my office, to expedite strategy execution, strengthen culture, improve adherence to values and much more. Every employee will receive notifications on their phone/App/laptop when I send a message. Analytics will give me the ability to see who read it and who didn’t. You will be able to comment on my communications. Please do. My messages will land under the “Organisational” function on the App menu.</li><br>';
-      msg += '<li>This platform will create leadership fitness in our organisation. If you engage it on a regular basis you will become a better leader and human being. You, our organisation and society will benefit from this.</li><br>';
-      msg += '<li>Please make use of the Personal Leadership Development Plan (PLDP) that you can access from anywhere on the App. On it is an explanatory video from Adriaan Groenewald, one of the co-founders of this platform.</li><br>';
-      msg += '<li>On the menu is a function “Global Contributors”. Please keep an eye out as there will be a growing group of top leaders, experts and authors here that add leadership content to the platform. You may choose to follow who you wish – as we do on all social media platforms - and this means you receive notifications when they post.</li><br>';
-      msg += '<li>On the menu is a “Daily” function, which is Leadership Platform sharing daily leadership messages to assist you on your leadership journey. You may choose to follow them as well.</li><br>';
-      msg += '<li>Please familiarise yourself with the T’s & C’s on the App.</li><br>';
-      msg += '<li>This GLP is a product that we are taking to market, so please be aware that our use of it also serves as a live pilot, while we benefit as an organisation and individuals.</li><br><br>';
-      msg += '</ol>';
-      msg += 'You will discover much more about our company Global Leadership Platform as you use it. And, this will be a growing, changing platform with new and dynamic features in the pipeline.<br>';
-      msg += 'I look forward to going on this leadership journey with you.<br><br>';
-      msg += 'Please find below your Login Credentials and Link to the App: <br><br>';
-      msg += 'App Link: '+url+' <br>';
-      msg += 'Username: '+email+'<br>';
-      msg += 'Password: '+password+'<br><br>';
-      msg += 'Kindly ensure to change your password when you first login to the App. <br><br>';
-      msg += '<b>Best Regards,</b> <br>';
-      msg += '<b>Global Leadership Platform.</b><br>';
+    var msgPlain = "", msg = "";
 
-      var msgPlain = 'Dear '+firstName+',';
-      msgPlain += 'An important message from the CEO:';
-      msgPlain += 'Dear Colleague ';
-      msgPlain += 'We have launched the Global Leadership Platform App inside OneConnect Group – your log in details are below. The App will be used for several purposes:';
-      msgPlain += '   1. More effective communication from my office, to expedite strategy execution, strengthen culture, improve adherence to values and much more. Every employee will receive notifications on their phone/App/laptop when I send a message. Analytics will give me the ability to see who read it and who didn’t. You will be able to comment on my communications. Please do. My messages will land under the “Organisational” function on the App menu.';
-      msgPlain += '   2. This platform will create leadership fitness in our organisation. If you engage it on a regular basis you will become a better leader and human being. You, our organisation and society will benefit from this.';
-      msgPlain += '   3. Please make use of the Personal Leadership Development Plan (PLDP) that you can access from anywhere on the App. On it is an explanatory video from Adriaan Groenewald, one of the co-founders of this platform.';
-      msgPlain += '   4. On the menu is a function “Global Contributors”. Please keep an eye out as there will be a growing group of top leaders, experts and authors here that add leadership content to the platform. You may choose to follow who you wish – as we do on all social media platforms - and this means you receive notifications when they post.';
-      msgPlain += '   5. On the menu is a “Daily” function, which is Leadership Platform sharing daily leadership messages to assist you on your leadership journey. You may choose to follow them as well.';
-      msgPlain += '   6. Please familiarise yourself with the T’s & C’s on the App.';
-      msgPlain += '   7. This GLP is a product that we are taking to market, so please be aware that our use of it also serves as a live pilot, while we benefit as an organisation and individuals.';
-      msgPlain += 'You will discover much more about our company Global Leadership Platform as you use it. And, this will be a growing, changing platform with new and dynamic features in the pipeline.';
-      msgPlain += 'I look forward to going on this leadership journey with you.';
-      msgPlain += 'Please find below your Login Credentials and Link to the App: ';
-      msgPlain += 'App Link: '+url;
-      msgPlain += 'Username: '+email+'';
-      msgPlain += 'Password: '+password+'';
-      msgPlain += 'Kindly ensure to change your password when you first login to the App. ';
-      msgPlain += 'Best Regards, ';
-      msgPlain += 'Global Leadership Platform.';
-    }else{
-      var msg = '<b>Dear '+firstName+',</b><br><br>';
-      msg += 'We would like to welcome you to Global Leadership Platform.<br><br>';
-      msg += 'Please find below your Login Credentials and Link to the App: <br><br>';
-      msg += 'App Link: '+url+' <br>';
-      msg += 'Username: '+email+'<br>';
-      msg += 'Password: '+password+'<br><br>';
-      msg += 'Kindly ensure to change your password when you first login to the App. <br><br>';
-      msg += '<b>Best Regards,</b> <br>';
-      msg += '<b>Global Leadership Platform.</b><br>';
-
-      var msgPlain = 'Dear '+firstName+',';
-      msgPlain += 'We would like to welcome you to Global Leadership Platform.';
-      msgPlain += 'Please find below your Login Credentials and Link to the App: ';
-      msgPlain += 'App Link: '+url;
-      msgPlain += 'Username: '+email+'';
-      msgPlain += 'Password: '+password+'';
-      msgPlain += 'Kindly ensure to change your password when you first login to the App. ';
-      msgPlain += 'Best Regards, ';
-      msgPlain += 'Global Leadership Platform.';
-    }
-
+    // construct emails - plain and html templates
+    msgPlain = welcomeEmail.plainEmail(userobj, url);
+    msg = welcomeEmail.htmlEmail(userobj, url);
 
     return admin.auth().createUser({
       email: email,
@@ -1267,7 +1209,7 @@ function sendPLDPReminders(){
         companyName:companyName
       }
 
-      var companyURL = getCompanyURL(companyName);
+      var companyURL = userToken.getCompanyURL(companyID);
 
       console.log("user: ", journalUserID);
       let payload = {

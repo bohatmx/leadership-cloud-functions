@@ -340,9 +340,11 @@ module.exports = function (){
 
     this.getCompanyURL = function(companyID){
         // Signed up corporate
-        // Edcon => -LBPcsCl4Dp7BsYB8fjE
+        // New Edcon => -LOs4iZh3Y9LSiNtpWlH
+        // Old Edcon => -LBPcsCl4Dp7BsYB8fjE
         // OneConnect => -LDVbbRyIMhukVtTVQ0n
         if(companyID == "-LDVbbRyIMhukVtTVQ0n") return "https://oneconnect.thinklead.co.za/"
+        else if((companyID == "-LOs4iZh3Y9LSiNtpWlH") || (companyID == "-LBPcsCl4Dp7BsYB8fjE")) return "https://edcon.thinklead.co.za/"
         else return "https://thinklead.app/"
 
         // Test Server

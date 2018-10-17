@@ -534,6 +534,15 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
             return snapshot;
         });
 
+    }else if(updateType == "upduser"){
+        var updateOwner = {};
+        updateOwner['users/-Kx8HDnAkFF5ErwaPBPg/companyanalytics'] = true;
+        admin.database().ref().update(updateOwner).then(postsupdate => {
+            console.log('updateOwner done');
+        }).catch(posts_err => {
+            console.log('updateOwner error');
+        })
+
     }
     
 });

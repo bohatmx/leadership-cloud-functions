@@ -102,7 +102,7 @@ module.exports = function (){
             secure: true,
             auth: {
                 user: "thinklead",
-                pass: "qDoEOEZNqYr6"
+                pass: "wR3(7FPMQvUwa-u&"
             },
             maxConnections: 5,
             maxMessages: 100
@@ -144,7 +144,7 @@ module.exports = function (){
             secure: true,
             auth: {
                 user: "thinklead",
-                pass: "qDoEOEZNqYr6"
+                pass: "wR3(7FPMQvUwa-u&"
             },
             maxConnections: 5,
             maxMessages: 100
@@ -187,7 +187,7 @@ module.exports = function (){
             secure: true,
             auth: {
                 user: "thinklead",
-                pass: "qDoEOEZNqYr6"
+                pass: "wR3(7FPMQvUwa-u&"
             },
             maxConnections: 5,
             maxMessages: 100
@@ -429,7 +429,7 @@ module.exports = function (){
             secure: true,
             auth: {
                 user: "thinklead",
-                pass: "qDoEOEZNqYr6"
+                pass: "wR3(7FPMQvUwa-u&"
             },
             maxConnections: 5,
             maxMessages: 100

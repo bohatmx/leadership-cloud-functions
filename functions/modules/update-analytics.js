@@ -535,13 +535,56 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
         });
 
     }else if(updateType == "upduser"){
-        var updateOwner = {};
-        updateOwner['users/-Kx8HDnAkFF5ErwaPBPg/companyanalytics'] = true;
-        admin.database().ref().update(updateOwner).then(postsupdate => {
-            console.log('updateOwner done');
-        }).catch(posts_err => {
-            console.log('updateOwner error');
-        })
+        return admin.database().ref('/user').orderByChild("email").equalTo("SRamiah@edcon.co.za").once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+    
+                var childKey = childSnapshot.key;
+                var childData = childSnapshot.val();
+                var userID = childData.userID;
+
+                console.log(childData);
+
+                // create a followGC record
+                admin.database().ref('/followGC/'+childKey).set(childData);
+
+            });
+
+        });
+        // var updateOwner = {};
+        // updateOwner['users/-Kx8HDnAkFF5ErwaPBPg/companyanalytics'] = true;
+        // admin.database().ref().update(updateOwner).then(postsupdate => {
+        //     console.log('updateOwner done');
+        // }).catch(posts_err => {
+        //     console.log('updateOwner error');
+        // })
+
+    }else if(updateType == "usersnotloggedin"){
+        return admin.database().ref('/user').orderByChild("companyID").equalTo("-LOs4iZh3Y9LSiNtpWlH").once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+    
+                var uid = childSnapshot.key;
+                var childData = childSnapshot.val();
+                var userID = childData.userID;
+                var email = childData.email;
+                var userName = childData.firstName+" "+childData.lastName;
+
+                admin.database().ref('user-lastlogin').orderByChild('uid').equalTo(uid).once('value').then(function(snap){
+                    var exists = snap.exists();
+                    if(!exists) console.log( userName,",",email, ",", exists);
+                })
+
+                
+                // admin.database().ref().update(updateOwner).then(postsupdate => {
+                //     console.log('updateOwner user');
+                // }).catch(posts_err => {
+                //     console.log('Error updateOwner user');
+                // })
+
+                
+            });
+    
+            return snapshot;
+        });
 
     }
     

@@ -48,6 +48,7 @@ var appNotifications = require('./modules/app-notifications');
 var analyticsNotifications = require('./modules/analytics-notifications');
 var mailNotifications = require('./modules/mail-notifications');
 var userWelcomeEmail = require('./modules/welcome-email');
+var followGC = require('./modules/follow-gc');
 
 // var removeBadAccounts = require('./modules/remove-badaccounts');
 
@@ -69,6 +70,7 @@ exports.m15 = userUnsubscribed
 exports.m16 = appNotifications
 exports.m17 = analyticsNotifications
 exports.m18 = mailNotifications
+exports.m19 = followGC
 // exports.m08 = removeBadAccounts
 
 var userToken = new handleNotifications();
@@ -902,6 +904,7 @@ exports.sendEmailFeedback = functions.database.ref('/feedback/{feedbackID}').onC
   var senderName = feedbackobj.journalUserName;
   var senderEmail = feedbackobj.journalUserEmail;
   var userPlatform = feedbackobj.userPlatform;
+  var companyID = feedbackobj.companyID;
 
   if(category == undefined){
     category = "Feedback";
@@ -939,25 +942,15 @@ exports.sendEmailFeedback = functions.database.ref('/feedback/{feedbackID}').onC
     msgPlain += 'User Platform: '+userPlatform+'<br>';
 
     var subject = '['+category+' - Global Leadership Platform] : '+subject;
-    var to = 'info@leadershipplatform.com';
 
-    // Test server options
-    // var to = 'cmwakio@gmail.com';
+    if(companyID == "-LOs4iZh3Y9LSiNtpWlH"){
+      // Send to Khanyisa
+      var to = 'support@thinklead.co.za, KMhlaba@edcon.co.za';
+    }else{
+      // Send to LDP
+      var to = 'support@thinklead.co.za, info@leadershipplatform.com';
+    }
     
-    // let mailOptions = {
-    //   from: 'Leadership Platform <test@leadershipplatform.com>', // sender address 
-    //   to: ''+to, // list of receivers 
-    //   subject: subject, // Subject line 
-    //   text: ''+msgPlain, // plaintext body 
-    //   html: ''+msg // html body 
-    // };
-
-    // transporter.sendMail(mailOptions, function(error, info){
-    //   if(error){
-    //     console.log('Mail error: '+error);
-    //   }
-    //   console.log('Email sent!');
-    // });
 
     // live server options
     let emailRes = sendEmails(to, subject, msgPlain, msg);
@@ -965,43 +958,6 @@ exports.sendEmailFeedback = functions.database.ref('/feedback/{feedbackID}').onC
 
   return true;
 });
-
-function followHonorary(companyID, userID, myUserType){
-  // var companyID = "-KgsUcgfo7z1U9MXgd9i";
-  // var userID = "-Kwoqx98yZsUZhlJDWj7";
-  // var myUserType = 4;
-
-  // publish new Thoughts
-  const refThoughts = admin.database().ref('/users');
-  refThoughts.orderByChild('companyID')
-    .equalTo(companyID)
-    .once('value')
-    .then(function (snapshot) {
-      snapshot.forEach(function(childSnapshot) {
-        var childKey = childSnapshot.key;
-        var childData = childSnapshot.val();
-        var userType = childData.userType;
-        var honoraryUserID = childData.userID;
-
-        if((userType === 4) && (honoraryUserID !== userID)){
-          // set following data
-          
-          admin.database().ref('/users/' + userID + '/following').child(honoraryUserID).set(true);
-          
-          // console.log('Followed Honorary User'+childKey);
-        }
-
-        if((myUserType === 4) && (honoraryUserID !== userID)){
-          // set follower data
-          admin.database().ref('/users/' + userID + '/follower').child(honoraryUserID).set(true);
-          
-          // console.log('My New Follower '+childKey);
-        }
-    });
-  });
-
-  return true;
-}
 
 exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserID}').onCreate((snap, context) => {
   // Get Firebase object
@@ -1069,8 +1025,8 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
 
       admin.database().ref('/user/'+uid).set(data);
 
-      // Auto follow HC users
-      // followHonorary(companyID, userID, userType);
+      // create a followGC record
+      admin.database().ref('/followGC/'+uid).set(data);
 
       var to = email;
       var subject = 'Welcome to Global Leadership Platform';
@@ -1093,15 +1049,20 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
 exports.newUserCreated = functions.database.ref('/user/{userID}').onCreate((snap, context) => {
   // Get Firebase object
   const user = snap.val();
-  // Specify Algolia's objectID using the Firebase object key
-  var companyID = user.companyID;
 
-    // Add count to users analytics for users
-  let countItems = admin.database().ref('company-analytics').child(companyID).child('counts').child('noofusers');
-  let currentCount = countItems.transaction(function(current) {
-    return (current || 0) + 1;
-  });
+  if(user){
+    // Specify Algolia's objectID using the Firebase object key
+    var companyID = user.companyID;
 
+    if(companyID != undefined){
+      // Add count to users analytics for users
+      let countItems = admin.database().ref('company-analytics').child(companyID).child('counts').child('noofusers');
+      let currentCount = countItems.transaction(function(current) {
+        return (current || 0) + 1;
+      });
+
+    }
+  }
 });
 
 // on delete daily thoughts
@@ -1445,43 +1406,6 @@ function publishScheduledContent() {
               var topLeader_status = childData.topLeader_status;
               var publish_status = childData.publish_status;
 
-              // var journalUserName = childData.journalUserName;
-              // var subtitle = childData.subtitle;
-              // var journalUserID = childData.journalUserID;
-              // var photoURL = "";
-              // var notificationDate = Date.now();
-              // // update with new item id
-              // var notificationItemID = newItemID;
-              // var companyName = childData.companyName;
-
-              // var all = false;
-
-              // if((dailyThoughtType == 2) || (dailyThoughtType == 3)) {
-              //   all = true;
-              // }
-
-              // if(childData.photoURL != undefined || childData.photoURL != ""){
-              //   photoURL = childData.photoURL;
-              // }else{
-              //   photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
-              // }
-          
-              // if(photoURL == undefined || photoURL == ""){
-              //   photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
-              // }
-
-              // var notificationData = {
-              //   notificationItemID: notificationItemID,
-              //   notificationType: 'thought',
-              //   notificationMsg: journalUserName+' posted a thought by '+subtitle,
-              //   journalUserID: journalUserID,
-              //   journalUserName: journalUserName,
-              //   photoURL: photoURL,
-              //   notificationDate: notificationDate,
-              //   companyID:companyID,
-              //   companyName:companyName
-              // }
-
               // set publish status
               if(publish_status === "hc_unpublished") publish_status = "hc_"+status;
               else if(publish_status === "daily_unpublished") publish_status = "daily_"+status;
@@ -1500,14 +1424,6 @@ function publishScheduledContent() {
               // Write the new notification's data
               var updates = {};
               updates['/dailyThoughts/' + newItemID] = childData;
-
-              // updates['/dailyThoughts/' + childKey+'/dailyThoughtType_status'] = dailyThoughtType+'_'+status;
-              // updates['/dailyThoughts/' + childKey+'/status'] = status;
-              // updates['/dailyThoughts/' + childKey+'/companyID_status'] = companyID+'_'+status;
-              // updates['/dailyThoughts/' + childKey+'/topLeader_status'] = topLeader_status+'_'+status;
-              // updates['/dailyThoughts/' + childKey+'/publish_status'] = publish_status;
-
-              // console.log(updates);
 
               admin.database().ref().update(updates).then(update_res =>{
                 admin.database().ref('dailyThoughts/'+childKey).set(null);
@@ -1554,11 +1470,7 @@ function publishScheduledContent() {
               // Write the new notification's data
               var updates = {};
               updates['/news/' + newItemID] = childData;
-              // updates['/news/' + childKey+'/dailyThoughtType_status'] = dailyThoughtType+'_'+status;
-              // updates['/news/' + childKey+'/status'] = status;
-              // updates['/news/' + childKey+'/companyID_status'] = companyID+'_'+status;
-              // updates['/news/' + childKey+'/topLeader_status'] = topLeader_status+'_'+status;
-              // console.log(updates);
+              
               admin.database().ref().update(updates).then(update_res =>{
                 admin.database().ref('news/'+childKey).set(null);
                 console.log('Success updating articles published id: '+newItemID+' old id '+childKey);

@@ -101,8 +101,12 @@ module.exports = function (){
             port: 465,
             secure: true,
             auth: {
-                user: "thinklead",
+                user: "thinklead@comms.thinklead.co.za",
                 pass: "wR3(7FPMQvUwa-u&"
+            },
+            tls: {
+                // do not fail on invalid certs
+                rejectUnauthorized: false
             },
             maxConnections: 5,
             maxMessages: 100
@@ -137,46 +141,73 @@ module.exports = function (){
     };
 
     this.sendNewUserEmail = function sendEmails(options) {
+        var listofnewemails = [];
+        var successnew_email = [];
+        var failurenew_email = [];
+
+        console.log("mail options for new user: ", options);
+
+        listofnewemails.push(options);
+
         var transporter = nodemailer.createTransport({
             pool: true,
             host: 'comms.thinklead.co.za',
             port: 465,
             secure: true,
             auth: {
-                user: "thinklead",
+                user: "thinklead@comms.thinklead.co.za",
                 pass: "wR3(7FPMQvUwa-u&"
+            },
+            tls: {
+                // do not fail on invalid certs
+                rejectUnauthorized: false
             },
             maxConnections: 5,
             maxMessages: 100
         });
 
-        let mailOptions = {
-            from: 'Global Leadership Platform <thinklead@comms.thinklead.co.za>',
-            to: ''+options.to,
-            bcc: ''+options.bcc,
-            subject: ''+options.subject,
-            text: ''+options.msgTxt,
-            html: ''+options.msgHTML
+        function callBatchMailer(task, callback) {
+            console.log(`processing ${task.to}`);
+
+            let mailOptions = {
+                from: 'Global Leadership Platform <thinklead@comms.thinklead.co.za>',
+                to: ''+task.to,
+                bcc: ''+task.bcc,
+                subject: ''+task.subject,
+                text: ''+task.msgTxt,
+                html: ''+task.msgHTML
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log("Error sending mails 2: ",error);
+                    failurenew_email.push(task.to);
+                    return callback();
+                }else{
+                    console.log('Message sent: %s', info.messageId);
+                    successnew_email.push(task.to);
+                    return callback();
+                }
+                
+            });
+            
+        }        
+
+        // create a queue object with concurrency 10
+        var q = async.queue(callBatchMailer, 10);
+
+        // assign a callback
+        q.drain = function() {
+            console.log("success new user emails: ",successnew_email);
+            console.log("failure new user emails: ", failurenew_email);
+            console.log('All New User Emails have been processed');
         };
 
-        // sgMail.send(mailOptions).then((response) => {
-        //     console.log("sendNewUserEmail Success");
-        //     return response;
-        // }).catch(error => {
-        //     //Log friendly error
-        //     console.error("sendNewUserEmail Error: ",error.toString());
-        //     return error;
-        // });
-
-        // send mail with defined transport object
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return console.log("Error sending mails 2:",error);
-            }else{
-                return console.log('Message sent: %s', info.messageId);
-            }
-            
+        // add some items to the queue (batch-wise)
+        q.push(listofnewemails, function(err) {
+            console.log('finished processing item');
         });
+
     };
 
     this.sendNodeEmail = function sendMail(options, link) {
@@ -186,8 +217,12 @@ module.exports = function (){
             port: 465,
             secure: true,
             auth: {
-                user: "thinklead",
+                user: "thinklead@comms.thinklead.co.za",
                 pass: "wR3(7FPMQvUwa-u&"
+            },
+            tls: {
+                // do not fail on invalid certs
+                rejectUnauthorized: false
             },
             maxConnections: 5,
             maxMessages: 100
@@ -428,8 +463,12 @@ module.exports = function (){
             port: 465,
             secure: true,
             auth: {
-                user: "thinklead",
+                user: "thinklead@comms.thinklead.co.za",
                 pass: "wR3(7FPMQvUwa-u&"
+            },
+            tls: {
+                // do not fail on invalid certs
+                rejectUnauthorized: false
             },
             maxConnections: 5,
             maxMessages: 100

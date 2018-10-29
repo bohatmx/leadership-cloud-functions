@@ -387,6 +387,14 @@ module.exports = function (){
         
     }
 
+    this.bouncedEmails = function(email){
+        blockedEmail = {
+            "bant@mail.com": true,"bob@delan.co.za": true,"bouncetest@tribulant.com": true,"demo@afriforum.co.za": true,"demo@blsa.org.za": true,"demo@edcon.co.za": true,"demo@flysaa.com": true,"demo@harmony.co.za": true,"demo@hugegroup.com": true,"demo@mcd.co.za": true,"demo@mediclinic.co.za": true,"demo@miway.co.za": true,"demo@sandvik.co.za": true,"demo@spar.co.za": true,"demo@telesure.co.za": true,"demo@thomsonreuters.com": true,"idpdevapp@oneconnectgroup.com": true,"jan@doe.co.za": true,"john@doe.co.za": true,"king@doe.oc.za": true,"kurisani@avsoft.co.za": true,"Nathan@gmail.com": true,"nthaum@gmali.com": true,"pheladi@admin.com":true, "andrewjackson.sa@gnail.com": true, "coreyschristensen@msn.com": true, "glpappkevin@gail.com": true, "magdaleen@liquidorance.co.za": true, "theov@uj.ac.za": true
+        }
+
+        return blockedEmail[email] ? true : false;
+    }
+
     this.sendBatchMails = function(options){
         var all = options.all;
         var postcompanyID = options.companyID;
@@ -425,13 +433,28 @@ module.exports = function (){
                         console.log("sending to all");
                         console.log("Subscribed, push to emails ", email);
                         userinfo.email = email;
-                        listofemails.push(userinfo);
+
+                        var isBlocked = that.bouncedEmails(email);
+
+                        console.log(email+" isBlocked: "+ isBlocked);
+
+                        if(isBlocked == false){
+                            listofemails.push(userinfo);
+                        }
+
                     }else{
                         if(companyID == postcompanyID){
                             console.log("sending to company");
                             console.log("Subscribed, push to emails ", email);
                             userinfo.email = email;
-                            listofemails.push(userinfo);
+                            
+                            var isBlocked = that.bouncedEmails(email);
+
+                            console.log(email+" isBlocked: "+ isBlocked);
+
+                            if(isBlocked == false){
+                                listofemails.push(userinfo);
+                            }
                         }
                     }
                 }

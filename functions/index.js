@@ -49,6 +49,7 @@ var analyticsNotifications = require('./modules/analytics-notifications');
 var mailNotifications = require('./modules/mail-notifications');
 var userWelcomeEmail = require('./modules/welcome-email');
 var followGC = require('./modules/follow-gc');
+var removeUser = require('./modules/remove-user');
 
 // var removeBadAccounts = require('./modules/remove-badaccounts');
 
@@ -71,6 +72,7 @@ exports.m16 = appNotifications
 exports.m17 = analyticsNotifications
 exports.m18 = mailNotifications
 exports.m19 = followGC
+exports.m20 = removeUser
 // exports.m08 = removeBadAccounts
 
 var userToken = new handleNotifications();

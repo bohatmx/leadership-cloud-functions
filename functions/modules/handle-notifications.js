@@ -17,6 +17,8 @@ var failure_email = [];
 var sgMail = require('@sendgrid/mail');
 sgMail.setApiKey("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");
 
+const companies = require('../configs/get-companies');
+
 module.exports = function (){
     var that = this;
     this.serverKey = config.serverKey;
@@ -365,6 +367,12 @@ module.exports = function (){
     }
 
     this.testBatchEmails = function(options){
+
+        // For Testing
+        var user = {
+            'email': "cmwakio@gmail.com",
+            'companyID': companies['prod']
+        }
         listofemails = ["cmwakio@gmail.com","colman@oneconnect.co.za"];
 
         if(listofemails && listofemails.length > 0){
@@ -378,12 +386,28 @@ module.exports = function (){
         // New Edcon => -LOs4iZh3Y9LSiNtpWlH
         // Old Edcon => -LBPcsCl4Dp7BsYB8fjE
         // OneConnect => -LDVbbRyIMhukVtTVQ0n
-        if(companyID == "-LDVbbRyIMhukVtTVQ0n") return "https://oneconnect.thinklead.co.za/"
-        else if((companyID == "-LOs4iZh3Y9LSiNtpWlH") || (companyID == "-LBPcsCl4Dp7BsYB8fjE")) return "https://edcon.thinklead.co.za/"
-        else return "https://thinklead.app/"
+
+        /**
+         *  Old Implementation
+         */
+        // if(companyID == "-LDVbbRyIMhukVtTVQ0n") 
+        //     return "https://oneconnect.thinklead.co.za/"
+        // else if((companyID == "-LOs4iZh3Y9LSiNtpWlH") || (companyID == "-LBPcsCl4Dp7BsYB8fjE")) 
+        //     return "https://edcon.thinklead.co.za/"
+        // else 
+        //     return "https://thinklead.app/"
 
         // Test Server
         // return "https://glp-test.firebaseapp.com/"
+
+        /**
+         *  Refactored Implementation
+         */
+
+         if (companies[companyID])
+                return companies[companyID].url
+         else 
+            return companies['-KgsUcgfo7z1U9MXgd9i'].url  //  as default return "https://thinklead.app/" 
         
     }
 

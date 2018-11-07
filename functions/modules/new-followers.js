@@ -9,14 +9,20 @@ exports.newFollowers = functions.database.ref('/followers/{key}/{userID}').onCre
   const key = context.params.key;
   var snapRef = snap.ref;
 
+  console.log("follower key: ", key);
+
   if(userID == key){
     return snapRef.remove()
   }
 
   return admin.database().ref('/users/' + userID).once('value').then(function(snapshot) {
+  
+    console.log("userID: "+userID);
+    console.log("user sanpshot: "+snapshot.val());
+
     var email = (snapshot.val() && snapshot.val().email) || '';
     var companyID = (snapshot.val() && snapshot.val().companyID) || '';
-    var receiveEmails = snapshot.val().receiveEmails;
+    var receiveEmails = (snapshot.val() && snapshot.val().receiveEmails);
 
     if(receiveEmails == undefined || receiveEmails == '') {receiveEmails = true}
 

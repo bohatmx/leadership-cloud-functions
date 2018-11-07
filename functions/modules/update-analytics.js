@@ -1,5 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+
+var async = require("async");
 var appAnalytics = require('./app-analytics');
 var updateAppAnalytics = new appAnalytics();
 
@@ -534,14 +536,314 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
             return snapshot;
         });
 
+    }else if(updateType == "monthlyUsersUpdate"){
+        var startDate = '2018-01-31';
+        var today = new Date;
+        var lastDay = lastday(today.getFullYear(), today.getMonth());
+        var endMonth = (today.getMonth()+1) < 10 ? '0'+(today.getMonth()+1) : (today.getMonth()+1);
+        var endDate = [today.getFullYear(), endMonth, lastDay].join('-');
+
+        var fulldates = [], parsedates = [];
+
+        function dateRange(startDate, endDate) {
+            var start      = startDate.split('-');
+            var end        = endDate.split('-');
+
+            var startYear  = parseInt(start[0]);
+            var endYear    = parseInt(end[0]);
+            var dates      = [];
+          
+            for(var i = startYear; i <= endYear; i++) {
+              var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+              var startMon = i === startYear ? parseInt(start[1])-1 : 0;
+              for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+                var month = j+1;
+                var displayMonth = month < 10 ? '0'+month : month;
+                var endday = lastday(i, j);
+                dates.push([i, displayMonth, endday].join('-'));
+
+                var x = new Date([i, displayMonth, endday].join('-'));
+                var d = Date.parse(x);
+                parsedates.push(d);
+              }
+            }
+            return dates;
+        }
+
+        function lastday(y, m){
+            return  new Date(y, m +1, 0).getDate();
+        }
+
+        var fulldates = dateRange(startDate, endDate);
+        var listofusers = [];
+        var success = [];
+        var failure = [];
+
+        var usersupdate = admin.database().ref('/user').orderByChild("companyID").once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+    
+                var childKey = childSnapshot.key;
+                
+                var childData = childSnapshot.val();
+                var userID = childData.userID;
+                var companyID = childData.companyID;
+                var dateRegistered = childData.dateRegistered;
+
+                if((dateRegistered != undefined) && (companyID != undefined)){
+
+                    for (var x in parsedates){
+                        var endAt = parsedates[x];
+            
+                        var d = new Date(endAt);
+                        var locale = "en-us", month = d.toLocaleString(locale, { month: "short" }),
+                        year = d.getFullYear();
+
+                        if(dateRegistered <= endAt){
+                            var userObj = {
+                                companyID: companyID,
+                                userID: userID,
+                                period: year+'-'+month 
+                            }
+    
+                            console.log(userID+" registered on / before: "+year+" month: ", month+" company: "+companyID);
+
+                            listofusers.push(userObj);
+    
+                        }
+                    }
+
+                }
+            });
+
+            if(listofusers && listofusers.length > 0){
+
+                function callBatchMailer(task, callback) {
+                    console.log(`processing ${task.userID}`);
+                    // return callback();
+    
+                    let countItems = admin.database().ref('company-analytics').child(task.companyID).child(task.period).child('noofusers');
+    
+                    let currentCount = countItems.transaction(function(current) {
+                        // return 0;
+                        return (current || 0) + 1;
+                    }, function(error, committed, snapshot) {
+                        if (error) {
+                            console.log('Transaction failed abnormally! '+task.companyID+': ', error);
+                            failure.push(task.userID);
+                            return callback();
+                        } else if (!committed) {
+                            console.log('Not Committed '+task.companyID+': ', committed);
+                            failure.push(task.userID);
+                            return callback();
+                        } else {
+                            console.log('Transaction '+task.companyID+' committed');
+                            success.push(task.userID);
+                            return callback();
+                        }
+                    });
+                }
+    
+                // create a queue object with concurrency 10
+                var q = async.queue(callBatchMailer, 10);
+    
+                // assign a callback
+                q.drain = function() {
+                    console.log("success processing: ",success);
+                    console.log("failure user emails: ", failure);
+                    console.log('All User Accounts have been processed');
+                };
+    
+                // add some items to the queue (batch-wise)
+                q.push(listofusers, function(err) {
+                    console.log('finished processing item');
+                });
+
+                console.log("list of users to update: ");
+            }else{
+                console.error("Length of users is less than zero: ");
+            }
+
+        });
+        
+
     }else if(updateType == "upduser"){
-        var updateOwner = {};
-        updateOwner['users/-Kx8HDnAkFF5ErwaPBPg/companyanalytics'] = true;
-        admin.database().ref().update(updateOwner).then(postsupdate => {
-            console.log('updateOwner done');
-        }).catch(posts_err => {
-            console.log('updateOwner error');
+        var listofusers = [];
+        var success = [];
+        var failure = [];
+
+        var usersupdate = admin.database().ref('/user').orderByChild("companyID").once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+    
+                var childKey = childSnapshot.key;
+                
+                var childData = childSnapshot.val();
+                var userID = childData.userID;
+                var companyID = childData.companyID;
+                var dateRegistered = childData.dateRegistered;
+
+                if((dateRegistered != undefined) && (companyID != undefined)){
+                    var d = new Date(dateRegistered);
+
+                    var locale = "en-us", month = d.toLocaleString(locale, { month: "short" }),
+                    year = d.getFullYear();
+
+                    var userObj = {
+                        companyID: companyID,
+                        userID: userID,
+                        period: year+'-'+month 
+                    }
+
+                    listofusers.push(userObj);
+                }
+            });
+
+            if(listofusers && listofusers.length > 0){
+
+                function callBatchMailer(task, callback) {
+                    console.log(`processing ${task.userID}`);
+    
+                    let countItems = admin.database().ref('company-analytics').child(task.companyID).child(task.period).child('noofusers');
+    
+                    let currentCount = countItems.transaction(function(current) {
+                        return 0;
+                        // return (current || 0) + 1;
+                    }, function(error, committed, snapshot) {
+                        if (error) {
+                            console.log('Transaction failed abnormally! '+task.userID+': ', error);
+                            failure.push(task.userID);
+                            return callback();
+                        } else if (!committed) {
+                            console.log('Not Committed '+task.userID+': ', committed);
+                            failure.push(task.userID);
+                            return callback();
+                        } else {
+                            console.log('Transaction '+task.userID+' committed');
+                            success.push(task.userID);
+                            return callback();
+                        }
+                    });
+                }
+    
+                // create a queue object with concurrency 10
+                var q = async.queue(callBatchMailer, 10);
+    
+                // assign a callback
+                q.drain = function() {
+                    console.log("success processing: ",success);
+                    console.log("failure user emails: ", failure);
+                    console.log('All User Accounts have been processed');
+                };
+    
+                // add some items to the queue (batch-wise)
+                q.push(listofusers, function(err) {
+                    console.log('finished processing item');
+                });
+
+                console.log("list of users to update: ");
+            }else{
+                console.error("Length of users is less than zero: ");
+            }
+
+        });
+
+    }else if(updateType == "usersnotloggedin"){
+        var count = 0;
+        admin.auth().listUsers(1000)
+        .then(function(listUsersResult) {
+                listUsersResult.users.forEach(function(userRecord) {
+                    
+                    console.log("count: ",count,"user: ", userRecord.toJSON().email," verified: ",userRecord.toJSON().emailVerified);
+                    
+                    // if(!userRecord.toJSON().emailVerified){
+                    //     count++;
+                    //     var uid = userRecord.toJSON().uid;
+
+                    //     admin.auth().updateUser(uid, {
+                    //         emailVerified: true
+                    //     })
+                    //     .then(function(userRecord) {
+                    //         // See the UserRecord reference doc for the contents of userRecord.
+                            
+                    //         // console.log("Successfully updated user", userRecord.toJSON().email);
+                    //     })
+                    //     .catch(function(error) {
+                    //         console.log("Error updating user:", error);
+                    //     });
+                    // }
+
+                    count++;
+                });
+            })
+            .catch(function(error) {
+            console.log("Error listing users:", error);
+        });
+        // return admin.database().ref('/user').orderByChild("companyID").equalTo('-LEiZPT-C2PyLu_YLKNU').once('value').then(function(snapshot) {
+            
+            
+        //     snapshot.forEach(function(childSnapshot) {
+    
+        //         var uid = childSnapshot.key;
+
+        //         // admin.auth().getUser(uid)
+        //         // .then(function(userRecord) {
+        //         //     // See the UserRecord reference doc for the contents of userRecord.
+        //         //     console.log("Successfully fetched user data:", userRecord.toJSON().email);
+        //         // })
+        //         // .catch(function(error) {
+        //         //     console.log("Error fetching user data:", error);
+        //         // });
+        //         admin.auth().updateUser(uid, {
+        //             emailVerified: true
+        //         })
+        //         .then(function(userRecord) {
+        //             // See the UserRecord reference doc for the contents of userRecord.
+        //             console.log("Successfully updated user", userRecord.toJSON().email);
+        //         })
+        //         .catch(function(error) {
+        //             console.log("Error updating user:", error);
+        //         });
+        //         // var childData = childSnapshot.val();
+        //         // var userID = childData.userID;
+        //         // var email = childData.email;
+        //         // var userName = childData.firstName+" "+childData.lastName;
+
+        //         // admin.database().ref('user-lastlogin').orderByChild('uid').equalTo(uid).once('value').then(function(snap){
+        //         //     var exists = snap.exists();
+        //         //     if(!exists) console.log( userName,",",email, ",", exists);
+        //         // })
+                
+        //     });
+    
+        //     return snapshot;
+        // });
+
+    }else if(updateType == "userRecord"){
+        var uid = "9mpv4kuFNTZryzEv0LhKYpxqQBC3";
+
+        // var uid = "srgiSWBqBjSnBlb3xxR5ua2IX9F3";
+        // emailVerified: false
+        // password: "Pass@1234"
+
+        admin.auth().updateUser(uid, {
+            emailVerified: true,
+            password: "pass1234"
         })
+        .then(function(userRecord) {
+            // See the UserRecord reference doc for the contents of userRecord.
+            console.log("Successfully updated user", userRecord.toJSON());
+        })
+        .catch(function(error) {
+            console.log("Error updating user:", error);
+        });
+            
+        // admin.auth().getUser(uid)
+        // .then(function(userRecord) {
+        //     // See the UserRecord reference doc for the contents of userRecord.
+        //     console.log("Successfully fetched user data:", userRecord.toJSON());
+        // })
+        // .catch(function(error) {
+        //     console.log("Error fetching user data:", error);
+        // });
 
     }
     

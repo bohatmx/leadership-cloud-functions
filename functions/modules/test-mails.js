@@ -4,9 +4,9 @@ var userMails = new handleNotifications();
 
 exports.testMails = functions.https.onRequest((req, res) => {
 
-    var password = "5Z3DWC1J";
-    var firstName = "Yondie";
-    let email = "YMetu@edcon.co.za";
+    var password = "TZRD5CCG";
+    var firstName = "Jason";
+    let email = "JJackson@edcon.co.za";
 
 
     var url = "https://edcon.thinklead.co.za/"

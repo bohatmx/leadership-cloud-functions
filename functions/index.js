@@ -1,6 +1,24 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp();
+// admin.initializeApp();
+
+
+// Test Server
+// var serviceAccount = require("./service/glp-test-firebase-adminsdk-58xlx-84586619f2.json");
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://glp-test.firebaseio.com"
+// });
+
+
+// Live Server
+var serviceAccount = require("./service/leadershipplatform-158316-firebase-adminsdk-goitz-f99dd5b92d.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://leadershipplatform-158316.firebaseio.com"
+});
 
 
 // for test server only - sending mails ==========
@@ -237,7 +255,6 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
 
             var childKey = childSnapshot.key;
             var childData = childSnapshot.val();
-            // var url = getCompanyURL(childData.companyName);
             var url = userToken.getCompanyURL(companyID)
 
             var payload = {
@@ -895,6 +912,33 @@ exports.deletedVideos = functions.database.ref('/videos/{videoID}').onDelete((sn
   
 });
 
+exports.userDisabled = functions.database.ref('/users/{userID}').onUpdate(event => {
+  const currdata = event.data.val();
+  const prevdata = event.data.previous.val();
+  const uid = currdata.uid;
+  
+  const key = event.data.key;
+
+  if (prevdata.disabled !== currdata.disabled) {
+      //status has changed
+      // statusHasChanged = true;
+      var disabled = currdata.disabled;
+      
+      admin.auth().updateUser(uid, {
+        disabled: disabled
+      })
+      .then(function(userRecord) {
+        // See the UserRecord reference doc for the contents of userRecord.
+        console.log("Successfully disabled user", userRecord.toJSON());
+      })
+      .catch(function(error) {
+        console.log("Error updating user:", error);
+      });
+  }
+
+});
+
+
 exports.sendEmailFeedback = functions.database.ref('/feedback/{feedbackID}').onCreate((snap, context) => {
   // Get Firebase object
   const feedbackobj = snap.val();
@@ -1115,16 +1159,6 @@ exports.publishContent = functions.https.onRequest((req, res) => {
 
 function myLoops(){
   publishScheduledContent();
-}
-
-function getCompanyURL(companyName){
-  // Signed up corporate
-  // Edcon => -LBPcsCl4Dp7BsYB8fjE
-  if(companyName.trim() == "OneConnect Technologies") return "https://oneconnect.thinklead.co.za/"
-  else return "https://thinklead.app/"
-
-  // Test Server
-  // return "https://glp-test.firebaseapp.com/"
 }
 
 function sendPLDPReminders(){
@@ -1407,11 +1441,16 @@ function publishScheduledContent() {
               var status = 'approved';
               var topLeader_status = childData.topLeader_status;
               var publish_status = childData.publish_status;
+              var companyID_status = companyID+'_'+status;
 
               // set publish status
               if(publish_status === "hc_unpublished") publish_status = "hc_"+status;
               else if(publish_status === "daily_unpublished") publish_status = "daily_"+status;
               else if(publish_status === "-LEiZPT-C2PyLu_YLKNU_unpublished") publish_status = "-LEiZPT-C2PyLu_YLKNU_"+status;
+              else if(publish_status === companyID+"_ilead_unpublished") {
+                publish_status = companyID+"_ilead_"+status;
+                companyID_status = "corporate_ilead_"+status;
+              }
               else publish_status = companyID+"_"+status;
 
               // set the new dailythought ID
@@ -1419,7 +1458,7 @@ function publishScheduledContent() {
 
               childData.dailyThoughtType_status = dailyThoughtType+'_'+status;
               childData.status = status;
-              childData.companyID_status = companyID+'_'+status;
+              childData.companyID_status = companyID_status;
               childData.topLeader_status = topLeader_status+'_'+status;
               childData.publish_status = publish_status;
 

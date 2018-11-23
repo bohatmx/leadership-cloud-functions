@@ -12,6 +12,7 @@
     "@sendgrid/mail": "^6.2.1",
     "algoliasearch": "^3.24.10",
     "async": "^2.6.1",
+    "curl": "^0.1.4",
     "dotenv": "^5.0.0",
     "email-validator": "^2.0.4",
     "fast-crc32c": "^1.0.4",

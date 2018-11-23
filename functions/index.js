@@ -1,6 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-// admin.initializeApp();
+var curl = require('curl');
+admin.initializeApp();
 
 
 // Test Server
@@ -13,12 +14,12 @@ const admin = require('firebase-admin');
 
 
 // Live Server
-var serviceAccount = require("./service/leadershipplatform-158316-firebase-adminsdk-goitz-f99dd5b92d.json");
+// var serviceAccount = require("./service/leadershipplatform-158316-firebase-adminsdk-goitz-f99dd5b92d.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://leadershipplatform-158316.firebaseio.com"
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://leadershipplatform-158316.firebaseio.com"
+// });
 
 
 // for test server only - sending mails ==========
@@ -68,6 +69,7 @@ var mailNotifications = require('./modules/mail-notifications');
 var userWelcomeEmail = require('./modules/welcome-email');
 var followGC = require('./modules/follow-gc');
 var removeUser = require('./modules/remove-user');
+var unshortenURL = require('./modules/unshorten-url');
 
 // var removeBadAccounts = require('./modules/remove-badaccounts');
 
@@ -91,6 +93,7 @@ exports.m17 = analyticsNotifications
 exports.m18 = mailNotifications
 exports.m19 = followGC
 exports.m20 = removeUser
+exports.m21 = unshortenURL
 // exports.m08 = removeBadAccounts
 
 var userToken = new handleNotifications();
@@ -151,7 +154,6 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
     companyID:companyID,
     companyName:companyName
   }
-     
 
   // start external/global approved 2_approved
   if((dailyThoughtType_status === "2_approved") || (dailyThoughtType_status === "3_approved")){
@@ -757,8 +759,7 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
   var video = snap.val();
   // Specify Algolia's objectID using the Firebase object key
   video.objectID = snap.key;
-
-  console.log("video: ", video);
+  var UploadExternal = video.UploadExternal;
 
   // get title and subtitle from thought object
   var company_status = video.company_status;
@@ -769,7 +770,8 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
   var dailyThoughtType_status = video.dailyThoughtType_status;
 
   console.log("dailyThoughtType_status: "+dailyThoughtType_status)
-
+  console.log("UploadExternal: "+UploadExternal)
+  
   if((company_status == "general_true") || (company_status == "general_false")){
     var title = video.title;
 
@@ -845,7 +847,7 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
       });
     
       var newNotification = userToken.createNotifications(all, options, notificationData);
-      return true;
+      // return true;
 
     }// end of 2_approved
     // start internal approved (1_approved)
@@ -873,10 +875,36 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
 
       var newNotification = userToken.createNotifications(all, options, notificationData);
 
-      return true;
+      // return true;
     }
     // end of 1_approved
+
+    if(UploadExternal === "external"){
+      var url = video.url;
+
+      // Update TED urls with embed code
+      if(url.includes('.ted.com')){
+
+        curl.get(url, {}, function(err, response, body) {
+            // console.log("response: ",response.headers);
+            // res.json("https://embed.ted.com"+response.request.uri.pathname);
+            var updatedurl = "https://embed.ted.com"+response.request.uri.pathname;
+
+            var updateURL = {};
+            updateURL['videos/'+snap.key+'/url'] = updatedurl;
+
+            admin.database().ref().update(updateURL).then(postsupdate => {
+              console.log('update url');
+            }).catch(posts_err => {
+              console.log('update url videos error', posts_err);
+            })
+        });
+      }
+      
+    }
   }
+
+  
 
 });
 
@@ -1434,7 +1462,8 @@ function publishScheduledContent() {
             console.log("newDate: ", newDate)
 
             if(dateScheduled <= newDate){
-              var newItemID = admin.database().ref().child('/dailyThoughts').push().key;
+              // var newItemID = admin.database().ref().child('/dailyThoughts').push().key;
+              var newItemID = childData.dailyThoughtID;
 
               var dailyThoughtType = childData.dailyThoughtType;
               var companyID = childData.companyID;
@@ -1466,15 +1495,15 @@ function publishScheduledContent() {
               var updates = {};
               updates['/dailyThoughts/' + newItemID] = childData;
 
-              admin.database().ref().update(updates).then(update_res =>{
-                admin.database().ref('dailyThoughts/'+childKey).set(null);
-                console.log('Success updating daily thoughts published id: '+newItemID+' old id: '+childKey);
-              }).catch(error =>{
-                console.log('Error updating daily thoughts published id '+newItemID);
-              })
+              admin.database().ref('dailyThoughts/'+childKey).set(null).then(()=>{
+                admin.database().ref().update(updates).then(update_res =>{
+                  console.log('Success updating daily thoughts published id: '+newItemID+' old id: '+childKey);
+                }).catch(error =>{
+                  console.log('Error updating daily thoughts published id '+newItemID);
+                })
+              });
 
               console.log('published thought '+newItemID);
-
             }
         });
       }).catch(error =>{
@@ -1494,7 +1523,8 @@ function publishScheduledContent() {
             
 
             if(dateScheduled <= newDate){
-              var newItemID = admin.database().ref().child('/news').push().key;
+              // var newItemID = admin.database().ref().child('/news').push().key;
+              var newItemID = childData.newsID;
 
               var dailyThoughtType = childData.dailyThoughtType;
               var companyID = childData.companyID;
@@ -1511,13 +1541,14 @@ function publishScheduledContent() {
               // Write the new notification's data
               var updates = {};
               updates['/news/' + newItemID] = childData;
-              
-              admin.database().ref().update(updates).then(update_res =>{
-                admin.database().ref('news/'+childKey).set(null);
-                console.log('Success updating articles published id: '+newItemID+' old id '+childKey);
-              }).catch(error =>{
-                console.log('Error updating articles published id '+childKey);
-              })
+
+              admin.database().ref('news/'+childKey).set(null).then(()=>{
+                admin.database().ref().update(updates).then(update_res =>{
+                  console.log('Success updating articles published id: '+newItemID+' old id '+childKey);
+                }).catch(error =>{
+                  console.log('Error updating articles published id '+childKey);
+                })
+              });
               
               console.log('published articles '+newItemID);
             }
@@ -1538,7 +1569,8 @@ function publishScheduledContent() {
             var dateScheduled = childData.dateScheduled;
             
             if(dateScheduled <= newDate){
-              var newItemID = admin.database().ref().child('/podcasts').push().key;
+              // var newItemID = admin.database().ref().child('/podcasts').push().key;
+              var newItemID = childData.podcastID;
 
               var dailyThoughtType = childData.dailyThoughtType;
               var companyID = childData.companyID;
@@ -1558,13 +1590,15 @@ function publishScheduledContent() {
               updates['/podcasts/' + newItemID] = childData;
 
               // console.log(updates);
-              admin.database().ref().update(updates).then(update_res =>{
-                admin.database().ref('podcasts/'+childKey).set(null);
-                console.log('Success updating voicemails published id'+newItemID+' old id: '+childKey);
-              }).catch(error =>{
-                console.log('Error updating voicemails published id '+childKey);
-              })
-              
+              admin.database().ref('podcasts/'+childKey).set(null).then(()=>{
+                admin.database().ref().update(updates).then(update_res =>{
+                
+                  console.log('Success updating voicemails published id'+newItemID+' old id: '+childKey);
+                }).catch(error =>{
+                  console.log('Error updating voicemails published id '+childKey);
+                })
+              });
+
               console.log('published podcast/voicemail '+newItemID);
             }
         });
@@ -1585,7 +1619,8 @@ function publishScheduledContent() {
             var dateScheduled = childData.dateScheduled;
 
             if(dateScheduled <= newDate){
-              var newItemID = admin.database().ref().child('/videos').push().key;
+              // var newItemID = admin.database().ref().child('/videos').push().key;
+              var newItemID = childData.videoID;
 
               var dailyThoughtType = childData.dailyThoughtType;
               var companyID = childData.companyID;
@@ -1605,12 +1640,14 @@ function publishScheduledContent() {
               updates['/videos/' + newItemID] = childData;
 
               // console.log(updates);
-              admin.database().ref().update(updates).then(update_res =>{
-                admin.database().ref('videos/'+childKey).set(null);
-                console.log('Success updating videos published id'+newItemID+' old id: '+childKey);
-              }).catch(error =>{
-                console.log('Error updating videos published id '+childKey);
-              })
+              admin.database().ref('videos/'+childKey).set(null).then(()=>{
+                admin.database().ref().update(updates).then(update_res =>{
+                  console.log('Success updating videos published id'+newItemID+' old id: '+childKey);
+                }).catch(error =>{
+                  console.log('Error updating videos published id '+childKey);
+                })
+              });
+              
               
               console.log('published videos '+childKey);
             }

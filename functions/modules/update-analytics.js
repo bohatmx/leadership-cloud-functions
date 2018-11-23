@@ -667,82 +667,42 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
         
 
     }else if(updateType == "upduser"){
-        var listofusers = [];
-        var success = [];
-        var failure = [];
+        // Edcon Company ID: -LOs4iZh3Y9LSiNtpWlH
+        // OneConnect Company ID: -LDVbbRyIMhukVtTVQ0n
+        // Edcon Test Server ID: -LNUyClmWi7ezjSI5E2q
 
-        var usersupdate = admin.database().ref('/user').orderByChild("companyID").once('value').then(function(snapshot) {
+        var usersupdate = admin.database().ref('/users').orderByChild("companyID").equalTo('-LDVbbRyIMhukVtTVQ0n').once('value').then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
     
                 var childKey = childSnapshot.key;
-                
                 var childData = childSnapshot.val();
                 var userID = childData.userID;
+                var uid = childData.uid;
                 var companyID = childData.companyID;
-                var dateRegistered = childData.dateRegistered;
+                var companyID_userType = childData.companyID_userType;
+                var userDescription = childData.userDescription;
+                var userType = childData.userType;
+                var updates = {};
 
-                if((dateRegistered != undefined) && (companyID != undefined)){
-                    var d = new Date(dateRegistered);
+                if(userType == 8){
+                    updates["users/"+userID+"/companyID_userType"]=companyID+"_10";
+                    updates["users/"+userID+"/userDescription"]="Corporate I-Leader";
+                    updates["users/"+userID+"/userType"]=10;
 
-                    var locale = "en-us", month = d.toLocaleString(locale, { month: "short" }),
-                    year = d.getFullYear();
-
-                    var userObj = {
-                        companyID: companyID,
-                        userID: userID,
-                        period: year+'-'+month 
-                    }
-
-                    listofusers.push(userObj);
-                }
-            });
-
-            if(listofusers && listofusers.length > 0){
-
-                function callBatchMailer(task, callback) {
-                    console.log(`processing ${task.userID}`);
+                    updates["user/"+uid+"/companyID_userType"]=companyID+"_10";
+                    updates["user/"+uid+"/userDescription"]="Corporate I-Leader";
+                    updates["user/"+uid+"/userType"]=10;
     
-                    let countItems = admin.database().ref('company-analytics').child(task.companyID).child(task.period).child('noofusers');
-    
-                    let currentCount = countItems.transaction(function(current) {
-                        return 0;
-                        // return (current || 0) + 1;
-                    }, function(error, committed, snapshot) {
-                        if (error) {
-                            console.log('Transaction failed abnormally! '+task.userID+': ', error);
-                            failure.push(task.userID);
-                            return callback();
-                        } else if (!committed) {
-                            console.log('Not Committed '+task.userID+': ', committed);
-                            failure.push(task.userID);
-                            return callback();
-                        } else {
-                            console.log('Transaction '+task.userID+' committed');
-                            success.push(task.userID);
-                            return callback();
-                        }
+                    var updateuser = admin.database().ref().update(updates).then(() =>{
+                        return console.log("user updated: ",userID);
+                    }).catch(posts_err => {
+                        console.log('update error: ', posts_err);
                     });
-                }
-    
-                // create a queue object with concurrency 10
-                var q = async.queue(callBatchMailer, 10);
-    
-                // assign a callback
-                q.drain = function() {
-                    console.log("success processing: ",success);
-                    console.log("failure user emails: ", failure);
-                    console.log('All User Accounts have been processed');
-                };
-    
-                // add some items to the queue (batch-wise)
-                q.push(listofusers, function(err) {
-                    console.log('finished processing item');
-                });
 
-                console.log("list of users to update: ");
-            }else{
-                console.error("Length of users is less than zero: ");
-            }
+                    // console.log("user: ", updates);
+                }
+
+            });
 
         });
 

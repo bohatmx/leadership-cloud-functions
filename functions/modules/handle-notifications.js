@@ -17,7 +17,7 @@ var failure_email = [];
 var sgMail = require('@sendgrid/mail');
 sgMail.setApiKey("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");
 
-const companies = require('../configs/get-companies');
+// const companies = require('../configs/get-companies');
 
 module.exports = function (){
     var that = this;
@@ -390,12 +390,12 @@ module.exports = function (){
         /**
          *  Old Implementation
          */
-        // if(companyID == "-LDVbbRyIMhukVtTVQ0n") 
-        //     return "https://oneconnect.thinklead.co.za/"
-        // else if((companyID == "-LOs4iZh3Y9LSiNtpWlH") || (companyID == "-LBPcsCl4Dp7BsYB8fjE")) 
-        //     return "https://edcon.thinklead.co.za/"
-        // else 
-        //     return "https://thinklead.app/"
+        if(companyID == "-LDVbbRyIMhukVtTVQ0n") 
+            return "https://oneconnect.thinklead.co.za/"
+        else if((companyID == "-LOs4iZh3Y9LSiNtpWlH") || (companyID == "-LBPcsCl4Dp7BsYB8fjE")) 
+            return "https://edcon.thinklead.co.za/"
+        else 
+            return "https://thinklead.app/"
 
         // Test Server
         // return "https://glp-test.firebaseapp.com/"
@@ -404,10 +404,10 @@ module.exports = function (){
          *  Refactored Implementation
          */
 
-         if (companies[companyID])
-                return companies[companyID].url
-         else 
-            return companies['-KgsUcgfo7z1U9MXgd9i'].url  //  as default return "https://thinklead.app/" 
+        //  if (companies[companyID])
+        //         return companies[companyID].url
+        //  else 
+        //     return companies['-KgsUcgfo7z1U9MXgd9i'].url  //  as default return "https://thinklead.app/" 
         
     }
 

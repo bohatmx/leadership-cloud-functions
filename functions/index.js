@@ -142,23 +142,21 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
   }
 
   // Define Thought type
-  var thoughtType = null;
+  var thoughtType = "default";
 
   // Checks publish thought status 
   if (dailythought.publish_status === 'daily_approved')
     thoughtType = 'dailythoughts'
-  else if (dailythought.publish_status === companyID.join('_approved'))
+  else if (dailythought.publish_status === companyID.concat('_approved'))
     thoughtType = 'companythoughts'
   else if (dailythought.publish_status === 'hc_approved')
     thoughtType = 'topleaderthoughts'
-  else if (dailythought.publish_status === companyID.join('_ilead_approved'))
+  else if (dailythought.publish_status === companyID.concat('_ilead_approved'))
     thoughtType = 'ileadcorporate'
-  else if (dailythought === '-LEiZPT-C2PyLu_YLKNU_approved') // public aa
+  else if (dailythought.publish_status === '-LEiZPT-C2PyLu_YLKNU_approved') // public aa
     thoughtType = 'ileadpublic'
   else
     thoughtType = 'default'
-
-
 
   var notificationData = {
     notificationItemID: notificationItemID,
@@ -174,10 +172,8 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
     companyName: companyName,
     thoughtType: thoughtType
   }
-<<<<<<< HEAD
-=======
 
->>>>>>> vusi-dev-branch
+  console.log(notificationData);
 
   // start external/global approved 2_approved
   if ((dailyThoughtType_status === "2_approved") || (dailyThoughtType_status === "3_approved")) {
@@ -793,16 +789,10 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
   // daily thought type status - 1_approved (internal approved), 2_approved (external approved)
   var dailyThoughtType_status = video.dailyThoughtType_status;
 
-<<<<<<< HEAD
   console.log("dailyThoughtType_status: "+dailyThoughtType_status)
   console.log("UploadExternal: "+UploadExternal)
   
   if((company_status == "general_true") || (company_status == "general_false")){
-=======
-  console.log("dailyThoughtType_status: " + dailyThoughtType_status)
-
-  if ((company_status == "general_true") || (company_status == "general_false")) {
->>>>>>> vusi-dev-branch
     var title = video.title;
 
     var journalUserID = video.userID;
@@ -1220,21 +1210,7 @@ function myLoops() {
   publishScheduledContent();
 }
 
-<<<<<<< HEAD
 function sendPLDPReminders(){
-=======
-function getCompanyURL(companyName) {
-  // Signed up corporate
-  // Edcon => -LBPcsCl4Dp7BsYB8fjE
-  if (companyName.trim() == "OneConnect Technologies") return "https://oneconnect.thinklead.co.za/"
-  else return "https://thinklead.app/"
-
-  // Test Server
-  // return "https://glp-test.firebaseapp.com/"
-}
-
-function sendPLDPReminders() {
->>>>>>> vusi-dev-branch
   const reminders_res = getDueUnsentPLDPReminders();
 
   reminders_res.then(snap => {
@@ -1506,7 +1482,6 @@ function publishScheduledContent() {
         console.log("dateScheduled: ", dateScheduled)
         console.log("newDate: ", newDate)
 
-<<<<<<< HEAD
             if(dateScheduled <= newDate){
               // var newItemID = admin.database().ref().child('/dailyThoughts').push().key;
               var newItemID = childData.dailyThoughtID;
@@ -1527,45 +1502,20 @@ function publishScheduledContent() {
                 companyID_status = "corporate_ilead_"+status;
               }
               else publish_status = companyID+"_"+status;
-=======
-        if (dateScheduled <= newDate) {
-          var newItemID = admin.database().ref().child('/dailyThoughts').push().key;
-
-          var dailyThoughtType = childData.dailyThoughtType;
-          var companyID = childData.companyID;
-          var status = 'approved';
-          var topLeader_status = childData.topLeader_status;
-          var publish_status = childData.publish_status;
-
-          // set publish status
-          if (publish_status === "hc_unpublished") publish_status = "hc_" + status;
-          else if (publish_status === "daily_unpublished") publish_status = "daily_" + status;
-          else if (publish_status === "-LEiZPT-C2PyLu_YLKNU_unpublished") publish_status = "-LEiZPT-C2PyLu_YLKNU_" + status;
-          else publish_status = companyID + "_" + status;
->>>>>>> vusi-dev-branch
 
           // set the new dailythought ID
           childData.dailyThoughtID = newItemID;
 
-<<<<<<< HEAD
               childData.dailyThoughtType_status = dailyThoughtType+'_'+status;
               childData.status = status;
               childData.companyID_status = companyID_status;
               childData.topLeader_status = topLeader_status+'_'+status;
               childData.publish_status = publish_status;
-=======
-          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
-          childData.status = status;
-          childData.companyID_status = companyID + '_' + status;
-          childData.topLeader_status = topLeader_status + '_' + status;
-          childData.publish_status = publish_status;
->>>>>>> vusi-dev-branch
 
           // Write the new notification's data
           var updates = {};
           updates['/dailyThoughts/' + newItemID] = childData;
 
-<<<<<<< HEAD
               admin.database().ref('dailyThoughts/'+childKey).set(null).then(()=>{
                 admin.database().ref().update(updates).then(update_res =>{
                   console.log('Success updating daily thoughts published id: '+newItemID+' old id: '+childKey);
@@ -1579,24 +1529,8 @@ function publishScheduledContent() {
         });
       }).catch(error =>{
         console.log('Error releasing thoughts', error)
-=======
-          admin.database().ref().update(updates).then(update_res => {
-            admin.database().ref('dailyThoughts/' + childKey).set(null);
-            console.log('Success updating daily thoughts published id: ' + newItemID + ' old id: ' + childKey);
-          }).catch(error => {
-            console.log('Error updating daily thoughts published id ' + newItemID);
-          })
-
-          console.log('published thought ' + newItemID);
-
-        }
->>>>>>> vusi-dev-branch
       });
-    }).catch(error => {
-      console.log('Error releasing thoughts', error)
-    });
 
-<<<<<<< HEAD
     // publish new Articles
     const refArticles = admin.database().ref('/news');
     refArticles.orderByChild('status')
@@ -1642,54 +1576,8 @@ function publishScheduledContent() {
         });
       }).catch(error =>{
         console.log('Error releasing articles', error)
-=======
-  // publish new Articles
-  const refArticles = admin.database().ref('/news');
-  refArticles.orderByChild('status')
-    .equalTo(checkStatus)
-    .once('value')
-    .then(function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
-        var childKey = childSnapshot.key;
-        var childData = childSnapshot.val();
-        var dateScheduled = childData.dateScheduled;
-
-
-        if (dateScheduled <= newDate) {
-          var newItemID = admin.database().ref().child('/news').push().key;
-
-          var dailyThoughtType = childData.dailyThoughtType;
-          var companyID = childData.companyID;
-          var status = 'approved';
-          var topLeader_status = childData.topLeader_status;
-
-          childData.newsID = newItemID;
-
-          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
-          childData.status = status;
-          childData.companyID_status = companyID + '_' + status;
-          childData.topLeader_status = topLeader_status + '_' + status;
-
-          // Write the new notification's data
-          var updates = {};
-          updates['/news/' + newItemID] = childData;
-
-          admin.database().ref().update(updates).then(update_res => {
-            admin.database().ref('news/' + childKey).set(null);
-            console.log('Success updating articles published id: ' + newItemID + ' old id ' + childKey);
-          }).catch(error => {
-            console.log('Error updating articles published id ' + childKey);
-          })
-
-          console.log('published articles ' + newItemID);
-        }
->>>>>>> vusi-dev-branch
       });
-    }).catch(error => {
-      console.log('Error releasing articles', error)
-    });
 
-<<<<<<< HEAD
     // publish new Podcasts
     const refPodcasts = admin.database().ref('/podcasts');
     refPodcasts.orderByChild('status')
@@ -1737,56 +1625,9 @@ function publishScheduledContent() {
         });
       }).catch(error =>{
         console.log('Error releasing podcasts', error)
-=======
-  // publish new Podcasts
-  const refPodcasts = admin.database().ref('/podcasts');
-  refPodcasts.orderByChild('status')
-    .equalTo(checkStatus)
-    .once('value')
-    .then(function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
-        var childKey = childSnapshot.key;
-        var childData = childSnapshot.val();
-        var dateScheduled = childData.dateScheduled;
-
-        if (dateScheduled <= newDate) {
-          var newItemID = admin.database().ref().child('/podcasts').push().key;
-
-          var dailyThoughtType = childData.dailyThoughtType;
-          var companyID = childData.companyID;
-          var status = 'approved';
-          var topLeader_status = childData.topLeader_status;
-
-          childData.podcastID = newItemID;
-
-          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
-          childData.status = status;
-          childData.companyID_status = companyID + '_' + status;
-          childData.topLeader_status = topLeader_status + '_' + status;
-          childData.company_status = "general_true";
-
-          // Write the new notification's data
-          var updates = {};
-          updates['/podcasts/' + newItemID] = childData;
-
-          // console.log(updates);
-          admin.database().ref().update(updates).then(update_res => {
-            admin.database().ref('podcasts/' + childKey).set(null);
-            console.log('Success updating voicemails published id' + newItemID + ' old id: ' + childKey);
-          }).catch(error => {
-            console.log('Error updating voicemails published id ' + childKey);
-          })
-
-          console.log('published podcast/voicemail ' + newItemID);
-        }
->>>>>>> vusi-dev-branch
       });
-    }).catch(error => {
-      console.log('Error releasing podcasts', error)
-    });
 
 
-<<<<<<< HEAD
     // publish new Videos
     const refVideos = admin.database().ref('/videos');
     refVideos.orderByChild('status')
@@ -1834,53 +1675,7 @@ function publishScheduledContent() {
         });
       }).catch(error =>{
         console.log('Error releasing videos', error)
-=======
-  // publish new Videos
-  const refVideos = admin.database().ref('/videos');
-  refVideos.orderByChild('status')
-    .equalTo(checkStatus)
-    .once('value')
-    .then(function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
-        var childKey = childSnapshot.key;
-        var childData = childSnapshot.val();
-        var dateScheduled = childData.dateScheduled;
-
-        if (dateScheduled <= newDate) {
-          var newItemID = admin.database().ref().child('/videos').push().key;
-
-          var dailyThoughtType = childData.dailyThoughtType;
-          var companyID = childData.companyID;
-          var status = 'approved';
-          var topLeader_status = childData.topLeader_status;
-
-          childData.videoID = newItemID;
-
-          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
-          childData.status = status;
-          childData.companyID_status = companyID + '_' + status;
-          childData.topLeader_status = topLeader_status + '_' + status;
-          childData.company_status = "general_true";
-
-          // Write the new notification's data
-          var updates = {};
-          updates['/videos/' + newItemID] = childData;
-
-          // console.log(updates);
-          admin.database().ref().update(updates).then(update_res => {
-            admin.database().ref('videos/' + childKey).set(null);
-            console.log('Success updating videos published id' + newItemID + ' old id: ' + childKey);
-          }).catch(error => {
-            console.log('Error updating videos published id ' + childKey);
-          })
-
-          console.log('published videos ' + childKey);
-        }
->>>>>>> vusi-dev-branch
       });
-    }).catch(error => {
-      console.log('Error releasing videos', error)
-    });
 
   console.log('running publishing content')
   // end publish new content

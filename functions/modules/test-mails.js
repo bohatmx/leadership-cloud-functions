@@ -4,15 +4,9 @@ var userMails = new handleNotifications();
 
 exports.testMails = functions.https.onRequest((req, res) => {
 
-<<<<<<< HEAD
     var password = "TZRD5CCG";
     var firstName = "Jason";
     let email = "JJackson@edcon.co.za";
-=======
-    // var password = "5Z3DWC1J";
-    // var firstName = "Yondie";
-    // let email = "YMetu@edcon.co.za";
->>>>>>> vusi-dev-branch
 
 
     // var url = "https://edcon.thinklead.co.za/"

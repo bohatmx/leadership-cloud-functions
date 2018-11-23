@@ -27,7 +27,7 @@ admin.initializeApp();
 // var nodemailer = require('nodemailer2');
 var options = {};
 // var transporter = nodemailer.createTransport(directTransport(options));
- 
+
 // // create reusable transporter object using the default SMTP transport 
 // var transporter = nodemailer.createTransport({
 //     service: 'gmail',
@@ -44,7 +44,7 @@ var tokens = [];
 
 const config = require('./modules/config.js');
 var url = config.url;
- 
+
 const commentsIn = require('./modules/comments-in');
 var handleNotifications = require('./modules/handle-notifications');
 var manageUsers = require('./modules/manage-users');
@@ -127,43 +127,67 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
 
   // Add count to users analytics for thoughts
   let countThoughts = admin.database().ref('users').child(journalUserID).child('analytics').child('thoughts');
-  let currentCount = countThoughts.transaction(function(current) {
+  let currentCount = countThoughts.transaction(function (current) {
     return (current || 0) + 1;
   });
 
-    if(dailythought.photoURL != undefined || dailythought.photoURL != ""){
-      photoURL = dailythought.photoURL;
-    }else{
-      photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
-    }
+  if (dailythought.photoURL != undefined || dailythought.photoURL != "") {
+    photoURL = dailythought.photoURL;
+  } else {
+    photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
+  }
 
-    if(photoURL == undefined || photoURL == ""){
-      photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
-    }
+  if (photoURL == undefined || photoURL == "") {
+    photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
+  }
+
+  // Define Thought type
+  var thoughtType = null;
+
+  // Checks publish thought status 
+  if (dailythought.publish_status === 'daily_approved')
+    thoughtType = 'dailythoughts'
+  else if (dailythought.publish_status === companyID.join('_approved'))
+    thoughtType = 'companythoughts'
+  else if (dailythought.publish_status === 'hc_approved')
+    thoughtType = 'topleaderthoughts'
+  else if (dailythought.publish_status === companyID.join('_ilead_approved'))
+    thoughtType = 'ileadcorporate'
+  else if (dailythought === '-LEiZPT-C2PyLu_YLKNU_approved') // public aa
+    thoughtType = 'ileadpublic'
+  else
+    thoughtType = 'default'
+
+
 
   var notificationData = {
     notificationItemID: notificationItemID,
     notificationType: 'thought',
-    notificationMsg: journalUserName+' posted a thought by '+subtitle,
+    notificationMsg: journalUserName + ' posted a thought by ' + subtitle,
     journalUserID: journalUserID,
     journalUserName: journalUserName,
     photoURL: photoURL,
     notificationDate: notificationDate,
     seen: false,
     opened: false,
-    companyID:companyID,
-    companyName:companyName
+    companyID: companyID,
+    companyName: companyName,
+    thoughtType: thoughtType
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> vusi-dev-branch
 
   // start external/global approved 2_approved
-  if((dailyThoughtType_status === "2_approved") || (dailyThoughtType_status === "3_approved")){
+  if ((dailyThoughtType_status === "2_approved") || (dailyThoughtType_status === "3_approved")) {
     // Prepare email notification
-    let msgPlain = journalUserName+' posted a thought by '+subtitle
+    let msgPlain = journalUserName + ' posted a thought by ' + subtitle
     msgPlain += '';
     msgPlain += 'Best Regards,';
     msgPlain += 'Global Leadership Platform.';
 
-    var subject = journalUserName+' posted a new thought';
+    var subject = journalUserName + ' posted a new thought';
 
     var all = true;
 
@@ -171,80 +195,80 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
       "subject": subject,
       "msgTxt": msgPlain,
       "msgHTML": "",
-      "photoURL":photoURL,
-      "notificationMsg": journalUserName+' posted a thought by '+subtitle,
+      "photoURL": photoURL,
+      "notificationMsg": journalUserName + ' posted a thought by ' + subtitle,
       "userName": journalUserName,
-      "notificationURL": 'filtered-thoughts/#/'+notificationItemID,
-      "userID":journalUserID,
-      "companyID":companyID,
-      "all":all
+      "notificationURL": 'filtered-thoughts/#/' + notificationItemID,
+      "userID": journalUserID,
+      "companyID": companyID,
+      "all": all
     }
 
     var newNotification = userToken.createNotifications(all, options, notificationData);
 
     return true;
-    
-  }// end of 2_approved
+
+  } // end of 2_approved
   // start internal approved (1_approved)
-  if(dailyThoughtType_status === "1_approved"){
+  if (dailyThoughtType_status === "1_approved") {
     // let tokens = [];
-      // Prepare email notification
-      let msgPlain = journalUserName+' posted a thought by '+subtitle
-      msgPlain += '';
-      msgPlain += 'Best Regards,';
-      msgPlain += 'Global Leadership Platform.';
+    // Prepare email notification
+    let msgPlain = journalUserName + ' posted a thought by ' + subtitle
+    msgPlain += '';
+    msgPlain += 'Best Regards,';
+    msgPlain += 'Global Leadership Platform.';
 
-      var subject = journalUserName+' posted a new thought';
+    var subject = journalUserName + ' posted a new thought';
 
-      var all = false;
+    var all = false;
 
-      if(companyID == "-LEiZPT-C2PyLu_YLKNU"){
-        all = true;
-      }else{
-        all = false;
-      }
+    if (companyID == "-LEiZPT-C2PyLu_YLKNU") {
+      all = true;
+    } else {
+      all = false;
+    }
 
-      var options = {
-        "subject": subject,
-        "msgTxt": msgPlain,
-        "msgHTML": "",
-        "photoURL":photoURL,
-        "notificationMsg": journalUserName+' posted a thought by '+subtitle,
-        "userName": journalUserName,
-        "notificationURL": 'filtered-thoughts/#/'+notificationItemID,
-        "userID":journalUserID,
-        "companyID":companyID,
-        "all":all
-      }
+    var options = {
+      "subject": subject,
+      "msgTxt": msgPlain,
+      "msgHTML": "",
+      "photoURL": photoURL,
+      "notificationMsg": journalUserName + ' posted a thought by ' + subtitle,
+      "userName": journalUserName,
+      "notificationURL": 'filtered-thoughts/#/' + notificationItemID,
+      "userID": journalUserID,
+      "companyID": companyID,
+      "all": all
+    }
 
-      var newNotification = userToken.createNotifications(all, options, notificationData);
+    var newNotification = userToken.createNotifications(all, options, notificationData);
 
-      return true;
+    return true;
   }
   // end of 1_approved
 
   // if thoughts are pending send notification to Admin
-  if(status === "pending"){
-    
+  if (status === "pending") {
+
     var notificationData = {
       notificationItemID: notificationItemID,
       notificationType: 'pending-thought',
-      notificationMsg: journalUserName+' posted a new message requiring your action.',
+      notificationMsg: journalUserName + ' posted a new message requiring your action.',
       journalUserID: journalUserID,
       journalUserName: journalUserName,
       photoURL: photoURL,
       notificationDate: notificationDate,
       seen: false,
       opened: false,
-      companyID:companyID,
-      companyName:companyName
+      companyID: companyID,
+      companyName: companyName
     }
 
-    var companyID_userType = companyID+"_7";
+    var companyID_userType = companyID + "_7";
 
     let companyAdmins = admin.database().ref('/users').orderByChild('companyID_userType').equalTo(companyID_userType).once('value')
 
-    const got_admins = companyAdmins.then(snap =>{
+    const got_admins = companyAdmins.then(snap => {
       snap.forEach(userv => {
         var admin_user = userv.val();
         var admin_key = userv.key;
@@ -252,8 +276,8 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
         let device_tokens = admin.database().ref('user').orderByChild('userID')
           .equalTo(admin_key).once('value')
 
-          device_tokens.then(snap => {
-            snap.forEach(function(childSnapshot) {
+        device_tokens.then(snap => {
+          snap.forEach(function (childSnapshot) {
 
             var childKey = childSnapshot.key;
             var childData = childSnapshot.val();
@@ -261,18 +285,18 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
 
             var payload = {
               title: 'New Pending Thought',
-              body: journalUserName+' posted a new message requiring your action.',
+              body: journalUserName + ' posted a new message requiring your action.',
               icon: "/images/manifest/icon-48x48.png",
               sound: 'default',
               badge: 1,
-              click_action: url+"thoughts-management"
+              click_action: url + "thoughts-management"
             };
 
             var notification_key = childData.notification_key;
 
-            if(notification_key == undefined){
+            if (notification_key == undefined) {
               console.log("undefined key for user: ", admin_key)
-            }else{
+            } else {
               var msg = {
                 "notification_key": notification_key,
                 payload: payload
@@ -285,20 +309,20 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
         }).catch(err => {
           console.log('Tokens Error: ', err);
         })
-        
-        var newNotificationID = admin.database().ref().child('users/'+admin_key+'/notifications').push().key;
+
+        var newNotificationID = admin.database().ref().child('users/' + admin_key + '/notifications').push().key;
 
         notificationData.newNotificationID = newNotificationID;
         // Write the new notification's data
         var updates = {};
-        updates['users/'+admin_key+'/notifications/'+newNotificationID] = notificationData;
+        updates['users/' + admin_key + '/notifications/' + newNotificationID] = notificationData;
 
         admin.database().ref().update(updates).then(postsupdate => {
           console.log('pending thoughts notification to admin');
         }).catch(posts_err => {
           console.log('pending posts error to admin');
         })
-        
+
       });
 
       return true;
@@ -321,62 +345,62 @@ exports.deletedThoughts = functions.database.ref('/dailyThoughts/{dailyThoughtID
   var companyID = deletedItem.companyID;
   var status = deletedItem.status;
 
-  if(status == "approved"){
+  if (status == "approved") {
     var notificationData = {
       notificationItemID: notificationItemID,
       notificationType: 'thought',
       journalUserID: journalUserID,
-      companyID:companyID
+      companyID: companyID
     }
-  
+
     // Add count to users analytics for thoughts
     let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('thoughts');
-  
-    let countItem =  countItems.transaction(function(current) {
-      if(current == 0){
+
+    let countItem = countItems.transaction(function (current) {
+      if (current == 0) {
         return current
-      }else{
+      } else {
         return (current || 0) - 1;
       }
-      
+
     });
-  
+
     updateAppAnalytics.removeposts(notificationData);
   }
-  
+
 });
 
 function loadUsers(userID) {
   let dbRef = admin.database().ref('/users');
-  let dbFollowers = admin.database().ref('/users/'+userID+'/follower');
+  let dbFollowers = admin.database().ref('/users/' + userID + '/follower');
   let defer = new Promise((resolve, reject) => {
     dbFollowers.once('value', (snap) => {
-        let data = snap.val();
-        let users = [];
+      let data = snap.val();
+      let users = [];
 
-        snap.forEach(datav => {
-          // get the key and data from the snapshot
-          // const childKey = datav.key;
-          // const childData = datav.val();
-          users.push(datav);
-        });
-
-        resolve(users);
-      }, (err) => {
-          reject(err);
+      snap.forEach(datav => {
+        // get the key and data from the snapshot
+        // const childKey = datav.key;
+        // const childData = datav.val();
+        users.push(datav);
       });
+
+      resolve(users);
+    }, (err) => {
+      reject(err);
+    });
   });
   return defer;
 }
 
 exports.unshortenUserURLs = functions.https.onRequest((req, res) => {
   var TinyURL = require('tinyurl');
-  var userURL = url+"#/lead/user/sign-up";
+  var userURL = url + "#/lead/user/sign-up";
 
-  TinyURL.shorten(userURL, function(res) {
-      console.log(res); //Returns a shorter version of http://google.com - http://tinyurl.com/2tx
+  TinyURL.shorten(userURL, function (res) {
+    console.log(res); //Returns a shorter version of http://google.com - http://tinyurl.com/2tx
   });
-  
+
 })
 
 exports.manageAllUsers = functions.https.onRequest((req, res) => {
@@ -387,23 +411,23 @@ exports.manageAllUsers = functions.https.onRequest((req, res) => {
 exports.manageUserTokens = functions.https.onRequest((req, res) => {
   var users = admin.database().ref('/users').once('value');
 
-  users.then(snapshot =>{
-    snapshot.forEach(function(childSnapshot) {
+  users.then(snapshot => {
+    snapshot.forEach(function (childSnapshot) {
 
       var childData = childSnapshot.val();
       var childKey = childSnapshot.key;
-      
-        var deviceTokens = childData.deviceTokens;
-        var tokens = [];
-        var uid = childData.uid;
-        var device = {};
 
-        if((deviceTokens != undefined) || (deviceTokens != null) && (childData.notification_key == undefined)){
-          device.uid = uid;
-          console.log("uid: ",uid);
-          
-          userToken.getNotificationKey(uid);
-        }
+      var deviceTokens = childData.deviceTokens;
+      var tokens = [];
+      var uid = childData.uid;
+      var device = {};
+
+      if ((deviceTokens != undefined) || (deviceTokens != null) && (childData.notification_key == undefined)) {
+        device.uid = uid;
+        console.log("uid: ", uid);
+
+        userToken.getNotificationKey(uid);
+      }
 
     });
 
@@ -413,29 +437,29 @@ exports.manageUserTokens = functions.https.onRequest((req, res) => {
 exports.createUserTokens = functions.https.onRequest((req, res) => {
   var users = admin.database().ref('/users').once('value');
 
-  users.then(snapshot =>{
-    snapshot.forEach(function(childSnapshot) {
+  users.then(snapshot => {
+    snapshot.forEach(function (childSnapshot) {
 
       var childData = childSnapshot.val();
       var childKey = childSnapshot.key;
-      
-        var deviceTokens = childData.deviceTokens;
-        var tokens = [];
-        var uid = childData.uid;
-        var device = {};
 
-        if((deviceTokens != undefined) || (deviceTokens != null) && (childData.notification_key == undefined)){
-          device.uid = uid;
-          console.log("uid: ",uid);
-          
-          for (var key in deviceTokens) {
-            tokens.push(deviceTokens[key]);
-          }
+      var deviceTokens = childData.deviceTokens;
+      var tokens = [];
+      var uid = childData.uid;
+      var device = {};
 
-          device.reg_ids = tokens;
-          // userToken.getNotificationKey(uid);
-          userToken.create(device);
+      if ((deviceTokens != undefined) || (deviceTokens != null) && (childData.notification_key == undefined)) {
+        device.uid = uid;
+        console.log("uid: ", uid);
+
+        for (var key in deviceTokens) {
+          tokens.push(deviceTokens[key]);
         }
+
+        device.reg_ids = tokens;
+        // userToken.getNotificationKey(uid);
+        userToken.create(device);
+      }
 
     });
 
@@ -467,83 +491,83 @@ exports.updateAlgoliaArticles = functions.database.ref('/news/{newsID}').onCreat
   var companyID = article.companyID;
   var companyName = article.companyName;
 
-    // Add count to users analytics for thoughts
-    let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('articles');
-    let currentCount = countItems.transaction(function(current) {
-      return (current || 0) + 1;
-    });
+  // Add count to users analytics for thoughts
+  let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('articles');
+  let currentCount = countItems.transaction(function (current) {
+    return (current || 0) + 1;
+  });
 
-    if(article.photoURL != undefined || article.photoURL != ""){
-      photoURL = article.photoURL;
-    }else{
-      photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
-    }
+  if (article.photoURL != undefined || article.photoURL != "") {
+    photoURL = article.photoURL;
+  } else {
+    photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
+  }
 
-    if(photoURL == undefined){
-      photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
-    }
+  if (photoURL == undefined) {
+    photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
+  }
 
-    var notificationData = {
-      notificationItemID: notificationItemID,
-      notificationType: 'article',
-      notificationMsg: journalUserName+' posted an article about: "'+body+'"',
-      journalUserID: journalUserID,
-      journalUserName: journalUserName,
-      photoURL: photoURL,
-      notificationDate: notificationDate,
-      seen: false,
-      opened: false,
-      companyID:companyID,
-      companyName:companyName
-    }
+  var notificationData = {
+    notificationItemID: notificationItemID,
+    notificationType: 'article',
+    notificationMsg: journalUserName + ' posted an article about: "' + body + '"',
+    journalUserID: journalUserID,
+    journalUserName: journalUserName,
+    photoURL: photoURL,
+    notificationDate: notificationDate,
+    seen: false,
+    opened: false,
+    companyID: companyID,
+    companyName: companyName
+  }
 
-    // Prepare email notification
-    let msgPlain = journalUserName+' posted an article about: '+body
-    msgPlain += '';
-    msgPlain += 'Best Regards,';
-    msgPlain += 'Global Leadership Platform.';
+  // Prepare email notification
+  let msgPlain = journalUserName + ' posted an article about: ' + body
+  msgPlain += '';
+  msgPlain += 'Best Regards,';
+  msgPlain += 'Global Leadership Platform.';
 
-    var subject = journalUserName+' posted a new article';
+  var subject = journalUserName + ' posted a new article';
 
   // daily thought type status - 1_approved (internal approved), 2_approved (external approved)
   var dailyThoughtType_status = article.dailyThoughtType_status;
 
   // start external/global approved 2_approved
-  if(dailyThoughtType_status === "2_approved"){
+  if (dailyThoughtType_status === "2_approved") {
     var all = true;
 
     var options = {
       "subject": subject,
       "msgTxt": msgPlain,
       "msgHTML": "",
-      "photoURL":photoURL,
-      "notificationMsg": journalUserName+' posted an article about: '+body,
+      "photoURL": photoURL,
+      "notificationMsg": journalUserName + ' posted an article about: ' + body,
       "userName": journalUserName,
-      "notificationURL": 'filtered-articles/#/'+notificationItemID,
-      "userID":journalUserID,
-      "companyID":companyID,
-      "all":all
+      "notificationURL": 'filtered-articles/#/' + notificationItemID,
+      "userID": journalUserID,
+      "companyID": companyID,
+      "all": all
     }
 
     var newNotification = userToken.createNotifications(all, options, notificationData);
     return true;
 
-  }// end of 2_approved
+  } // end of 2_approved
   // start internal approved (1_approved)
-  if(dailyThoughtType_status === "1_approved"){
+  if (dailyThoughtType_status === "1_approved") {
     var all = false;
 
     var options = {
       "subject": subject,
       "msgTxt": msgPlain,
       "msgHTML": "",
-      "photoURL":photoURL,
-      "notificationMsg": journalUserName+' posted an article about: '+body,
+      "photoURL": photoURL,
+      "notificationMsg": journalUserName + ' posted an article about: ' + body,
       "userName": journalUserName,
-      "notificationURL": 'filtered-articles/#/'+notificationItemID,
-      "userID":journalUserID,
-      "companyID":companyID,
-      "all":all
+      "notificationURL": 'filtered-articles/#/' + notificationItemID,
+      "userID": journalUserID,
+      "companyID": companyID,
+      "all": all
     }
 
     var newNotification = userToken.createNotifications(all, options, notificationData);
@@ -564,24 +588,24 @@ exports.deletedArticles = functions.database.ref('/news/{newsID}').onDelete((sna
   var companyID = deletedItem.companyID;
   var status = deletedItem.status;
 
-  if(status == "approved"){
+  if (status == "approved") {
     var notificationData = {
       notificationItemID: notificationItemID,
       notificationType: 'article',
       journalUserID: journalUserID,
-      companyID:companyID
+      companyID: companyID
     }
-  
+
     // Add count to users analytics for thoughts
     let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('articles');
-    let countItem = countItems.transaction(function(current) {
-      if(current == 0){
+    let countItem = countItems.transaction(function (current) {
+      if (current == 0) {
         return current
-      }else{
+      } else {
         return (current || 0) - 1;
       }
     });
-  
+
     updateAppAnalytics.removeposts(notificationData);
 
   }
@@ -599,7 +623,7 @@ exports.newPodcast = functions.database.ref('/podcasts/{podcastID}').onCreate((s
   // get title and subtitle from thought object
   var company_status = podcast.company_status;
 
-  if((company_status == "general_true") || (company_status == "general_false")){
+  if ((company_status == "general_true") || (company_status == "general_false")) {
 
     var title = podcast.title;
     var podcastDescription = podcast.podcastDescription;
@@ -613,99 +637,99 @@ exports.newPodcast = functions.database.ref('/podcasts/{podcastID}').onCreate((s
     var companyName = podcast.companyName;
 
     var updateOwner = {};
-    updateOwner['podcasts/'+snap.key+'/postOwner'] = journalUserID;
+    updateOwner['podcasts/' + snap.key + '/postOwner'] = journalUserID;
     admin.database().ref().update(updateOwner).then(postsupdate => {
       console.log('updateOwner podcasts');
     }).catch(posts_err => {
       console.log('updateOwner podcasts error');
     })
 
-      if(podcast.photoURL != undefined || podcast.photoURL != ""){
-        photoURL = podcast.photoURL;
-      }else{
-        photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
-      }
+    if (podcast.photoURL != undefined || podcast.photoURL != "") {
+      photoURL = podcast.photoURL;
+    } else {
+      photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
+    }
 
-      if(photoURL == undefined){
-        photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
-      }
+    if (photoURL == undefined) {
+      photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
+    }
 
     var notificationData = {
       notificationItemID: notificationItemID,
       notificationType: 'podcast',
-      notificationMsg: journalUserName+' posted a '+podcastDescription.toLowerCase()+' about: "'+title+'"',
+      notificationMsg: journalUserName + ' posted a ' + podcastDescription.toLowerCase() + ' about: "' + title + '"',
       journalUserID: journalUserID,
       journalUserName: journalUserName,
       photoURL: photoURL,
       notificationDate: notificationDate,
       seen: false,
       opened: false,
-      companyID:companyID,
-      companyName:companyName
+      companyID: companyID,
+      companyName: companyName
     }
 
     console.log('notificationData', notificationData);
 
     // Prepare email notification
-    let msgPlain = journalUserName+' posted a '+podcastDescription.toLowerCase()+' about: '+title
+    let msgPlain = journalUserName + ' posted a ' + podcastDescription.toLowerCase() + ' about: ' + title
     msgPlain += '';
     msgPlain += 'Best Regards,';
     msgPlain += 'Global Leadership Platform.';
 
-    var subject = journalUserName+' shared a new '+podcastDescription.toLowerCase();
+    var subject = journalUserName + ' shared a new ' + podcastDescription.toLowerCase();
 
     // daily thought type status - 1_approved (internal approved), 2_approved (external approved)
     var dailyThoughtType_status = podcast.dailyThoughtType_status;
 
-    console.log("dailyThoughtType_status: "+dailyThoughtType_status);
+    console.log("dailyThoughtType_status: " + dailyThoughtType_status);
 
     // start external/global approved 2_approved
-    if(dailyThoughtType_status === "2_approved"){
+    if (dailyThoughtType_status === "2_approved") {
       var all = true;
 
       var options = {
         "subject": subject,
         "msgTxt": msgPlain,
         "msgHTML": "",
-        "photoURL":photoURL,
-        "notificationMsg": journalUserName+' posted a '+podcastDescription.toLowerCase()+' about: '+title,
+        "photoURL": photoURL,
+        "notificationMsg": journalUserName + ' posted a ' + podcastDescription.toLowerCase() + ' about: ' + title,
         "userName": journalUserName,
-        "notificationURL": 'filtered-podcasts/#/'+notificationItemID,
-        "userID":journalUserID,
-        "companyID":companyID,
-        "all":all
+        "notificationURL": 'filtered-podcasts/#/' + notificationItemID,
+        "userID": journalUserID,
+        "companyID": companyID,
+        "all": all
       }
 
       // Add count to users analytics for thoughts
       let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('podcasts');
-      let currentCount = countItems.transaction(function(current) {
+      let currentCount = countItems.transaction(function (current) {
         return (current || 0) + 1;
       });
-    
+
       var newNotification = userToken.createNotifications(all, options, notificationData);
       return true;
 
-    }// end of 2_approved
+    } // end of 2_approved
     // start internal approved (1_approved)
-    if(dailyThoughtType_status === "1_approved"){
+    if (dailyThoughtType_status === "1_approved") {
       var all = false;
 
       var options = {
         "subject": subject,
         "msgTxt": msgPlain,
         "msgHTML": "",
-        "photoURL":photoURL,
-        "notificationMsg": journalUserName+' posted a '+podcastDescription.toLowerCase()+' about: '+title,
+        "photoURL": photoURL,
+        "notificationMsg": journalUserName + ' posted a ' + podcastDescription.toLowerCase() + ' about: ' + title,
         "userName": journalUserName,
-        "notificationURL": 'filtered-podcasts/#/'+notificationItemID,
-        "userID":journalUserID,
-        "companyID":companyID,
-        "all":all
+        "notificationURL": 'filtered-podcasts/#/' + notificationItemID,
+        "userID": journalUserID,
+        "companyID": companyID,
+        "all": all
       }
 
       // Add count to users analytics for thoughts
       let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('podcasts');
-      let currentCount = countItems.transaction(function(current) {
+      let currentCount = countItems.transaction(function (current) {
         return (current || 0) + 1;
       });
 
@@ -714,7 +738,7 @@ exports.newPodcast = functions.database.ref('/podcasts/{podcastID}').onCreate((s
       return true;
     }
     // end of 1_approved
-    
+
   }
 
 });
@@ -730,27 +754,27 @@ exports.deletedPodcasts = functions.database.ref('/podcasts/{podcastID}').onDele
   var notificationType = deletedItem.podcastDescription.toLowerCase();
   var status = deletedItem.status;
 
-  if(status == "approved"){
+  if (status == "approved") {
     var notificationData = {
       notificationItemID: notificationItemID,
       notificationType: notificationType,
       journalUserID: journalUserID,
-      companyID:companyID
+      companyID: companyID
     }
 
     // Add count to users analytics for thoughts
     let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('podcasts');
-    let countItem = countItems.transaction(function(current) {
-      if(current == 0){
+    let countItem = countItems.transaction(function (current) {
+      if (current == 0) {
         return current
-      }else{
+      } else {
         return (current || 0) - 1;
       }
-      
+
     });
   }
 
-  
+
 });
 
 // on create or update videos
@@ -769,10 +793,16 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
   // daily thought type status - 1_approved (internal approved), 2_approved (external approved)
   var dailyThoughtType_status = video.dailyThoughtType_status;
 
+<<<<<<< HEAD
   console.log("dailyThoughtType_status: "+dailyThoughtType_status)
   console.log("UploadExternal: "+UploadExternal)
   
   if((company_status == "general_true") || (company_status == "general_false")){
+=======
+  console.log("dailyThoughtType_status: " + dailyThoughtType_status)
+
+  if ((company_status == "general_true") || (company_status == "general_false")) {
+>>>>>>> vusi-dev-branch
     var title = video.title;
 
     var journalUserID = video.userID;
@@ -784,92 +814,92 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
     var companyName = video.companyName;
 
     var updateOwner = {};
-    updateOwner['videos/'+snap.key+'/postOwner'] = journalUserID;
+    updateOwner['videos/' + snap.key + '/postOwner'] = journalUserID;
     admin.database().ref().update(updateOwner).then(postsupdate => {
       console.log('updateOwner videos');
     }).catch(posts_err => {
       console.log('updateOwner videos error');
     })
 
-    if(video.photoURL != undefined || video.photoURL != ""){
+    if (video.photoURL != undefined || video.photoURL != "") {
       photoURL = video.photoURL;
-    }else{
+    } else {
       photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
     }
 
-    if(photoURL == undefined){
+    if (photoURL == undefined) {
       photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
     }
 
     var notificationData = {
       notificationItemID: notificationItemID,
       notificationType: 'video',
-      notificationMsg: journalUserName+' posted a video about: "'+title+'"',
+      notificationMsg: journalUserName + ' posted a video about: "' + title + '"',
       journalUserID: journalUserID,
       journalUserName: journalUserName,
       photoURL: photoURL,
       notificationDate: notificationDate,
       seen: false,
       opened: false,
-      companyID:companyID,
-      companyName:companyName
+      companyID: companyID,
+      companyName: companyName
     }
 
     // Prepare email notification
-    let msgPlain = journalUserName+' posted a video about '+title
+    let msgPlain = journalUserName + ' posted a video about ' + title
     msgPlain += '';
     msgPlain += 'Best Regards,';
     msgPlain += 'Global Leadership Platform.';
 
-    var subject = journalUserName+' shared a new video';
+    var subject = journalUserName + ' shared a new video';
 
     // start external/global approved 2_approved
-    if(dailyThoughtType_status === "2_approved"){
+    if (dailyThoughtType_status === "2_approved") {
       var all = true;
 
       var options = {
         "subject": subject,
         "msgTxt": msgPlain,
         "msgHTML": "",
-        "photoURL":photoURL,
-        "notificationMsg": journalUserName+' posted a video about '+title,
+        "photoURL": photoURL,
+        "notificationMsg": journalUserName + ' posted a video about ' + title,
         "userName": journalUserName,
-        "notificationURL": 'filtered-videos/#/'+notificationItemID,
-        "userID":journalUserID,
-        "companyID":companyID,
-        "all":all
+        "notificationURL": 'filtered-videos/#/' + notificationItemID,
+        "userID": journalUserID,
+        "companyID": companyID,
+        "all": all
       }
 
       // Add count to users analytics for thoughts
       let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('videos');
-      let currentCount = countItems.transaction(function(current) {
+      let currentCount = countItems.transaction(function (current) {
         return (current || 0) + 1;
       });
-    
+
       var newNotification = userToken.createNotifications(all, options, notificationData);
       // return true;
 
-    }// end of 2_approved
+    } // end of 2_approved
     // start internal approved (1_approved)
-    if(dailyThoughtType_status === "1_approved"){
+    if (dailyThoughtType_status === "1_approved") {
       var all = false;
 
       var options = {
         "subject": subject,
         "msgTxt": msgPlain,
         "msgHTML": "",
-        "photoURL":photoURL,
-        "notificationMsg": journalUserName+' posted a video about '+title,
+        "photoURL": photoURL,
+        "notificationMsg": journalUserName + ' posted a video about ' + title,
         "userName": journalUserName,
-        "notificationURL": 'filtered-videos/#/'+notificationItemID,
-        "userID":journalUserID,
-        "companyID":companyID,
-        "all":all
+        "notificationURL": 'filtered-videos/#/' + notificationItemID,
+        "userID": journalUserID,
+        "companyID": companyID,
+        "all": all
       }
 
       // Add count to users analytics for thoughts
       let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('videos');
-      let currentCount = countItems.transaction(function(current) {
+      let currentCount = countItems.transaction(function (current) {
         return (current || 0) + 1;
       });
 
@@ -918,26 +948,26 @@ exports.deletedVideos = functions.database.ref('/videos/{videoID}').onDelete((sn
   var companyID = deletedItem.companyID;
   var status = deletedItem.status;
 
-  if(status == "approved"){
+  if (status == "approved") {
     var notificationData = {
       notificationItemID: notificationItemID,
       notificationType: 'video',
       journalUserID: journalUserID,
-      companyID:companyID
+      companyID: companyID
     }
 
     // Add count to users analytics for thoughts
     let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('videos');
-    let countItem = countItems.transaction(function(current) {
-      if(current == 0){
+    let countItem = countItems.transaction(function (current) {
+      if (current == 0) {
         return current
-      }else{
+      } else {
         return (current || 0) - 1;
       }
     });
   }
 
-  
+
 });
 
 exports.userDisabled = functions.database.ref('/users/{userID}').onUpdate(event => {
@@ -971,7 +1001,7 @@ exports.sendEmailFeedback = functions.database.ref('/feedback/{feedbackID}').onC
   // Get Firebase object
   const feedbackobj = snap.val();
   const feedbackobjid = snap.key;
-  
+
   var message = feedbackobj.message;
   var subject = feedbackobj.subject;
   var category = feedbackobj.category;
@@ -980,51 +1010,51 @@ exports.sendEmailFeedback = functions.database.ref('/feedback/{feedbackID}').onC
   var userPlatform = feedbackobj.userPlatform;
   var companyID = feedbackobj.companyID;
 
-  if(category == undefined){
+  if (category == undefined) {
     category = "Feedback";
   }
 
-  if(userPlatform == undefined){
+  if (userPlatform == undefined) {
     userPlatform = " N/A ";
   }
 
-  if(message !== undefined && message.length > 2){
+  if (message !== undefined && message.length > 2) {
 
     let msg = '<b>Dear Leadership Platform,</b><br><br>';
-    msg += 'Category: '+category+'<br><br>';
-    msg += 'Subject: '+subject+'<br><br>';
-    msg += 'Message: '+message+'<br><br>';
-    msg += 'From: '+senderName+' <br>';
-    msg += 'Email: '+senderEmail+'<br>';
+    msg += 'Category: ' + category + '<br><br>';
+    msg += 'Subject: ' + subject + '<br><br>';
+    msg += 'Message: ' + message + '<br><br>';
+    msg += 'From: ' + senderName + ' <br>';
+    msg += 'Email: ' + senderEmail + '<br>';
     msg += '<br>';
     msg += '<b>Best Regards,</b> <br>';
     msg += '<b>Global Leadership Platform.</b><br>';
     msg += '<br><br>';
-    msg += '<i>User Platform: '+userPlatform+'</i><br>';
+    msg += '<i>User Platform: ' + userPlatform + '</i><br>';
 
     let msgPlain = 'Dear Leadership Platform,';
-    msgPlain += 'Category: '+category+'<br><br>';
-    msgPlain += 'Subject: '+subject+'';
-    msgPlain += 'Message: '+message+'';
-    msgPlain += 'From: '+senderName+'';
-    msgPlain += 'Email: '+senderEmail+'';
+    msgPlain += 'Category: ' + category + '<br><br>';
+    msgPlain += 'Subject: ' + subject + '';
+    msgPlain += 'Message: ' + message + '';
+    msgPlain += 'From: ' + senderName + '';
+    msgPlain += 'Email: ' + senderEmail + '';
     msgPlain += '';
     msgPlain += 'Best Regards,';
     msgPlain += 'Global Leadership Platform.';
     msgPlain += '';
     msgPlain += '';
-    msgPlain += 'User Platform: '+userPlatform+'<br>';
+    msgPlain += 'User Platform: ' + userPlatform + '<br>';
 
-    var subject = '['+category+' - Global Leadership Platform] : '+subject;
+    var subject = '[' + category + ' - Global Leadership Platform] : ' + subject;
 
-    if(companyID == "-LOs4iZh3Y9LSiNtpWlH"){
+    if (companyID == "-LOs4iZh3Y9LSiNtpWlH") {
       // Send to Khanyisa
       var to = 'support@thinklead.co.za, KMhlaba@edcon.co.za';
-    }else{
+    } else {
       // Send to LDP
       var to = 'support@thinklead.co.za, info@leadershipplatform.com';
     }
-    
+
 
     // live server options
     let emailRes = sendEmails(to, subject, msgPlain, msg);
@@ -1037,17 +1067,17 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
   // Get Firebase object
   const userobj = snap.val();
   const userobjid = snap.key;
-  
-  if((userobj != undefined)  || (userobj != null)){
-    if(userobj.email != undefined){
+
+  if ((userobj != undefined) || (userobj != null)) {
+    if (userobj.email != undefined) {
       var email = userobj.email;
     }
   }
-  
-  if(email !== undefined && email.length > 5){
+
+  if (email !== undefined && email.length > 5) {
     var userID = admin.database().ref().child('users').push().key;
     var password = userobj.password;
-    var displayName = userobj.firstName+" "+userobj.lastName;
+    var displayName = userobj.firstName + " " + userobj.lastName;
     var lastName = userobj.lastName;
     var firstName = userobj.firstName;
     let companyID = userobj.companyID;
@@ -1060,7 +1090,8 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
 
     var url = userToken.getCompanyURL(companyID);
 
-    var msgPlain = "", msg = "";
+    var msgPlain = "",
+      msg = "";
 
     // construct emails - plain and html templates
     msgPlain = welcomeEmail.plainEmail(userobj, url);
@@ -1072,24 +1103,24 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
       password: password,
       displayName: displayName,
       disabled: false
-    }).then(function(user) {
+    }).then(function (user) {
       var uid = user.uid;
 
       var data = {
-        "companyID" : companyID,
-        "companyName" : companyName,
-        "dateRegistered" : dateRegistered,
-        "email" : email,
-        "firstName" : firstName,
-        "lastName" : lastName,
-        "password" : password,
-        "stringDateRegistered" : stringDateRegistered,
-        "userDescription" : userDescription,
-        "uid" : uid,
-        "userID" : userID,
-        "userType" : userType,
+        "companyID": companyID,
+        "companyName": companyName,
+        "dateRegistered": dateRegistered,
+        "email": email,
+        "firstName": firstName,
+        "lastName": lastName,
+        "password": password,
+        "stringDateRegistered": stringDateRegistered,
+        "userDescription": userDescription,
+        "uid": uid,
+        "userID": userID,
+        "userType": userType,
         "inviteSent": true,
-        "companyID_userType" : companyID+"_"+userType
+        "companyID_userType": companyID + "_" + userType
       }
 
       // Write the new user data
@@ -1097,23 +1128,23 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
       updates['users/' + userID] = data;
       admin.database().ref().update(updates);
 
-      admin.database().ref('/user/'+uid).set(data);
+      admin.database().ref('/user/' + uid).set(data);
 
       // create a followGC record
-      admin.database().ref('/followGC/'+uid).set(data);
+      admin.database().ref('/followGC/' + uid).set(data);
 
       var to = email;
       var subject = 'Welcome to Global Leadership Platform';
 
       let emailRes = sendEmails(to, subject, msgPlain, msg)
       // delete user
-      admin.database().ref('newUploadUsers/'+ userobjid).remove();
+      admin.database().ref('newUploadUsers/' + userobjid).remove();
 
       return user;
-    }, function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
+    }, function (error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
     });
 
   }
@@ -1124,14 +1155,14 @@ exports.newUserCreated = functions.database.ref('/user/{userID}').onCreate((snap
   // Get Firebase object
   const user = snap.val();
 
-  if(user){
+  if (user) {
     // Specify Algolia's objectID using the Firebase object key
     var companyID = user.companyID;
 
-    if(companyID != undefined){
+    if (companyID != undefined) {
       // Add count to users analytics for users
       let countItems = admin.database().ref('company-analytics').child(companyID).child('counts').child('noofusers');
-      let currentCount = countItems.transaction(function(current) {
+      let currentCount = countItems.transaction(function (current) {
         return (current || 0) + 1;
       });
 
@@ -1148,13 +1179,13 @@ exports.userDeleted = functions.database.ref('/user/{userID}').onDelete((snap, c
   // Add count to users analytics for users
   let countItems = admin.database().ref('company-analytics').child(companyID).child('counts').child('noofusers');
 
-  let countItem =  countItems.transaction(function(current) {
-    if(current == 0){
+  let countItem = countItems.transaction(function (current) {
+    if (current == 0) {
       return current
-    }else{
+    } else {
       return (current || 0) - 1;
     }
-    
+
   });
 
 });
@@ -1178,25 +1209,39 @@ exports.publishContent = functions.https.onRequest((req, res) => {
   tl.add(myLoops);
   tl.setInterval(55000);
   tl.run();
-  tl.onError(function(error){
-    console.log('Test Loops',error);
+  tl.onError(function (error) {
+    console.log('Test Loops', error);
   });
 
   // res.send(true);
 });
 
-function myLoops(){
+function myLoops() {
   publishScheduledContent();
 }
 
+<<<<<<< HEAD
 function sendPLDPReminders(){
+=======
+function getCompanyURL(companyName) {
+  // Signed up corporate
+  // Edcon => -LBPcsCl4Dp7BsYB8fjE
+  if (companyName.trim() == "OneConnect Technologies") return "https://oneconnect.thinklead.co.za/"
+  else return "https://thinklead.app/"
+
+  // Test Server
+  // return "https://glp-test.firebaseapp.com/"
+}
+
+function sendPLDPReminders() {
+>>>>>>> vusi-dev-branch
   const reminders_res = getDueUnsentPLDPReminders();
 
   reminders_res.then(snap => {
     for (let rems of snap) {
-      
+
       let userName = rems.journalUserName
-      let msg = rems.moveAction+': '+rems.title
+      let msg = rems.moveAction + ': ' + rems.title
       let notificationDate = Date.now()
       var notificationFequency = rems.reminderFrequency;
       var myPLDPID = rems.myPLDPID;
@@ -1214,24 +1259,24 @@ function sendPLDPReminders(){
 
       console.log("rems photo: ", rems.photoURL);
 
-      if(photoURL == undefined) photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
+      if (photoURL == undefined) photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
 
       console.log("photoURL: ", photoURL);
-      
-      
+
+
 
       var notificationData = {
         notificationItemID: notificationID,
         notificationType: 'pldpreminder',
-        notificationMsg: 'You have a PLDP reminder about: "'+title+'"',
+        notificationMsg: 'You have a PLDP reminder about: "' + title + '"',
         journalUserID: journalUserID,
         journalUserName: userName,
         photoURL: photoURL,
         notificationDate: notificationDate,
         seen: false,
         opened: false,
-        companyID:companyID,
-        companyName:companyName
+        companyID: companyID,
+        companyName: companyName
       }
 
       var companyURL = userToken.getCompanyURL(companyID);
@@ -1243,7 +1288,7 @@ function sendPLDPReminders(){
         icon: "/images/manifest/icon-48x48.png",
         sound: 'default',
         badge: '1',
-        click_action: companyURL+"my-pldp"
+        click_action: companyURL + "my-pldp"
       }
 
       let device_tokens = admin.database().ref('user').orderByChild('userID').equalTo(journalUserID).once('value');
@@ -1251,7 +1296,7 @@ function sendPLDPReminders(){
       device_tokens.then(snap => {
         console.log("fetch device tokens");
 
-        snap.forEach(function(childSnapshot) {
+        snap.forEach(function (childSnapshot) {
 
           console.log("gotten device tokens");
 
@@ -1265,13 +1310,13 @@ function sendPLDPReminders(){
           var receivePLDPEmails = childData.receivePLDPEmails;
           var uid = childKey;
 
-          if(receivePLDPEmails == undefined){
+          if (receivePLDPEmails == undefined) {
             receivePLDPEmails = true;
           }
 
-          if(notification_key == undefined){
+          if (notification_key == undefined) {
             console.log("undefined key for user: ", journalUserID)
-          }else{
+          } else {
             var msg = {
               "notification_key": notification_key,
               payload: payload
@@ -1281,20 +1326,20 @@ function sendPLDPReminders(){
           }
 
           // Send email notification
-          if(email == undefined){
+          if (email == undefined) {
             console.log("undefined email for user: ", rems.journalUserID)
-          }else{
+          } else {
             // If user subscribed to PLDP emails
-            if(receivePLDPEmails == true){
+            if (receivePLDPEmails == true) {
               // create email body
-              let msgHTML = '<b>Dear '+rems.journalUserName+',</b><br><br>';
-              msgHTML += 'You have a new PLDP reminder about: '+rems.title+'<br><br>';
+              let msgHTML = '<b>Dear ' + rems.journalUserName + ',</b><br><br>';
+              msgHTML += 'You have a new PLDP reminder about: ' + rems.title + '<br><br>';
               msgHTML += '<br>';
               msgHTML += '<b>Best Regards,</b> <br>';
               msgHTML += '<b>Global Leadership Platform.</b><br>';
 
-              let msgPlain = 'Dear '+rems.journalUserName+',';
-              msgPlain += 'You have a new PLDP reminder about: '+rems.title;
+              let msgPlain = 'Dear ' + rems.journalUserName + ',';
+              msgPlain += 'You have a new PLDP reminder about: ' + rems.title;
               msgPlain += '';
               msgPlain += 'Best Regards,';
               msgPlain += 'Global Leadership Platform.';
@@ -1306,20 +1351,20 @@ function sendPLDPReminders(){
                 "subject": subject,
                 "msgTxt": msgPlain,
                 "msgHTML": msgHTML,
-                "photoURL":photoURL,
-                "notificationMsg": 'You have a new PLDP reminder about: '+rems.title,
+                "photoURL": photoURL,
+                "notificationMsg": 'You have a new PLDP reminder about: ' + rems.title,
                 "userName": userName,
                 "notificationURL": "my-pldp",
-                "companyURL":companyURL
+                "companyURL": companyURL
               }
               console.log("send email notify: ", options);
 
-              var link = 'email='+email+'&type=pldp&action='+uid+'&notification='+journalUserID;
+              var link = 'email=' + email + '&type=pldp&action=' + uid + '&notification=' + journalUserID;
 
               userToken.sendNodeEmail(options, link);
 
             }
-            
+
           }
         });
 
@@ -1327,15 +1372,15 @@ function sendPLDPReminders(){
         console.log('Tokens Error: ', err);
       });
 
-      var newNotificationID = admin.database().ref().child('users/'+rems.journalUserID+'/pldpnotifications').push().key;
+      var newNotificationID = admin.database().ref().child('users/' + rems.journalUserID + '/pldpnotifications').push().key;
       notificationData.newNotificationID = newNotificationID;
 
       // Write the new notification's data
       var updates = {};
-      updates['users/'+rems.journalUserID+'/pldpnotifications/'+newNotificationID] = notificationData;
-      admin.database().ref().update(updates).then(notify_res =>{
+      updates['users/' + rems.journalUserID + '/pldpnotifications/' + newNotificationID] = notificationData;
+      admin.database().ref().update(updates).then(notify_res => {
         console.log('Write the new notifications data');
-      }).catch(notify_err =>{
+      }).catch(notify_err => {
         console.log('notify_err');
       });
 
@@ -1343,14 +1388,14 @@ function sendPLDPReminders(){
       reminderStatus = "Sent";
 
       // reset notification per settings
-      if(notificationFequency !== "Does not repeat"){
+      if (notificationFequency !== "Does not repeat") {
         var d = new Date(reminderDate);
         // set new dates according to frequency
-        if (notificationFequency === "Hourly") d.setHours(d.getHours()+1);
-        if (notificationFequency === "Daily") d.setDate(d.getDate()+1);
-        if (notificationFequency === "Weekly") d.setDate(d.getDate()+7);
-        if (notificationFequency === "Monthly") d.setMonth(d.getMonth()+1);
-        if (notificationFequency === "Yearly") d.setFullYear(d.getFullYear()+1);
+        if (notificationFequency === "Hourly") d.setHours(d.getHours() + 1);
+        if (notificationFequency === "Daily") d.setDate(d.getDate() + 1);
+        if (notificationFequency === "Weekly") d.setDate(d.getDate() + 7);
+        if (notificationFequency === "Monthly") d.setMonth(d.getMonth() + 1);
+        if (notificationFequency === "Yearly") d.setFullYear(d.getFullYear() + 1);
 
         reminderDate = Date.parse(d);
         stringReminderDate = formatDate(reminderDate);
@@ -1360,31 +1405,31 @@ function sendPLDPReminders(){
 
       // Update the notification reminder
       var notificationUpdates = {};
-      notificationUpdates['pldpNotifications/' + notificationID+'/reminderDate'] = reminderDate;
-      notificationUpdates['pldpNotifications/' + notificationID+'/stringReminderDate'] = stringReminderDate;
-      notificationUpdates['pldpNotifications/' + notificationID+'/reminderStatus'] = reminderStatus;
-      
-      admin.database().ref().update(notificationUpdates).then(notificationupdates_res =>{
+      notificationUpdates['pldpNotifications/' + notificationID + '/reminderDate'] = reminderDate;
+      notificationUpdates['pldpNotifications/' + notificationID + '/stringReminderDate'] = stringReminderDate;
+      notificationUpdates['pldpNotifications/' + notificationID + '/reminderStatus'] = reminderStatus;
+
+      admin.database().ref().update(notificationUpdates).then(notificationupdates_res => {
         console.log('update pldp notification reminder 1');
-      }).catch(notificationupdates_err =>{
+      }).catch(notificationupdates_err => {
         console.log('notificationupdates_err');
       });
 
       // Update the pldp's notification reminder
       var pldpUpdates = {};
-      pldpUpdates['myPLDP/'+moveAction+'/'+ myPLDPID+'/reminderDate'] = reminderDate;
-      pldpUpdates['myPLDP/'+moveAction+'/'+ myPLDPID+'/stringReminderDate'] = stringReminderDate;
-      pldpUpdates['myPLDP/'+moveAction+'/'+ myPLDPID+'/reminderStatus'] = reminderStatus;
-      
-      admin.database().ref().update(pldpUpdates).then(pldpupdates_res =>{
+      pldpUpdates['myPLDP/' + moveAction + '/' + myPLDPID + '/reminderDate'] = reminderDate;
+      pldpUpdates['myPLDP/' + moveAction + '/' + myPLDPID + '/stringReminderDate'] = stringReminderDate;
+      pldpUpdates['myPLDP/' + moveAction + '/' + myPLDPID + '/reminderStatus'] = reminderStatus;
+
+      admin.database().ref().update(pldpUpdates).then(pldpupdates_res => {
         console.log('update pldp notification reminder 2');
-      }).catch(pldpupdates_err =>{
+      }).catch(pldpupdates_err => {
         console.log('pldpUpdates_err');
       });
 
     }
     // console.log('snap out',snap);
-  }).catch(error =>{
+  }).catch(error => {
     console.log("reminders_res error", error);
     return false;
   })
@@ -1394,11 +1439,11 @@ function sendPLDPReminders(){
   return true;
 }
 
-function getDueUnsentPLDPReminders(){
+function getDueUnsentPLDPReminders() {
   var status = "Unsent";
   var d = Date.now();
   var e = new Date(d);
-  e.setSeconds(0,0);
+  e.setSeconds(0, 0);
   var newDate = Date.parse(e);
 
   var fiveMinutesAgo = newDate - 300000;
@@ -1406,7 +1451,7 @@ function getDueUnsentPLDPReminders(){
 
   let dbRef = admin.database().ref('/pldpNotifications').orderByChild('reminderStatus').equalTo(status).once('value')
 
-  const reminders_prom = dbRef.then(snap =>{
+  const reminders_prom = dbRef.then(snap => {
     snap.forEach(datav => {
       var send_reminder = datav.val();
       var reminderdate = send_reminder.reminderDate;
@@ -1414,16 +1459,16 @@ function getDueUnsentPLDPReminders(){
       var journalUserName = send_reminder.journalUserName;
 
       // console.log("PLDP for : ",journalUserName);
-        if((reminderdate >= fiveMinutesAgo) && (reminderdate <= newDate)){
-          console.log(journalUserName+" push to reminders");
-          // console.log("reminderdate: ", reminderdate);
-          // console.log("newDate: ", newDate);
-          // console.log("fiveMinutesAgo: ", fiveMinutesAgo);
-          reminders.push(send_reminder);
-        }else{
-          console.log("nothing to push to reminders");
-        }
-      
+      if ((reminderdate >= fiveMinutesAgo) && (reminderdate <= newDate)) {
+        console.log(journalUserName + " push to reminders");
+        // console.log("reminderdate: ", reminderdate);
+        // console.log("newDate: ", newDate);
+        // console.log("fiveMinutesAgo: ", fiveMinutesAgo);
+        reminders.push(send_reminder);
+      } else {
+        console.log("nothing to push to reminders");
+      }
+
     });
 
     return reminders;
@@ -1435,32 +1480,33 @@ function getDueUnsentPLDPReminders(){
 // Publish new Thoughts, new Articles, new Videos, new Podcasts, new Voicemails
 function publishScheduledContent() {
 
-    var d = Date.now();
-    var e = new Date(d);
-    e.setSeconds(0,0);
-    var newDate = Date.parse(e);
-    var checkStatus = 'unpublished';
+  var d = Date.now();
+  var e = new Date(d);
+  e.setSeconds(0, 0);
+  var newDate = Date.parse(e);
+  var checkStatus = 'unpublished';
 
-    // Get a reference to the database service
+  // Get a reference to the database service
 
-    // publish new Thoughts
-    const refThoughts = admin.database().ref('/dailyThoughts');
-    refThoughts.orderByChild('status')
-        .equalTo(checkStatus)
-        .once('value')
-        .then(function (snapshot) {
-          // console.log("snapshot: ", snapshot)
+  // publish new Thoughts
+  const refThoughts = admin.database().ref('/dailyThoughts');
+  refThoughts.orderByChild('status')
+    .equalTo(checkStatus)
+    .once('value')
+    .then(function (snapshot) {
+      // console.log("snapshot: ", snapshot)
 
-          snapshot.forEach(function(childSnapshot) {
-            // console.log("child snapshot: ", childSnapshot)
+      snapshot.forEach(function (childSnapshot) {
+        // console.log("child snapshot: ", childSnapshot)
 
-            var childKey = childSnapshot.key;
-            var childData = childSnapshot.val();
+        var childKey = childSnapshot.key;
+        var childData = childSnapshot.val();
 
-            var dateScheduled = childData.dateScheduled;
-            console.log("dateScheduled: ", dateScheduled)
-            console.log("newDate: ", newDate)
+        var dateScheduled = childData.dateScheduled;
+        console.log("dateScheduled: ", dateScheduled)
+        console.log("newDate: ", newDate)
 
+<<<<<<< HEAD
             if(dateScheduled <= newDate){
               // var newItemID = admin.database().ref().child('/dailyThoughts').push().key;
               var newItemID = childData.dailyThoughtID;
@@ -1481,20 +1527,45 @@ function publishScheduledContent() {
                 companyID_status = "corporate_ilead_"+status;
               }
               else publish_status = companyID+"_"+status;
+=======
+        if (dateScheduled <= newDate) {
+          var newItemID = admin.database().ref().child('/dailyThoughts').push().key;
 
-              // set the new dailythought ID
-              childData.dailyThoughtID = newItemID;
+          var dailyThoughtType = childData.dailyThoughtType;
+          var companyID = childData.companyID;
+          var status = 'approved';
+          var topLeader_status = childData.topLeader_status;
+          var publish_status = childData.publish_status;
 
+          // set publish status
+          if (publish_status === "hc_unpublished") publish_status = "hc_" + status;
+          else if (publish_status === "daily_unpublished") publish_status = "daily_" + status;
+          else if (publish_status === "-LEiZPT-C2PyLu_YLKNU_unpublished") publish_status = "-LEiZPT-C2PyLu_YLKNU_" + status;
+          else publish_status = companyID + "_" + status;
+>>>>>>> vusi-dev-branch
+
+          // set the new dailythought ID
+          childData.dailyThoughtID = newItemID;
+
+<<<<<<< HEAD
               childData.dailyThoughtType_status = dailyThoughtType+'_'+status;
               childData.status = status;
               childData.companyID_status = companyID_status;
               childData.topLeader_status = topLeader_status+'_'+status;
               childData.publish_status = publish_status;
+=======
+          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
+          childData.status = status;
+          childData.companyID_status = companyID + '_' + status;
+          childData.topLeader_status = topLeader_status + '_' + status;
+          childData.publish_status = publish_status;
+>>>>>>> vusi-dev-branch
 
-              // Write the new notification's data
-              var updates = {};
-              updates['/dailyThoughts/' + newItemID] = childData;
+          // Write the new notification's data
+          var updates = {};
+          updates['/dailyThoughts/' + newItemID] = childData;
 
+<<<<<<< HEAD
               admin.database().ref('dailyThoughts/'+childKey).set(null).then(()=>{
                 admin.database().ref().update(updates).then(update_res =>{
                   console.log('Success updating daily thoughts published id: '+newItemID+' old id: '+childKey);
@@ -1508,8 +1579,24 @@ function publishScheduledContent() {
         });
       }).catch(error =>{
         console.log('Error releasing thoughts', error)
-      });
+=======
+          admin.database().ref().update(updates).then(update_res => {
+            admin.database().ref('dailyThoughts/' + childKey).set(null);
+            console.log('Success updating daily thoughts published id: ' + newItemID + ' old id: ' + childKey);
+          }).catch(error => {
+            console.log('Error updating daily thoughts published id ' + newItemID);
+          })
 
+          console.log('published thought ' + newItemID);
+
+        }
+>>>>>>> vusi-dev-branch
+      });
+    }).catch(error => {
+      console.log('Error releasing thoughts', error)
+    });
+
+<<<<<<< HEAD
     // publish new Articles
     const refArticles = admin.database().ref('/news');
     refArticles.orderByChild('status')
@@ -1555,8 +1642,54 @@ function publishScheduledContent() {
         });
       }).catch(error =>{
         console.log('Error releasing articles', error)
-      });
+=======
+  // publish new Articles
+  const refArticles = admin.database().ref('/news');
+  refArticles.orderByChild('status')
+    .equalTo(checkStatus)
+    .once('value')
+    .then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        var childKey = childSnapshot.key;
+        var childData = childSnapshot.val();
+        var dateScheduled = childData.dateScheduled;
 
+
+        if (dateScheduled <= newDate) {
+          var newItemID = admin.database().ref().child('/news').push().key;
+
+          var dailyThoughtType = childData.dailyThoughtType;
+          var companyID = childData.companyID;
+          var status = 'approved';
+          var topLeader_status = childData.topLeader_status;
+
+          childData.newsID = newItemID;
+
+          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
+          childData.status = status;
+          childData.companyID_status = companyID + '_' + status;
+          childData.topLeader_status = topLeader_status + '_' + status;
+
+          // Write the new notification's data
+          var updates = {};
+          updates['/news/' + newItemID] = childData;
+
+          admin.database().ref().update(updates).then(update_res => {
+            admin.database().ref('news/' + childKey).set(null);
+            console.log('Success updating articles published id: ' + newItemID + ' old id ' + childKey);
+          }).catch(error => {
+            console.log('Error updating articles published id ' + childKey);
+          })
+
+          console.log('published articles ' + newItemID);
+        }
+>>>>>>> vusi-dev-branch
+      });
+    }).catch(error => {
+      console.log('Error releasing articles', error)
+    });
+
+<<<<<<< HEAD
     // publish new Podcasts
     const refPodcasts = admin.database().ref('/podcasts');
     refPodcasts.orderByChild('status')
@@ -1604,9 +1737,56 @@ function publishScheduledContent() {
         });
       }).catch(error =>{
         console.log('Error releasing podcasts', error)
+=======
+  // publish new Podcasts
+  const refPodcasts = admin.database().ref('/podcasts');
+  refPodcasts.orderByChild('status')
+    .equalTo(checkStatus)
+    .once('value')
+    .then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        var childKey = childSnapshot.key;
+        var childData = childSnapshot.val();
+        var dateScheduled = childData.dateScheduled;
+
+        if (dateScheduled <= newDate) {
+          var newItemID = admin.database().ref().child('/podcasts').push().key;
+
+          var dailyThoughtType = childData.dailyThoughtType;
+          var companyID = childData.companyID;
+          var status = 'approved';
+          var topLeader_status = childData.topLeader_status;
+
+          childData.podcastID = newItemID;
+
+          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
+          childData.status = status;
+          childData.companyID_status = companyID + '_' + status;
+          childData.topLeader_status = topLeader_status + '_' + status;
+          childData.company_status = "general_true";
+
+          // Write the new notification's data
+          var updates = {};
+          updates['/podcasts/' + newItemID] = childData;
+
+          // console.log(updates);
+          admin.database().ref().update(updates).then(update_res => {
+            admin.database().ref('podcasts/' + childKey).set(null);
+            console.log('Success updating voicemails published id' + newItemID + ' old id: ' + childKey);
+          }).catch(error => {
+            console.log('Error updating voicemails published id ' + childKey);
+          })
+
+          console.log('published podcast/voicemail ' + newItemID);
+        }
+>>>>>>> vusi-dev-branch
       });
+    }).catch(error => {
+      console.log('Error releasing podcasts', error)
+    });
 
 
+<<<<<<< HEAD
     // publish new Videos
     const refVideos = admin.database().ref('/videos');
     refVideos.orderByChild('status')
@@ -1654,7 +1834,53 @@ function publishScheduledContent() {
         });
       }).catch(error =>{
         console.log('Error releasing videos', error)
+=======
+  // publish new Videos
+  const refVideos = admin.database().ref('/videos');
+  refVideos.orderByChild('status')
+    .equalTo(checkStatus)
+    .once('value')
+    .then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        var childKey = childSnapshot.key;
+        var childData = childSnapshot.val();
+        var dateScheduled = childData.dateScheduled;
+
+        if (dateScheduled <= newDate) {
+          var newItemID = admin.database().ref().child('/videos').push().key;
+
+          var dailyThoughtType = childData.dailyThoughtType;
+          var companyID = childData.companyID;
+          var status = 'approved';
+          var topLeader_status = childData.topLeader_status;
+
+          childData.videoID = newItemID;
+
+          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
+          childData.status = status;
+          childData.companyID_status = companyID + '_' + status;
+          childData.topLeader_status = topLeader_status + '_' + status;
+          childData.company_status = "general_true";
+
+          // Write the new notification's data
+          var updates = {};
+          updates['/videos/' + newItemID] = childData;
+
+          // console.log(updates);
+          admin.database().ref().update(updates).then(update_res => {
+            admin.database().ref('videos/' + childKey).set(null);
+            console.log('Success updating videos published id' + newItemID + ' old id: ' + childKey);
+          }).catch(error => {
+            console.log('Error updating videos published id ' + childKey);
+          })
+
+          console.log('published videos ' + childKey);
+        }
+>>>>>>> vusi-dev-branch
       });
+    }).catch(error => {
+      console.log('Error releasing videos', error)
+    });
 
   console.log('running publishing content')
   // end publish new content
@@ -1663,16 +1889,16 @@ function publishScheduledContent() {
 //custom date functions
 function formatDate(date) {
   var d = new Date(date),
-  month = '' + (d.getMonth() + 1),
-  day = '' + d.getDate(),
-  year = d.getFullYear(),
-  hours = '' + d.getHours(),
-  minutes = '' + d.getMinutes(),
-  seconds = '' + d.getSeconds(),
-  milliseconds = '' + d.getMilliseconds();
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear(),
+    hours = '' + d.getHours(),
+    minutes = '' + d.getMinutes(),
+    seconds = '' + d.getSeconds(),
+    milliseconds = '' + d.getMilliseconds();
 
   var today = new Date(),
-  thisYear = today.getFullYear();
+    thisYear = today.getFullYear();
 
   // get month name
   var monthName = getDayMonthStr(d.getMonth(), "month", false);
@@ -1686,42 +1912,39 @@ function formatDate(date) {
   if (milliseconds.length < 2) milliseconds = '0' + milliseconds;
 
   // format reminder date
-  if(thisYear === year){
-    var reminderDate = monthName+" "+day+", "+hours+":"+minutes;
-  }
-  else{
-    var reminderDate = monthName+" "+day+", "+year+", "+hours+":"+minutes;
+  if (thisYear === year) {
+    var reminderDate = monthName + " " + day + ", " + hours + ":" + minutes;
+  } else {
+    var reminderDate = monthName + " " + day + ", " + year + ", " + hours + ":" + minutes;
   }
 
   return reminderDate;
 }
 
-function getDayMonthStr(val, dateParam, long){
+function getDayMonthStr(val, dateParam, long) {
   // days
-  var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  var daysShort = ["Sun","Mon","Tue","Wed","Thur","Fri","Sat"];
+  var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var daysShort = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
 
   // Months
-  var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September","October", "November", "December"];
-  var monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep","Oct", "Nov", "Dec"];
+  var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  var monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  if(dateParam === "day" && long === true){
+  if (dateParam === "day" && long === true) {
     // return day in long format
     return days[val];
-  }
-  else if(dateParam === "day" && long === false){
+  } else if (dateParam === "day" && long === false) {
     // return days in short
     return daysShort[val];
   }
-  if(dateParam === "month" && long === true){
+  if (dateParam === "month" && long === true) {
     // return month in long format
     return monthNames[val];
-  }
-  else if(dateParam === "month" && long === false){
+  } else if (dateParam === "month" && long === false) {
     // return month in short
     return monthNamesShort[val];
   }
-  
+
 }
 
 // end custom date functions

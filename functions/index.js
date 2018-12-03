@@ -1,6 +1,25 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+var curl = require('curl');
 admin.initializeApp();
+
+
+// Test Server
+// var serviceAccount = require("./service/glp-test-firebase-adminsdk-58xlx-84586619f2.json");
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://glp-test.firebaseio.com"
+// });
+
+
+// Live Server
+// var serviceAccount = require("./service/leadershipplatform-158316-firebase-adminsdk-goitz-f99dd5b92d.json");
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://leadershipplatform-158316.firebaseio.com"
+// });
 
 
 // for test server only - sending mails ==========
@@ -50,6 +69,7 @@ var mailNotifications = require('./modules/mail-notifications');
 var userWelcomeEmail = require('./modules/welcome-email');
 var followGC = require('./modules/follow-gc');
 var removeUser = require('./modules/remove-user');
+var unshortenURL = require('./modules/unshorten-url');
 
 var elasticsearch = require('./modules/elasticsearch')
 
@@ -75,6 +95,7 @@ exports.m17 = analyticsNotifications
 exports.m18 = mailNotifications
 exports.m19 = followGC
 exports.m20 = removeUser
+exports.m21 = unshortenURL
 // exports.m08 = removeBadAccounts
 exports.m21 = elasticsearch
 
@@ -124,23 +145,21 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
   }
 
   // Define Thought type
-  var thoughtType = null;
+  var thoughtType = "default";
 
   // Checks publish thought status 
   if (dailythought.publish_status === 'daily_approved')
     thoughtType = 'dailythoughts'
-  else if (dailythought.publish_status === companyID.join('_approved'))
+  else if (dailythought.publish_status === companyID.concat('_approved'))
     thoughtType = 'companythoughts'
   else if (dailythought.publish_status === 'hc_approved')
     thoughtType = 'topleaderthoughts'
-  else if (dailythought.publish_status === companyID.join('_ilead_approved'))
+  else if (dailythought.publish_status === companyID.concat('_ilead_approved'))
     thoughtType = 'ileadcorporate'
-  else if (dailythought === '-LEiZPT-C2PyLu_YLKNU_approved') // public aa
+  else if (dailythought.publish_status === '-LEiZPT-C2PyLu_YLKNU_approved') // public aa
     thoughtType = 'ileadpublic'
   else
     thoughtType = 'default'
-
-
 
   var notificationData = {
     notificationItemID: notificationItemID,
@@ -157,6 +176,7 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
     thoughtType: thoughtType
   }
 
+  console.log(notificationData);
 
   // start external/global approved 2_approved
   if ((dailyThoughtType_status === "2_approved") || (dailyThoughtType_status === "3_approved")) {
@@ -260,7 +280,6 @@ exports.updateAlgoliaThoughts = functions.database.ref('/dailyThoughts/{dailyTho
 
             var childKey = childSnapshot.key;
             var childData = childSnapshot.val();
-            // var url = getCompanyURL(childData.companyName);
             var url = userToken.getCompanyURL(companyID)
 
             var payload = {
@@ -763,8 +782,7 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
   var video = snap.val();
   // Specify Algolia's objectID using the Firebase object key
   video.objectID = snap.key;
-
-  console.log("video: ", video);
+  var UploadExternal = video.UploadExternal;
 
   // get title and subtitle from thought object
   var company_status = video.company_status;
@@ -774,9 +792,10 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
   // daily thought type status - 1_approved (internal approved), 2_approved (external approved)
   var dailyThoughtType_status = video.dailyThoughtType_status;
 
-  console.log("dailyThoughtType_status: " + dailyThoughtType_status)
-
-  if ((company_status == "general_true") || (company_status == "general_false")) {
+  console.log("dailyThoughtType_status: "+dailyThoughtType_status)
+  console.log("UploadExternal: "+UploadExternal)
+  
+  if((company_status == "general_true") || (company_status == "general_false")){
     var title = video.title;
 
     var journalUserID = video.userID;
@@ -851,7 +870,7 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
       });
 
       var newNotification = userToken.createNotifications(all, options, notificationData);
-      return true;
+      // return true;
 
     } // end of 2_approved
     // start internal approved (1_approved)
@@ -879,10 +898,36 @@ exports.newVideo = functions.database.ref('/videos/{videoID}').onCreate((snap, c
 
       var newNotification = userToken.createNotifications(all, options, notificationData);
 
-      return true;
+      // return true;
     }
     // end of 1_approved
+
+    if(UploadExternal === "external"){
+      var url = video.url;
+
+      // Update TED urls with embed code
+      if(url.includes('.ted.com')){
+
+        curl.get(url, {}, function(err, response, body) {
+            // console.log("response: ",response.headers);
+            // res.json("https://embed.ted.com"+response.request.uri.pathname);
+            var updatedurl = "https://embed.ted.com"+response.request.uri.pathname;
+
+            var updateURL = {};
+            updateURL['videos/'+snap.key+'/url'] = updatedurl;
+
+            admin.database().ref().update(updateURL).then(postsupdate => {
+              console.log('update url');
+            }).catch(posts_err => {
+              console.log('update url videos error', posts_err);
+            })
+        });
+      }
+      
+    }
   }
+
+  
 
 });
 
@@ -917,6 +962,33 @@ exports.deletedVideos = functions.database.ref('/videos/{videoID}').onDelete((sn
 
 
 });
+
+exports.userDisabled = functions.database.ref('/users/{userID}').onUpdate(event => {
+  const currdata = event.data.val();
+  const prevdata = event.data.previous.val();
+  const uid = currdata.uid;
+  
+  const key = event.data.key;
+
+  if (prevdata.disabled !== currdata.disabled) {
+      //status has changed
+      // statusHasChanged = true;
+      var disabled = currdata.disabled;
+      
+      admin.auth().updateUser(uid, {
+        disabled: disabled
+      })
+      .then(function(userRecord) {
+        // See the UserRecord reference doc for the contents of userRecord.
+        console.log("Successfully disabled user", userRecord.toJSON());
+      })
+      .catch(function(error) {
+        console.log("Error updating user:", error);
+      });
+  }
+
+});
+
 
 exports.sendEmailFeedback = functions.database.ref('/feedback/{feedbackID}').onCreate((snap, context) => {
   // Get Firebase object
@@ -1163,17 +1235,7 @@ function myLoops() {
   publishScheduledContent();
 }
 
-function getCompanyURL(companyName) {
-  // Signed up corporate
-  // Edcon => -LBPcsCl4Dp7BsYB8fjE
-  if (companyName.trim() == "OneConnect Technologies") return "https://oneconnect.thinklead.co.za/"
-  else return "https://thinklead.app/"
-
-  // Test Server
-  // return "https://glp-test.firebaseapp.com/"
-}
-
-function sendPLDPReminders() {
+function sendPLDPReminders(){
   const reminders_res = getDueUnsentPLDPReminders();
 
   reminders_res.then(snap => {
@@ -1445,186 +1507,200 @@ function publishScheduledContent() {
         console.log("dateScheduled: ", dateScheduled)
         console.log("newDate: ", newDate)
 
-        if (dateScheduled <= newDate) {
-          var newItemID = admin.database().ref().child('/dailyThoughts').push().key;
+            if(dateScheduled <= newDate){
+              // var newItemID = admin.database().ref().child('/dailyThoughts').push().key;
+              var newItemID = childData.dailyThoughtID;
 
-          var dailyThoughtType = childData.dailyThoughtType;
-          var companyID = childData.companyID;
-          var status = 'approved';
-          var topLeader_status = childData.topLeader_status;
-          var publish_status = childData.publish_status;
+              var dailyThoughtType = childData.dailyThoughtType;
+              var companyID = childData.companyID;
+              var status = 'approved';
+              var topLeader_status = childData.topLeader_status;
+              var publish_status = childData.publish_status;
+              var companyID_status = companyID+'_'+status;
 
-          // set publish status
-          if (publish_status === "hc_unpublished") publish_status = "hc_" + status;
-          else if (publish_status === "daily_unpublished") publish_status = "daily_" + status;
-          else if (publish_status === "-LEiZPT-C2PyLu_YLKNU_unpublished") publish_status = "-LEiZPT-C2PyLu_YLKNU_" + status;
-          else publish_status = companyID + "_" + status;
+              // set publish status
+              if(publish_status === "hc_unpublished") publish_status = "hc_"+status;
+              else if(publish_status === "daily_unpublished") publish_status = "daily_"+status;
+              else if(publish_status === "-LEiZPT-C2PyLu_YLKNU_unpublished") publish_status = "-LEiZPT-C2PyLu_YLKNU_"+status;
+              else if(publish_status === companyID+"_ilead_unpublished") {
+                publish_status = companyID+"_ilead_"+status;
+                companyID_status = "corporate_ilead_"+status;
+              }
+              else publish_status = companyID+"_"+status;
 
           // set the new dailythought ID
           childData.dailyThoughtID = newItemID;
 
-          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
-          childData.status = status;
-          childData.companyID_status = companyID + '_' + status;
-          childData.topLeader_status = topLeader_status + '_' + status;
-          childData.publish_status = publish_status;
+              childData.dailyThoughtType_status = dailyThoughtType+'_'+status;
+              childData.status = status;
+              childData.companyID_status = companyID_status;
+              childData.topLeader_status = topLeader_status+'_'+status;
+              childData.publish_status = publish_status;
 
           // Write the new notification's data
           var updates = {};
           updates['/dailyThoughts/' + newItemID] = childData;
 
-          admin.database().ref().update(updates).then(update_res => {
-            admin.database().ref('dailyThoughts/' + childKey).set(null);
-            console.log('Success updating daily thoughts published id: ' + newItemID + ' old id: ' + childKey);
-          }).catch(error => {
-            console.log('Error updating daily thoughts published id ' + newItemID);
-          })
+              admin.database().ref('dailyThoughts/'+childKey).set(null).then(()=>{
+                admin.database().ref().update(updates).then(update_res =>{
+                  console.log('Success updating daily thoughts published id: '+newItemID+' old id: '+childKey);
+                }).catch(error =>{
+                  console.log('Error updating daily thoughts published id '+newItemID);
+                })
+              });
 
-          console.log('published thought ' + newItemID);
-
-        }
+              console.log('published thought '+newItemID);
+            }
+        });
+      }).catch(error =>{
+        console.log('Error releasing thoughts', error)
       });
-    }).catch(error => {
-      console.log('Error releasing thoughts', error)
-    });
 
-  // publish new Articles
-  const refArticles = admin.database().ref('/news');
-  refArticles.orderByChild('status')
-    .equalTo(checkStatus)
-    .once('value')
-    .then(function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
-        var childKey = childSnapshot.key;
-        var childData = childSnapshot.val();
-        var dateScheduled = childData.dateScheduled;
+    // publish new Articles
+    const refArticles = admin.database().ref('/news');
+    refArticles.orderByChild('status')
+        .equalTo(checkStatus)
+        .once('value')
+        .then(function (snapshot) {
+          snapshot.forEach(function(childSnapshot) {
+            var childKey = childSnapshot.key;
+            var childData = childSnapshot.val();
+            var dateScheduled = childData.dateScheduled;
+            
 
+            if(dateScheduled <= newDate){
+              // var newItemID = admin.database().ref().child('/news').push().key;
+              var newItemID = childData.newsID;
 
-        if (dateScheduled <= newDate) {
-          var newItemID = admin.database().ref().child('/news').push().key;
+              var dailyThoughtType = childData.dailyThoughtType;
+              var companyID = childData.companyID;
+              var status = 'approved';
+              var topLeader_status = childData.topLeader_status;
 
-          var dailyThoughtType = childData.dailyThoughtType;
-          var companyID = childData.companyID;
-          var status = 'approved';
-          var topLeader_status = childData.topLeader_status;
+              childData.newsID = newItemID;
 
-          childData.newsID = newItemID;
+              childData.dailyThoughtType_status = dailyThoughtType+'_'+status;
+              childData.status = status;
+              childData.companyID_status = companyID+'_'+status;
+              childData.topLeader_status = topLeader_status+'_'+status;
 
-          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
-          childData.status = status;
-          childData.companyID_status = companyID + '_' + status;
-          childData.topLeader_status = topLeader_status + '_' + status;
+              // Write the new notification's data
+              var updates = {};
+              updates['/news/' + newItemID] = childData;
 
-          // Write the new notification's data
-          var updates = {};
-          updates['/news/' + newItemID] = childData;
-
-          admin.database().ref().update(updates).then(update_res => {
-            admin.database().ref('news/' + childKey).set(null);
-            console.log('Success updating articles published id: ' + newItemID + ' old id ' + childKey);
-          }).catch(error => {
-            console.log('Error updating articles published id ' + childKey);
-          })
-
-          console.log('published articles ' + newItemID);
-        }
+              admin.database().ref('news/'+childKey).set(null).then(()=>{
+                admin.database().ref().update(updates).then(update_res =>{
+                  console.log('Success updating articles published id: '+newItemID+' old id '+childKey);
+                }).catch(error =>{
+                  console.log('Error updating articles published id '+childKey);
+                })
+              });
+              
+              console.log('published articles '+newItemID);
+            }
+        });
+      }).catch(error =>{
+        console.log('Error releasing articles', error)
       });
-    }).catch(error => {
-      console.log('Error releasing articles', error)
-    });
 
-  // publish new Podcasts
-  const refPodcasts = admin.database().ref('/podcasts');
-  refPodcasts.orderByChild('status')
-    .equalTo(checkStatus)
-    .once('value')
-    .then(function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
-        var childKey = childSnapshot.key;
-        var childData = childSnapshot.val();
-        var dateScheduled = childData.dateScheduled;
+    // publish new Podcasts
+    const refPodcasts = admin.database().ref('/podcasts');
+    refPodcasts.orderByChild('status')
+        .equalTo(checkStatus)
+        .once('value')
+        .then(function (snapshot) {
+          snapshot.forEach(function(childSnapshot) {
+            var childKey = childSnapshot.key;
+            var childData = childSnapshot.val();
+            var dateScheduled = childData.dateScheduled;
+            
+            if(dateScheduled <= newDate){
+              // var newItemID = admin.database().ref().child('/podcasts').push().key;
+              var newItemID = childData.podcastID;
 
-        if (dateScheduled <= newDate) {
-          var newItemID = admin.database().ref().child('/podcasts').push().key;
+              var dailyThoughtType = childData.dailyThoughtType;
+              var companyID = childData.companyID;
+              var status = 'approved';
+              var topLeader_status = childData.topLeader_status;
 
-          var dailyThoughtType = childData.dailyThoughtType;
-          var companyID = childData.companyID;
-          var status = 'approved';
-          var topLeader_status = childData.topLeader_status;
+              childData.podcastID = newItemID;
 
-          childData.podcastID = newItemID;
+              childData.dailyThoughtType_status = dailyThoughtType+'_'+status;
+              childData.status = status;
+              childData.companyID_status = companyID+'_'+status;
+              childData.topLeader_status = topLeader_status+'_'+status;
+              childData.company_status = "general_true";
 
-          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
-          childData.status = status;
-          childData.companyID_status = companyID + '_' + status;
-          childData.topLeader_status = topLeader_status + '_' + status;
-          childData.company_status = "general_true";
+              // Write the new notification's data
+              var updates = {};
+              updates['/podcasts/' + newItemID] = childData;
 
-          // Write the new notification's data
-          var updates = {};
-          updates['/podcasts/' + newItemID] = childData;
+              // console.log(updates);
+              admin.database().ref('podcasts/'+childKey).set(null).then(()=>{
+                admin.database().ref().update(updates).then(update_res =>{
+                
+                  console.log('Success updating voicemails published id'+newItemID+' old id: '+childKey);
+                }).catch(error =>{
+                  console.log('Error updating voicemails published id '+childKey);
+                })
+              });
 
-          // console.log(updates);
-          admin.database().ref().update(updates).then(update_res => {
-            admin.database().ref('podcasts/' + childKey).set(null);
-            console.log('Success updating voicemails published id' + newItemID + ' old id: ' + childKey);
-          }).catch(error => {
-            console.log('Error updating voicemails published id ' + childKey);
-          })
-
-          console.log('published podcast/voicemail ' + newItemID);
-        }
+              console.log('published podcast/voicemail '+newItemID);
+            }
+        });
+      }).catch(error =>{
+        console.log('Error releasing podcasts', error)
       });
-    }).catch(error => {
-      console.log('Error releasing podcasts', error)
-    });
 
 
-  // publish new Videos
-  const refVideos = admin.database().ref('/videos');
-  refVideos.orderByChild('status')
-    .equalTo(checkStatus)
-    .once('value')
-    .then(function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
-        var childKey = childSnapshot.key;
-        var childData = childSnapshot.val();
-        var dateScheduled = childData.dateScheduled;
+    // publish new Videos
+    const refVideos = admin.database().ref('/videos');
+    refVideos.orderByChild('status')
+        .equalTo(checkStatus)
+        .once('value')
+        .then(function (snapshot) {
+          snapshot.forEach(function(childSnapshot) {
+            var childKey = childSnapshot.key;
+            var childData = childSnapshot.val();
+            var dateScheduled = childData.dateScheduled;
 
-        if (dateScheduled <= newDate) {
-          var newItemID = admin.database().ref().child('/videos').push().key;
+            if(dateScheduled <= newDate){
+              // var newItemID = admin.database().ref().child('/videos').push().key;
+              var newItemID = childData.videoID;
 
-          var dailyThoughtType = childData.dailyThoughtType;
-          var companyID = childData.companyID;
-          var status = 'approved';
-          var topLeader_status = childData.topLeader_status;
+              var dailyThoughtType = childData.dailyThoughtType;
+              var companyID = childData.companyID;
+              var status = 'approved';
+              var topLeader_status = childData.topLeader_status;
 
-          childData.videoID = newItemID;
+              childData.videoID = newItemID;
 
-          childData.dailyThoughtType_status = dailyThoughtType + '_' + status;
-          childData.status = status;
-          childData.companyID_status = companyID + '_' + status;
-          childData.topLeader_status = topLeader_status + '_' + status;
-          childData.company_status = "general_true";
+              childData.dailyThoughtType_status = dailyThoughtType+'_'+status;
+              childData.status = status;
+              childData.companyID_status = companyID+'_'+status;
+              childData.topLeader_status = topLeader_status+'_'+status;
+              childData.company_status = "general_true";
 
-          // Write the new notification's data
-          var updates = {};
-          updates['/videos/' + newItemID] = childData;
+              // Write the new notification's data
+              var updates = {};
+              updates['/videos/' + newItemID] = childData;
 
-          // console.log(updates);
-          admin.database().ref().update(updates).then(update_res => {
-            admin.database().ref('videos/' + childKey).set(null);
-            console.log('Success updating videos published id' + newItemID + ' old id: ' + childKey);
-          }).catch(error => {
-            console.log('Error updating videos published id ' + childKey);
-          })
-
-          console.log('published videos ' + childKey);
-        }
+              // console.log(updates);
+              admin.database().ref('videos/'+childKey).set(null).then(()=>{
+                admin.database().ref().update(updates).then(update_res =>{
+                  console.log('Success updating videos published id'+newItemID+' old id: '+childKey);
+                }).catch(error =>{
+                  console.log('Error updating videos published id '+childKey);
+                })
+              });
+              
+              
+              console.log('published videos '+childKey);
+            }
+        });
+      }).catch(error =>{
+        console.log('Error releasing videos', error)
       });
-    }).catch(error => {
-      console.log('Error releasing videos', error)
-    });
 
   console.log('running publishing content')
   // end publish new content

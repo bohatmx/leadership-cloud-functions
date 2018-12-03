@@ -1,5 +1,3 @@
-companies
-
 module.exports = {
     serverKey: 'key=AAAAZgwTzHM:APA91bE3GGJDu3JikXmXjWlX9dh0teidOTnzIG97HZsfEGu4YEIrj7Gs4c3WqO-8PMjI259pGoyFtzQ-6VXgKsEX2kBebGl0mNXVp5hxlyCBrf8WPT1pNiJNvO70Vn3c8xghVyR2M7nI',
     senderID: '438289288307',

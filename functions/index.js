@@ -51,6 +51,8 @@ var userWelcomeEmail = require('./modules/welcome-email');
 var followGC = require('./modules/follow-gc');
 var removeUser = require('./modules/remove-user');
 
+var elasticsearch = require('./modules/elasticsearch')
+
 // var removeBadAccounts = require('./modules/remove-badaccounts');
 
 exports.m01 = commentsIn
@@ -74,6 +76,7 @@ exports.m18 = mailNotifications
 exports.m19 = followGC
 exports.m20 = removeUser
 // exports.m08 = removeBadAccounts
+exports.m21 = elasticsearch
 
 var userToken = new handleNotifications();
 var updateAppAnalytics = new appAnalytics();
@@ -1107,6 +1110,28 @@ exports.userDeleted = functions.database.ref('/user/{userID}').onDelete((snap, c
   });
 
 });
+
+exports.testDataLoaded = functions.database.ref('/cars').onCreate((snap, context) => {
+
+  console,
+  log(createTestCarData())
+
+})
+// Testing search elastic
+function createTestCarData() {
+  let carsRef = admin.database().ref('/cars');
+  let carsImportLimit = 1000;
+  let pushPromises = [];
+  console.log('Importing ' + carsImportLimit + 'cars');
+  for (let i = 0; i < carsImportLimit; i++) {
+    pushPromises.push(cars[i]);
+  }
+
+  Promise.all(pushPromises).then(() => {
+    console.log('done!');
+    process.exit();
+  });
+}
 
 // MyPLDP Notification Reminder
 function sendEmails(to, subject, msgTxt, msgHTML) {

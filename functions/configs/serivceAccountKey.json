@@ -1,0 +1,12 @@
+{
+    "type": "service_account",
+    "project_id": "fir-elasticsearch-5326f",
+    "private_key_id": "b9cb198c654179a87b4512ea140910b12bb893a0",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDQ/MGTUj0BKdhX\nW+RORwvIqi9YbZ2pz32YmLVBR9kXUK6wpFOTQLctKr+xz/n8EWUhxDSbOCSAgSe+\nDo6scV1YA3VIFi0GGH9LQjOojBc+X3WS06fetkI3uUVDRhFuD25TIiWnE8vabjYL\njrFfG4vT0P1J5roiVw/sn0yZj5D66o+G0ZevHghZtGD/ly1Wl9nUgc07Ao4QkAOm\nnziZDyNIK3256lEjhTLGTZJM9n7Oc3wJ0CZ989rE9Izb2EunMl6OMVzp7rHyEBez\nUdDy7i6lrlWbDvGFgjKpExoOt98dNbsbWhQa5YGZTh4qKV9actP66WuJu2dNRvUF\npR4q9eQfAgMBAAECggEAKiU24n9ctx3Zt7Bb599TBIoxlxswBv1Fnl75eqtDH/0Q\n5aWWByWvayfqVbEUAF3/r6ISW9UkI1gojB8CbctE4El+PuXd+ZM6JJK6uTxbOaRl\noREXEwZdb0BpM+pu/GuXO6OwxTNsUmYUdxs1MPFsrvBADEW/9sno97aea3905OzI\nYq8EitOhjJ9cb+aUTiphhnCd1wfHhZzm+4+scNKgiJjnRKPUyoc2EanBmuGaQla8\n+naRT5nb8uU1B7CgXoHI7F5UBJCKHTo833OqmilpnOXFppLEN5gHfs3V5VHO+Jwj\nJmNcYXrWSzRHLIfzYggf5ElouxX3NbKubN58xKWaoQKBgQDu6TUJxMuSPKr8AERk\nwTKuOzojy4iS1O7VPKw400D+HpGEddXC6hRt9P+7hnNQYAoeuy18xECTooJGxoL7\nw0tGYd6KHDs12JTuv3WMmDj5P8bbjXLPhAzJkvMhOgPQcUkJcSKvGwf9FAYjNVkV\n2S0WiXw7zKss6OGrmxz5gkDJfwKBgQDf75sAGlYYeaoan0m26eRboSQrzPFbInDV\nJjDdsRQNpLAHW0iGn94Zb8phkQnMWpO4TWAfZySq01tU7qYcmzb+82aVMMQ3fJ5E\nAieOXBUzGz7uHpvCWdt3xZuzsoMG4vOucvRP3EngVRQF+zt2JJGaYDrkhCuyxZhV\nU9n/O+31YQKBgCO5q7yyON69Q7Q7Nf77BOEY6jDAFsQeIzivwfEdZfKaD5iHJlfn\nOPbYVAVurX+vXNQLmVm23xE0k9aRiLStF2yG5ggxAImkwWCSMLm9aYecCdh65lgx\nntflqYWmbzuUNR+8UztsB13IyMIrEA88Uom0NWeby10D1fsbTtHgsF9xAoGBAN2/\nxixu5+yqpcBhFbzUlbYKtufMtP/69eKMQ/1zuZjdCRbv1LzDGEr2AWFmH17GHtt1\ne4b9OzkRvLI49DMFnIsQefeoZ9VOSOatf4AgPTnzc/iWRMVK9+H9w3ZJgihSmt2X\npchjKqDDfuWBZ9tQ0QIe4pKhMyh/NJ7iPs/ZB4VhAoGANeGThnBYvDcM5e/v09Kv\nLvBTvVCImwrpjhgKEa1x/JdljIoHsEYiI7uCu8WZ+dK2ojCetW5GGtDu5y1Hl4AD\nlharobxn61x1dlOVGbB0OY/P0V2d1j7jNTVmF2KzMd7ZfaqU2ysQ0GlIITUVUW94\nGcp1XKoDv5h721Uped4tH3E=\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-h0nw0@fir-elasticsearch-5326f.iam.gserviceaccount.com",
+    "client_id": "112328594643088463080",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-h0nw0%40fir-elasticsearch-5326f.iam.gserviceaccount.com"
+}

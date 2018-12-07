@@ -960,31 +960,31 @@ exports.deletedVideos = functions.database.ref('/videos/{videoID}').onDelete((sn
 
 });
 
-exports.userDisabled = functions.database.ref('/users/{userID}').onUpdate(event => {
-  const currdata = event.data.val();
-  const prevdata = event.data.previous.val();
-  const uid = currdata.uid;
+// exports.userDisabled = functions.database.ref('/users/{userID}').onUpdate(event => {
+//   const currdata = event.data.val();
+//   const prevdata = event.data.previous.val();
+//   const uid = currdata.uid;
   
-  const key = event.data.key;
+//   const key = event.data.key;
 
-  if (prevdata.disabled !== currdata.disabled) {
-      //status has changed
-      // statusHasChanged = true;
-      var disabled = currdata.disabled;
+//   if (prevdata.disabled !== currdata.disabled) {
+//       //status has changed
+//       // statusHasChanged = true;
+//       var disabled = currdata.disabled;
       
-      admin.auth().updateUser(uid, {
-        disabled: disabled
-      })
-      .then(function(userRecord) {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log("Successfully disabled user", userRecord.toJSON());
-      })
-      .catch(function(error) {
-        console.log("Error updating user:", error);
-      });
-  }
+//       admin.auth().updateUser(uid, {
+//         disabled: disabled
+//       })
+//       .then(function(userRecord) {
+//         // See the UserRecord reference doc for the contents of userRecord.
+//         console.log("Successfully disabled user", userRecord.toJSON());
+//       })
+//       .catch(function(error) {
+//         console.log("Error updating user:", error);
+//       });
+//   }
 
-});
+// });
 
 
 exports.sendEmailFeedback = functions.database.ref('/feedback/{feedbackID}').onCreate((snap, context) => {

@@ -671,111 +671,107 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
         // OneConnect Company ID: -LDVbbRyIMhukVtTVQ0n
         // Edcon Test Server ID: -LNUyClmWi7ezjSI5E2q
 
-        var usersupdate = admin.database().ref('/users').orderByChild("companyID").equalTo('-LDVbbRyIMhukVtTVQ0n').once('value').then(function(snapshot) {
+        var usersupdate = admin.database().ref('/users').once('value').then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
     
                 var childKey = childSnapshot.key;
                 var childData = childSnapshot.val();
-                var userID = childData.userID;
-                var uid = childData.uid;
-                var companyID = childData.companyID;
-                var companyID_userType = childData.companyID_userType;
-                var userDescription = childData.userDescription;
-                var userType = childData.userType;
-                var updates = {};
+                // var userID = childData.userID;
 
-                if(userType == 8){
-                    updates["users/"+userID+"/companyID_userType"]=companyID+"_10";
-                    updates["users/"+userID+"/userDescription"]="Corporate I-Leader";
-                    updates["users/"+userID+"/userType"]=10;
-
-                    updates["user/"+uid+"/companyID_userType"]=companyID+"_10";
-                    updates["user/"+uid+"/userDescription"]="Corporate I-Leader";
-                    updates["user/"+uid+"/userType"]=10;
-    
-                    var updateuser = admin.database().ref().update(updates).then(() =>{
-                        return console.log("user updated: ",userID);
-                    }).catch(posts_err => {
-                        console.log('update error: ', posts_err);
-                    });
-
-                    // console.log("user: ", updates);
+                if(!childData.userID){
+                    console.log( "childKey: ",childKey);
                 }
+                // var uid = childData.uid;
+                // var companyID = childData.companyID;
+                // var companyID_userType = childData.companyID_userType;
+                // var userDescription = childData.userDescription;
+                // var userType = childData.userType;
+                // var updates = {};
+
+                // if(userType == 8){
+                //     updates["users/"+userID+"/companyID_userType"]=companyID+"_10";
+                //     updates["users/"+userID+"/userDescription"]="Corporate I-Leader";
+                //     updates["users/"+userID+"/userType"]=10;
+
+                //     updates["user/"+uid+"/companyID_userType"]=companyID+"_10";
+                //     updates["user/"+uid+"/userDescription"]="Corporate I-Leader";
+                //     updates["user/"+uid+"/userType"]=10;
+    
+                //     var updateuser = admin.database().ref().update(updates).then(() =>{
+                //         return console.log("user updated: ",userID);
+                //     }).catch(posts_err => {
+                //         console.log('update error: ', posts_err);
+                //     });
+
+                //     // console.log("user: ", updates);
+                // }
 
             });
 
         });
 
     }else if(updateType == "usersnotloggedin"){
-        var count = 0;
-        admin.auth().listUsers(1000)
-        .then(function(listUsersResult) {
-                listUsersResult.users.forEach(function(userRecord) {
+        // var count = 0;
+        // admin.auth().listUsers(1000)
+        // .then(function(listUsersResult) {
+        //         listUsersResult.users.forEach(function(userRecord) {
                     
-                    console.log("count: ",count,"user: ", userRecord.toJSON().email," verified: ",userRecord.toJSON().emailVerified);
+        //             console.log("count: ",count,"user: ", userRecord.toJSON().email," verified: ",userRecord.toJSON().emailVerified);
                     
-                    // if(!userRecord.toJSON().emailVerified){
-                    //     count++;
-                    //     var uid = userRecord.toJSON().uid;
+        //             // if(!userRecord.toJSON().emailVerified){
+        //             //     count++;
+        //             //     var uid = userRecord.toJSON().uid;
 
-                    //     admin.auth().updateUser(uid, {
-                    //         emailVerified: true
-                    //     })
-                    //     .then(function(userRecord) {
-                    //         // See the UserRecord reference doc for the contents of userRecord.
+        //             //     admin.auth().updateUser(uid, {
+        //             //         emailVerified: true
+        //             //     })
+        //             //     .then(function(userRecord) {
+        //             //         // See the UserRecord reference doc for the contents of userRecord.
                             
-                    //         // console.log("Successfully updated user", userRecord.toJSON().email);
-                    //     })
-                    //     .catch(function(error) {
-                    //         console.log("Error updating user:", error);
-                    //     });
-                    // }
+        //             //         // console.log("Successfully updated user", userRecord.toJSON().email);
+        //             //     })
+        //             //     .catch(function(error) {
+        //             //         console.log("Error updating user:", error);
+        //             //     });
+        //             // }
 
-                    count++;
-                });
-            })
-            .catch(function(error) {
-            console.log("Error listing users:", error);
-        });
-        // return admin.database().ref('/user').orderByChild("companyID").equalTo('-LEiZPT-C2PyLu_YLKNU').once('value').then(function(snapshot) {
-            
-            
-        //     snapshot.forEach(function(childSnapshot) {
-    
-        //         var uid = childSnapshot.key;
-
-        //         // admin.auth().getUser(uid)
-        //         // .then(function(userRecord) {
-        //         //     // See the UserRecord reference doc for the contents of userRecord.
-        //         //     console.log("Successfully fetched user data:", userRecord.toJSON().email);
-        //         // })
-        //         // .catch(function(error) {
-        //         //     console.log("Error fetching user data:", error);
-        //         // });
-        //         admin.auth().updateUser(uid, {
-        //             emailVerified: true
-        //         })
-        //         .then(function(userRecord) {
-        //             // See the UserRecord reference doc for the contents of userRecord.
-        //             console.log("Successfully updated user", userRecord.toJSON().email);
-        //         })
-        //         .catch(function(error) {
-        //             console.log("Error updating user:", error);
+        //             count++;
         //         });
-        //         // var childData = childSnapshot.val();
-        //         // var userID = childData.userID;
-        //         // var email = childData.email;
-        //         // var userName = childData.firstName+" "+childData.lastName;
-
-        //         // admin.database().ref('user-lastlogin').orderByChild('uid').equalTo(uid).once('value').then(function(snap){
-        //         //     var exists = snap.exists();
-        //         //     if(!exists) console.log( userName,",",email, ",", exists);
-        //         // })
-                
-        //     });
-    
-        //     return snapshot;
+        //     })
+        //     .catch(function(error) {
+        //     console.log("Error listing users:", error);
         // });
+        return admin.database().ref('/user').orderByChild("companyID").equalTo('-LOs4iZh3Y9LSiNtpWlH').once('value').then(function(snapshot) {
+            
+            snapshot.forEach(function(childSnapshot) {
+    
+                var uid = childSnapshot.key;
+
+                // admin.auth().getUser(uid)
+                // .then(function(userRecord) {
+                //     // See the UserRecord reference doc for the contents of userRecord.
+                //     console.log("Successfully fetched user data:", userRecord.toJSON().email);
+                // })
+                // .catch(function(error) {
+                //     console.log("Error fetching user data:", error);
+                // });
+                
+                
+                var childData = childSnapshot.val();
+                var userID = childData.userID;
+                var email = childData.email;
+                var userName = childData.firstName+" "+childData.lastName;
+                var companyName = childData.companyName;
+
+                admin.database().ref('user-lastlogin').orderByChild('uid').equalTo(uid).once('value').then(function(snap){
+                    var exists = snap.exists();
+                    if(!exists) console.log( userName,",",email, ",", companyName);
+                })
+                
+            });
+    
+            return snapshot;
+        });
 
     }else if(updateType == "userRecord"){
         var uid = "9mpv4kuFNTZryzEv0LhKYpxqQBC3";

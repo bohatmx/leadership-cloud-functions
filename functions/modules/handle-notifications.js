@@ -361,8 +361,8 @@ module.exports = function (){
         })
         .catch(function (err) {
             // API call failed...
-            console.log("error on request: ", err.statusCode);
-            console.log("error: ", err.error);
+            // console.log("error on request: ", err.statusCode);
+            // console.log("error: ", err.error);
         });
     }
 
@@ -386,6 +386,7 @@ module.exports = function (){
         // New Edcon => -LOs4iZh3Y9LSiNtpWlH
         // Old Edcon => -LBPcsCl4Dp7BsYB8fjE
         // OneConnect => -LDVbbRyIMhukVtTVQ0n
+        // BLSA => -LT2GkDrMhj3Tsx7KCme
 
         /**
          *  Old Implementation
@@ -394,6 +395,8 @@ module.exports = function (){
             return "https://oneconnect.thinklead.co.za/"
         else if((companyID == "-LOs4iZh3Y9LSiNtpWlH") || (companyID == "-LBPcsCl4Dp7BsYB8fjE")) 
             return "https://edcon.thinklead.co.za/"
+        else if(companyID == "-LT2GkDrMhj3Tsx7KCme") 
+            return "https://blsa.thinklead.co.za/"
         else 
             return "https://thinklead.app/"
 

@@ -710,6 +710,52 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
 
         });
 
+    }else if(updateType == "updateFollowGC"){
+
+        var usersupdate = admin.database().ref('/updateFollowGC').once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+    
+                var childKey = childSnapshot.key;
+                var childData = childSnapshot.val();
+                var followDate = Date.now();
+                var updates = {};
+
+                // if((childData.firstName != undefined) || (childData.userID != undefined) ){
+                //     var mydata = {
+                //         "firstName":childData.firstName,
+                //         "lastName":childData.lastName,
+                //         "companyName":childData.companyName,
+                //         "dateRegistered": followDate,
+                //         "photoURL":childData.photoURL,
+                //         "userID": childData.userID
+                //     }
+    
+                //     var theirdata = {
+                //         "firstName":childData.GC_firstName,
+                //         "lastName":childData.GC_lastName,
+                //         "companyName":childData.GC_companyName,
+                //         "dateRegistered":followDate,
+                //         "photoURL":childData.GC_photoURL,
+                //         "userID":childData.GC_userID
+                //     }
+
+    
+                //     updates["users/"+childData.userID+"/following/"+childData.GC_userID]=theirdata;
+                //     updates["users/"+childData.GC_userID+"/follower/"+childData.userID]=mydata;
+                //     updates["followers/"+childData.GC_userID+"/"+childData.userID]=mydata;
+    
+                //     admin.database().ref().update(updates).then(() =>{
+                //         console.log("Update successful userID: "+childData.userID+" Key: "+childKey);
+                //     }).catch(posts_err => {
+                //         console.error("Update Error userID: "+childData.userID+"  Key: "+childKey);
+                //     })
+                // }
+
+                
+            });
+
+        });
+
     }else if(updateType == "usersnotloggedin"){
         // var count = 0;
         // admin.auth().listUsers(1000)
@@ -741,7 +787,7 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
         //     .catch(function(error) {
         //     console.log("Error listing users:", error);
         // });
-        return admin.database().ref('/user').orderByChild("companyID").equalTo('-LOs4iZh3Y9LSiNtpWlH').once('value').then(function(snapshot) {
+        return admin.database().ref('/users').orderByChild("companyID").equalTo('-LEiZPT-C2PyLu_YLKNU').once('value').then(function(snapshot) {
             
             snapshot.forEach(function(childSnapshot) {
     
@@ -762,11 +808,18 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
                 var email = childData.email;
                 var userName = childData.firstName+" "+childData.lastName;
                 var companyName = childData.companyName;
+                var stringDateRegistered = childData.stringDateRegistered;
+                var dateRegistered = childData.dateRegistered;
 
-                admin.database().ref('user-lastlogin').orderByChild('uid').equalTo(uid).once('value').then(function(snap){
-                    var exists = snap.exists();
-                    if(!exists) console.log( userName,",",email, ",", companyName);
-                })
+                if(dateRegistered > 1545162677811){
+                    console.log( userName,",",email, ",", companyName, ",", stringDateRegistered, ",", dateRegistered)
+                }
+
+                
+                // admin.database().ref('user-lastlogin').orderByChild('uid').equalTo(uid).once('value').then(function(snap){
+                //     var exists = snap.exists();
+                //     if(!exists) console.log( userName,",",email, ",", companyName, ",", stringDateRegistered, ",", dateRegistered);
+                // })
                 
             });
     
@@ -801,6 +854,224 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
         //     console.log("Error fetching user data:", error);
         // });
 
+    }else if(updateType == "updatePostAnalytics"){
+        var usersupdate = admin.database().ref('/user-clicks').orderByChild('clickType').equalTo('posts').once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+
+                var childKey = childSnapshot.key;
+                var childData = childSnapshot.val();
+                
+                var clickType = childData.clickType;
+
+                if(clickType == "posts"){
+                    var clickArea = childData.clickArea;
+                    var postType = childData.postType;
+                    var journalID = childData.journalID;
+
+                    // thoughts
+                    if((postType == "thoughts") || (postType == "Thought")){
+                        if(clickArea == "viewedUserProfile"){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 1: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 1: ', committed);
+                                } else {
+                                    console.log('Transaction 1 committed');
+                                }
+                            });
+                        }else if((clickArea == "tca-videos") || (clickArea == "tca-links") || (clickArea == "tca-podcasts") ){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('attachmentsclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 2: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 2: ', committed);
+                                } else {
+                                    console.log('Transaction 2 committed');
+                                }
+                            });
+                        }else{
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 3: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 3: ', committed);
+                                } else {
+                                    console.log('Transaction 3 committed');
+                                }
+                            });
+                        }
+                    }
+                    // articles
+                    else if((postType == "articles") || (postType == "Article") || (postType == "news")){
+                        if(clickArea == "viewedUserProfile"){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 4: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 4: ', committed);
+                                } else {
+                                    console.log('Transaction 4 committed');
+                                }
+                            });
+                        }else if(clickArea == "readArticle") {
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('readarticle');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 5: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 5: ', committed);
+                                } else {
+                                    console.log('Transaction 5 committed');
+                                }
+                            });
+                        }else if((clickArea == "tca-videos") || (clickArea == "tca-links") || (clickArea == "tca-podcasts") ){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('attachmentsclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 6: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 6: ', committed);
+                                } else {
+                                    console.log('Transaction 6 committed');
+                                }
+                            });
+                        }else{
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 7: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 7: ', committed);
+                                } else {
+                                    console.log('Transaction 7 committed');
+                                }
+                            });
+                        }
+                    }
+                    // podcasts
+                    else if((postType == "podcasts") || (postType == "voicemail") || (postType == "news") || (postType == "Podcast") || (postType == "Voicemail")){
+                        if(clickArea == "viewedUserProfile"){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 8: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 8: ', committed);
+                                } else {
+                                    console.log('Transaction 8 committed');
+                                }
+                            });
+                        }else if(clickArea == "listenedTo") {
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('listenedto');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 9: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 9: ', committed);
+                                } else {
+                                    console.log('Transaction 9 committed');
+                                }
+                            });
+                        }else{
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 10: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 10: ', committed);
+                                } else {
+                                    console.log('Transaction 10 committed');
+                                }
+                            });
+                        }
+                    }
+                    // vides
+                    else if((postType == "Video") || (postType == "videos")){
+                        if(clickArea == "viewedUserProfile"){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 11: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 11: ', committed);
+                                } else {
+                                    console.log('Transaction 11 committed');
+                                }
+                            });
+                        }else if(clickArea == "viewed") {
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('viewed');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 12: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 12: ', committed);
+                                } else {
+                                    console.log('Transaction 12 committed');
+                                }
+                            });
+                        }else{
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 13: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 13: ', committed);
+                                } else {
+                                    console.log('Transaction 13 committed');
+                                }
+                            });
+                        }
+                    }
+
+                }
+
+            });
+
+        });
     }
     
 });

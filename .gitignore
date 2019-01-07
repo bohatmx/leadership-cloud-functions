@@ -1,8 +1,5 @@
 functions/node_modules/
-<<<<<<< HEAD
 functions/service/
 node_modules/
-=======
-node_modules/
-.
->>>>>>> vusi-dev-branch
+*.md
+http/

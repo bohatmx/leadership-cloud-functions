@@ -4,7 +4,7 @@ module.exports = {
     sgKey: "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",
     url: "https://thinklead.app/",
     serverurl:"https://us-central1-leadershipplatform-158316.cloudfunctions.net/",
-    environment:0
+    environment:1
 }
 
 // Environment - 0 -> Development, 1 -> Live

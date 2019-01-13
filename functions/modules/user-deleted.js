@@ -12,12 +12,12 @@ exports.usersDeleted = functions.database.ref('/users/{userID}').onDelete((snap,
     var userData = deletedItem;
   
     // create new key
-    var writeOperationsID = admin.database().ref().child('writeOperations/deleteUserElastic').push().key;
-    userData.writeOperationsID = writeOperationsID;
+    // var writeOperationsID = admin.database().ref().child('writeOperations/deleteUserElastic').push().key;
+    // userData.writeOperationsID = writeOperationsID;
   
     // update writeOperations data
     var updates = {};
-    updates['writeOperations/deleteUserElastic/'+writeOperationsID+'/userData'] = userData;
+    // updates['writeOperations/deleteUserElastic/'+writeOperationsID+'/userData'] = userData;
     updates['deletelogs/users/'+userID] = userData;
   
     admin.database().ref().update(updates).then(postsupdate => {

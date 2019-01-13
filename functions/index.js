@@ -1169,18 +1169,18 @@ exports.newUserCreated = functions.database.ref('/user/{userID}').onCreate((snap
       var userData = user;
 
       // create new key
-      var writeOperationsID = admin.database().ref().child('writeOperations/newUserElastic').push().key;
-      userData.writeOperationsID = writeOperationsID;
+      // var writeOperationsID = admin.database().ref().child('writeOperations/newUserElastic').push().key;
+      // userData.writeOperationsID = writeOperationsID;
 
-      // update writeOperations data
-      var updates = {};
-      updates['writeOperations/newUserElastic/'+writeOperationsID+'/userData'] = userData;
+      // // update writeOperations data
+      // var updates = {};
+      // updates['writeOperations/newUserElastic/'+writeOperationsID+'/userData'] = userData;
 
-      admin.database().ref().update(updates).then(postsupdate => {
-          console.log('New user Elastic search record posted');
-      }).catch(posts_err => {
-          console.log('Error posting new user Elastic search record posted');
-      })
+      // admin.database().ref().update(updates).then(postsupdate => {
+      //     console.log('New user Elastic search record posted');
+      // }).catch(posts_err => {
+      //     console.log('Error posting new user Elastic search record posted');
+      // })
 
     }
   }

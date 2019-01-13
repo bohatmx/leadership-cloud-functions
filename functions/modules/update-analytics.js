@@ -712,44 +712,45 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
 
     }else if(updateType == "updateFollowGC"){
 
+        // updateFollowGC
+        // Grant userID: -LPCj4-Poxlsgzc1hnbS
         var usersupdate = admin.database().ref('/updateFollowGC').once('value').then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
     
                 var childKey = childSnapshot.key;
                 var childData = childSnapshot.val();
                 var followDate = Date.now();
-                var updates = {};
+                var updates = {}
 
-                // if((childData.firstName != undefined) || (childData.userID != undefined) ){
-                //     var mydata = {
-                //         "firstName":childData.firstName,
-                //         "lastName":childData.lastName,
-                //         "companyName":childData.companyName,
-                //         "dateRegistered": followDate,
-                //         "photoURL":childData.photoURL,
-                //         "userID": childData.userID
-                //     }
+                if((childData.firstName != undefined) && (childData.userID != undefined) ){
+                    // var mydata = {
+                    //     "firstName":childData.firstName,
+                    //     "lastName":childData.lastName,
+                    //     "companyName":childData.companyName,
+                    //     "dateRegistered": followDate,
+                    //     "photoURL":childData.photoURL,
+                    //     "userID": childData.userID
+                    // }
     
-                //     var theirdata = {
-                //         "firstName":childData.GC_firstName,
-                //         "lastName":childData.GC_lastName,
-                //         "companyName":childData.GC_companyName,
-                //         "dateRegistered":followDate,
-                //         "photoURL":childData.GC_photoURL,
-                //         "userID":childData.GC_userID
-                //     }
-
+                    // var theirdata = {
+                    //     "firstName":childData.GC_firstName,
+                    //     "lastName":childData.GC_lastName,
+                    //     "companyName":childData.GC_companyName,
+                    //     "dateRegistered":followDate,
+                    //     "photoURL":childData.GC_photoURL,
+                    //     "userID":childData.GC_userID
+                    // }
+                    
+                    // updates["users/"+childData.userID+"/following/"+childData.GC_userID]=theirdata;
+                    // updates["users/"+childData.GC_userID+"/follower/"+childData.userID]=mydata;
+                    // updates["followers/"+childData.GC_userID+"/"+childData.userID]=mydata;
     
-                //     updates["users/"+childData.userID+"/following/"+childData.GC_userID]=theirdata;
-                //     updates["users/"+childData.GC_userID+"/follower/"+childData.userID]=mydata;
-                //     updates["followers/"+childData.GC_userID+"/"+childData.userID]=mydata;
-    
-                //     admin.database().ref().update(updates).then(() =>{
-                //         console.log("Update successful userID: "+childData.userID+" Key: "+childKey);
-                //     }).catch(posts_err => {
-                //         console.error("Update Error userID: "+childData.userID+"  Key: "+childKey);
-                //     })
-                // }
+                    // admin.database().ref().update(updates).then(() =>{
+                    //     console.log("Update successful userID: "+childData.userID+" Key: "+childKey);
+                    // }).catch(posts_err => {
+                    //     console.error("Update Error userID: "+childData.userID+"  Key: "+childKey);
+                    // })
+                }
 
                 
             });

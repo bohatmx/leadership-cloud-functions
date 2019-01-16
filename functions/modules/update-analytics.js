@@ -671,111 +671,161 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
         // OneConnect Company ID: -LDVbbRyIMhukVtTVQ0n
         // Edcon Test Server ID: -LNUyClmWi7ezjSI5E2q
 
-        var usersupdate = admin.database().ref('/users').orderByChild("companyID").equalTo('-LDVbbRyIMhukVtTVQ0n').once('value').then(function(snapshot) {
+        var usersupdate = admin.database().ref('/users').once('value').then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
     
                 var childKey = childSnapshot.key;
                 var childData = childSnapshot.val();
-                var userID = childData.userID;
-                var uid = childData.uid;
-                var companyID = childData.companyID;
-                var companyID_userType = childData.companyID_userType;
-                var userDescription = childData.userDescription;
-                var userType = childData.userType;
-                var updates = {};
+                // var userID = childData.userID;
 
-                if(userType == 8){
-                    updates["users/"+userID+"/companyID_userType"]=companyID+"_10";
-                    updates["users/"+userID+"/userDescription"]="Corporate I-Leader";
-                    updates["users/"+userID+"/userType"]=10;
-
-                    updates["user/"+uid+"/companyID_userType"]=companyID+"_10";
-                    updates["user/"+uid+"/userDescription"]="Corporate I-Leader";
-                    updates["user/"+uid+"/userType"]=10;
-    
-                    var updateuser = admin.database().ref().update(updates).then(() =>{
-                        return console.log("user updated: ",userID);
-                    }).catch(posts_err => {
-                        console.log('update error: ', posts_err);
-                    });
-
-                    // console.log("user: ", updates);
+                if(!childData.userID){
+                    console.log( "childKey: ",childKey);
                 }
+                // var uid = childData.uid;
+                // var companyID = childData.companyID;
+                // var companyID_userType = childData.companyID_userType;
+                // var userDescription = childData.userDescription;
+                // var userType = childData.userType;
+                // var updates = {};
+
+                // if(userType == 8){
+                //     updates["users/"+userID+"/companyID_userType"]=companyID+"_10";
+                //     updates["users/"+userID+"/userDescription"]="Corporate I-Leader";
+                //     updates["users/"+userID+"/userType"]=10;
+
+                //     updates["user/"+uid+"/companyID_userType"]=companyID+"_10";
+                //     updates["user/"+uid+"/userDescription"]="Corporate I-Leader";
+                //     updates["user/"+uid+"/userType"]=10;
+    
+                //     var updateuser = admin.database().ref().update(updates).then(() =>{
+                //         return console.log("user updated: ",userID);
+                //     }).catch(posts_err => {
+                //         console.log('update error: ', posts_err);
+                //     });
+
+                //     // console.log("user: ", updates);
+                // }
 
             });
 
         });
 
-    }else if(updateType == "usersnotloggedin"){
-        var count = 0;
-        admin.auth().listUsers(1000)
-        .then(function(listUsersResult) {
-                listUsersResult.users.forEach(function(userRecord) {
-                    
-                    console.log("count: ",count,"user: ", userRecord.toJSON().email," verified: ",userRecord.toJSON().emailVerified);
-                    
-                    // if(!userRecord.toJSON().emailVerified){
-                    //     count++;
-                    //     var uid = userRecord.toJSON().uid;
+    }else if(updateType == "updateFollowGC"){
 
-                    //     admin.auth().updateUser(uid, {
-                    //         emailVerified: true
-                    //     })
-                    //     .then(function(userRecord) {
-                    //         // See the UserRecord reference doc for the contents of userRecord.
-                            
-                    //         // console.log("Successfully updated user", userRecord.toJSON().email);
-                    //     })
-                    //     .catch(function(error) {
-                    //         console.log("Error updating user:", error);
-                    //     });
+        // updateFollowGC
+        // Grant userID: -LPCj4-Poxlsgzc1hnbS
+        var usersupdate = admin.database().ref('/updateFollowGC').once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+    
+                var childKey = childSnapshot.key;
+                var childData = childSnapshot.val();
+                var followDate = Date.now();
+                var updates = {}
+
+                if((childData.firstName != undefined) && (childData.userID != undefined) ){
+                    // var mydata = {
+                    //     "firstName":childData.firstName,
+                    //     "lastName":childData.lastName,
+                    //     "companyName":childData.companyName,
+                    //     "dateRegistered": followDate,
+                    //     "photoURL":childData.photoURL,
+                    //     "userID": childData.userID
                     // }
-
-                    count++;
-                });
-            })
-            .catch(function(error) {
-            console.log("Error listing users:", error);
-        });
-        // return admin.database().ref('/user').orderByChild("companyID").equalTo('-LEiZPT-C2PyLu_YLKNU').once('value').then(function(snapshot) {
-            
-            
-        //     snapshot.forEach(function(childSnapshot) {
     
-        //         var uid = childSnapshot.key;
+                    // var theirdata = {
+                    //     "firstName":childData.GC_firstName,
+                    //     "lastName":childData.GC_lastName,
+                    //     "companyName":childData.GC_companyName,
+                    //     "dateRegistered":followDate,
+                    //     "photoURL":childData.GC_photoURL,
+                    //     "userID":childData.GC_userID
+                    // }
+                    
+                    // updates["users/"+childData.userID+"/following/"+childData.GC_userID]=theirdata;
+                    // updates["users/"+childData.GC_userID+"/follower/"+childData.userID]=mydata;
+                    // updates["followers/"+childData.GC_userID+"/"+childData.userID]=mydata;
+    
+                    // admin.database().ref().update(updates).then(() =>{
+                    //     console.log("Update successful userID: "+childData.userID+" Key: "+childKey);
+                    // }).catch(posts_err => {
+                    //     console.error("Update Error userID: "+childData.userID+"  Key: "+childKey);
+                    // })
+                }
 
-        //         // admin.auth().getUser(uid)
-        //         // .then(function(userRecord) {
-        //         //     // See the UserRecord reference doc for the contents of userRecord.
-        //         //     console.log("Successfully fetched user data:", userRecord.toJSON().email);
-        //         // })
-        //         // .catch(function(error) {
-        //         //     console.log("Error fetching user data:", error);
-        //         // });
-        //         admin.auth().updateUser(uid, {
-        //             emailVerified: true
-        //         })
-        //         .then(function(userRecord) {
-        //             // See the UserRecord reference doc for the contents of userRecord.
-        //             console.log("Successfully updated user", userRecord.toJSON().email);
-        //         })
-        //         .catch(function(error) {
-        //             console.log("Error updating user:", error);
-        //         });
-        //         // var childData = childSnapshot.val();
-        //         // var userID = childData.userID;
-        //         // var email = childData.email;
-        //         // var userName = childData.firstName+" "+childData.lastName;
-
-        //         // admin.database().ref('user-lastlogin').orderByChild('uid').equalTo(uid).once('value').then(function(snap){
-        //         //     var exists = snap.exists();
-        //         //     if(!exists) console.log( userName,",",email, ",", exists);
-        //         // })
                 
-        //     });
-    
-        //     return snapshot;
+            });
+
+        });
+
+    }else if(updateType == "usersnotloggedin"){
+        // var count = 0;
+        // admin.auth().listUsers(1000)
+        // .then(function(listUsersResult) {
+        //         listUsersResult.users.forEach(function(userRecord) {
+                    
+        //             console.log("count: ",count,"user: ", userRecord.toJSON().email," verified: ",userRecord.toJSON().emailVerified);
+                    
+        //             // if(!userRecord.toJSON().emailVerified){
+        //             //     count++;
+        //             //     var uid = userRecord.toJSON().uid;
+
+        //             //     admin.auth().updateUser(uid, {
+        //             //         emailVerified: true
+        //             //     })
+        //             //     .then(function(userRecord) {
+        //             //         // See the UserRecord reference doc for the contents of userRecord.
+                            
+        //             //         // console.log("Successfully updated user", userRecord.toJSON().email);
+        //             //     })
+        //             //     .catch(function(error) {
+        //             //         console.log("Error updating user:", error);
+        //             //     });
+        //             // }
+
+        //             count++;
+        //         });
+        //     })
+        //     .catch(function(error) {
+        //     console.log("Error listing users:", error);
         // });
+        return admin.database().ref('/users').orderByChild("companyID").equalTo('-LEiZPT-C2PyLu_YLKNU').once('value').then(function(snapshot) {
+            
+            snapshot.forEach(function(childSnapshot) {
+    
+                var uid = childSnapshot.key;
+
+                // admin.auth().getUser(uid)
+                // .then(function(userRecord) {
+                //     // See the UserRecord reference doc for the contents of userRecord.
+                //     console.log("Successfully fetched user data:", userRecord.toJSON().email);
+                // })
+                // .catch(function(error) {
+                //     console.log("Error fetching user data:", error);
+                // });
+                
+                
+                var childData = childSnapshot.val();
+                var userID = childData.userID;
+                var email = childData.email;
+                var userName = childData.firstName+" "+childData.lastName;
+                var companyName = childData.companyName;
+                var stringDateRegistered = childData.stringDateRegistered;
+                var dateRegistered = childData.dateRegistered;
+
+                if(dateRegistered > 1545162677811){
+                    console.log( userName,",",email, ",", companyName, ",", stringDateRegistered, ",", dateRegistered)
+                }
+
+                
+                // admin.database().ref('user-lastlogin').orderByChild('uid').equalTo(uid).once('value').then(function(snap){
+                //     var exists = snap.exists();
+                //     if(!exists) console.log( userName,",",email, ",", companyName, ",", stringDateRegistered, ",", dateRegistered);
+                // })
+                
+            });
+    
+            return snapshot;
+        });
 
     }else if(updateType == "userRecord"){
         var uid = "9mpv4kuFNTZryzEv0LhKYpxqQBC3";
@@ -805,6 +855,224 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
         //     console.log("Error fetching user data:", error);
         // });
 
+    }else if(updateType == "updatePostAnalytics"){
+        var usersupdate = admin.database().ref('/user-clicks').orderByChild('clickType').equalTo('posts').once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+
+                var childKey = childSnapshot.key;
+                var childData = childSnapshot.val();
+                
+                var clickType = childData.clickType;
+
+                if(clickType == "posts"){
+                    var clickArea = childData.clickArea;
+                    var postType = childData.postType;
+                    var journalID = childData.journalID;
+
+                    // thoughts
+                    if((postType == "thoughts") || (postType == "Thought")){
+                        if(clickArea == "viewedUserProfile"){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 1: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 1: ', committed);
+                                } else {
+                                    console.log('Transaction 1 committed');
+                                }
+                            });
+                        }else if((clickArea == "tca-videos") || (clickArea == "tca-links") || (clickArea == "tca-podcasts") ){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('attachmentsclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 2: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 2: ', committed);
+                                } else {
+                                    console.log('Transaction 2 committed');
+                                }
+                            });
+                        }else{
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 3: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 3: ', committed);
+                                } else {
+                                    console.log('Transaction 3 committed');
+                                }
+                            });
+                        }
+                    }
+                    // articles
+                    else if((postType == "articles") || (postType == "Article") || (postType == "news")){
+                        if(clickArea == "viewedUserProfile"){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 4: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 4: ', committed);
+                                } else {
+                                    console.log('Transaction 4 committed');
+                                }
+                            });
+                        }else if(clickArea == "readArticle") {
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('readarticle');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 5: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 5: ', committed);
+                                } else {
+                                    console.log('Transaction 5 committed');
+                                }
+                            });
+                        }else if((clickArea == "tca-videos") || (clickArea == "tca-links") || (clickArea == "tca-podcasts") ){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('attachmentsclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 6: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 6: ', committed);
+                                } else {
+                                    console.log('Transaction 6 committed');
+                                }
+                            });
+                        }else{
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 7: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 7: ', committed);
+                                } else {
+                                    console.log('Transaction 7 committed');
+                                }
+                            });
+                        }
+                    }
+                    // podcasts
+                    else if((postType == "podcasts") || (postType == "voicemail") || (postType == "news") || (postType == "Podcast") || (postType == "Voicemail")){
+                        if(clickArea == "viewedUserProfile"){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 8: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 8: ', committed);
+                                } else {
+                                    console.log('Transaction 8 committed');
+                                }
+                            });
+                        }else if(clickArea == "listenedTo") {
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('listenedto');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 9: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 9: ', committed);
+                                } else {
+                                    console.log('Transaction 9 committed');
+                                }
+                            });
+                        }else{
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 10: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 10: ', committed);
+                                } else {
+                                    console.log('Transaction 10 committed');
+                                }
+                            });
+                        }
+                    }
+                    // vides
+                    else if((postType == "Video") || (postType == "videos")){
+                        if(clickArea == "viewedUserProfile"){
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 11: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 11: ', committed);
+                                } else {
+                                    console.log('Transaction 11 committed');
+                                }
+                            });
+                        }else if(clickArea == "viewed") {
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('viewed');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 12: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 12: ', committed);
+                                } else {
+                                    console.log('Transaction 12 committed');
+                                }
+                            });
+                        }else{
+                            let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
+
+                            let companyCount = countCompany.transaction(function(current) {
+                                return (current || 0) + 1;
+                            }, function(error, committed, snapshot) {
+                                if (error) {
+                                    console.log('Transaction failed abnormally! 13: ', error);
+                                } else if (!committed) {
+                                    console.log('Not Committed 13: ', committed);
+                                } else {
+                                    console.log('Transaction 13 committed');
+                                }
+                            });
+                        }
+                    }
+
+                }
+
+            });
+
+        });
     }
     
 });

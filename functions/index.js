@@ -70,6 +70,8 @@ var userWelcomeEmail = require('./modules/welcome-email');
 var followGC = require('./modules/follow-gc');
 var removeUser = require('./modules/remove-user');
 var unshortenURL = require('./modules/unshorten-url');
+var writeOperations = require('./modules/write-operations');
+var usersDeleted = require('./modules/user-deleted');
 
 var elasticsearch = require('./modules/elasticsearch')
 var userSearch = require('./modules/user-search')
@@ -96,7 +98,9 @@ exports.m17 = analyticsNotifications
 exports.m18 = mailNotifications
 exports.m19 = followGC
 exports.m20 = removeUser
-//exports.m21 = unshortenURL
+exports.m21 = unshortenURL
+exports.m22 = writeOperations
+exports.m23 = usersDeleted
 // exports.m08 = removeBadAccounts
 exports.m25 = elasticsearch
 exports.m26 = userSearch
@@ -969,22 +973,22 @@ exports.deletedVideos = functions.database.ref('/videos/{videoID}').onDelete((sn
 //   const currdata = event.data.val();
 //   const prevdata = event.data.previous.val();
 //   const uid = currdata.uid;
-
+  
 //   const key = event.data.key;
 
 //   if (prevdata.disabled !== currdata.disabled) {
-//     //status has changed
-//     // statusHasChanged = true;
-//     var disabled = currdata.disabled;
-
-//     admin.auth().updateUser(uid, {
+//       //status has changed
+//       // statusHasChanged = true;
+//       var disabled = currdata.disabled;
+      
+//       admin.auth().updateUser(uid, {
 //         disabled: disabled
 //       })
-//       .then(function (userRecord) {
+//       .then(function(userRecord) {
 //         // See the UserRecord reference doc for the contents of userRecord.
 //         console.log("Successfully disabled user", userRecord.toJSON());
 //       })
-//       .catch(function (error) {
+//       .catch(function(error) {
 //         console.log("Error updating user:", error);
 //       });
 //   }
@@ -1125,13 +1129,18 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
 
       admin.database().ref('/user/' + uid).set(data);
 
-      // create a followGC record
-      admin.database().ref('/followGC/' + uid).set(data);
+      // Live server only
+      if(config.environment === 1){
+        // create a followGC record
+        admin.database().ref('/followGC/' + uid).set(data);
 
-      var to = email;
-      var subject = 'Welcome to Global Leadership Platform';
+        var to = email;
+        var subject = 'Welcome to Global Leadership Platform';
 
-      let emailRes = sendEmails(to, subject, msgPlain, msg)
+        // Send Email Notification
+        let emailRes = sendEmails(to, subject, msgPlain, msg)
+      }
+      
       // delete user
       admin.database().ref('newUploadUsers/' + userobjid).remove();
 
@@ -1161,6 +1170,23 @@ exports.newUserCreated = functions.database.ref('/user/{userID}').onCreate((snap
         return (current || 0) + 1;
       });
 
+      // assign user data
+      var userData = user;
+
+      // create new key
+      // var writeOperationsID = admin.database().ref().child('writeOperations/newUserElastic').push().key;
+      // userData.writeOperationsID = writeOperationsID;
+
+      // // update writeOperations data
+      // var updates = {};
+      // updates['writeOperations/newUserElastic/'+writeOperationsID+'/userData'] = userData;
+
+      // admin.database().ref().update(updates).then(postsupdate => {
+      //     console.log('New user Elastic search record posted');
+      // }).catch(posts_err => {
+      //     console.log('Error posting new user Elastic search record posted');
+      // })
+
     }
   }
 });
@@ -1180,9 +1206,8 @@ exports.userDeleted = functions.database.ref('/user/{userID}').onDelete((snap, c
     } else {
       return (current || 0) - 1;
     }
-
   });
-
+  
 });
 
 /**

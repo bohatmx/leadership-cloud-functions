@@ -114,32 +114,40 @@ module.exports = function (){
             maxMessages: 100
         });
 
-        let mailOptions = {
-            from: 'Global Leadership Platform <thinklead@comms.thinklead.co.za>',
-            to: ''+options.to,
-            subject: ''+options.subject,
-            text: ''+options.msgTxt,
-            html: ''+options.msgHTML
-        };
+        // Check if Email is blocked
+        var isBlocked = that.bouncedEmails(options.to);
+        console.log(options.to+" isBlocked: "+ isBlocked);
+        
+        if(isBlocked == false){
+            let mailOptions = {
+                from: 'Global Leadership Platform <thinklead@comms.thinklead.co.za>',
+                to: ''+options.to,
+                subject: ''+options.subject,
+                text: ''+options.msgTxt,
+                html: ''+options.msgHTML
+            };
 
-        // sgMail.send(mailOptions).then((response) => {
-        //     console.log("sendEmail success.");
-        //     return response;
-        // }).catch(error => {
-        //     //Log friendly error
-        //     console.error("sendEmail Error: ",error.toString());
-        //     return error;
-        // });
+            // sgMail.send(mailOptions).then((response) => {
+            //     console.log("sendEmail success.");
+            //     return response;
+            // }).catch(error => {
+            //     //Log friendly error
+            //     console.error("sendEmail Error: ",error.toString());
+            //     return error;
+            // });
 
-        // send mail with defined transport object
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return console.log("Error sending mails 1: ",error);
-            }else{
-                return console.log('Message sent: %s', info.messageId);
-            }
-            
-        });
+            // send mail with defined transport object
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return console.log("Error sending mails 1: ",error);
+                }else{
+                    return console.log('Message sent: %s', info.messageId);
+                }
+                
+            });
+        }
+
+        
     };
 
     this.sendNewUserEmail = function sendEmails(options) {
@@ -149,66 +157,72 @@ module.exports = function (){
 
         console.log("mail options for new user: ", options);
 
-        listofnewemails.push(options);
+        // Check if Email is blocked
+        var isBlocked = that.bouncedEmails(options.to);
+        console.log(options.to+" isBlocked: "+ isBlocked);
+        
+        if(isBlocked == false){
+            listofnewemails.push(options);
 
-        var transporter = nodemailer.createTransport({
-            pool: true,
-            host: 'comms.thinklead.co.za',
-            port: 465,
-            secure: true,
-            auth: {
-                user: "thinklead@comms.thinklead.co.za",
-                pass: "wR3(7FPMQvUwa-u&"
-            },
-            tls: {
-                // do not fail on invalid certs
-                rejectUnauthorized: false
-            },
-            maxConnections: 5,
-            maxMessages: 100
-        });
+            var transporter = nodemailer.createTransport({
+                pool: true,
+                host: 'comms.thinklead.co.za',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: "thinklead@comms.thinklead.co.za",
+                    pass: "wR3(7FPMQvUwa-u&"
+                },
+                tls: {
+                    // do not fail on invalid certs
+                    rejectUnauthorized: false
+                },
+                maxConnections: 5,
+                maxMessages: 100
+            });
 
-        function callBatchMailer(task, callback) {
-            console.log(`processing ${task.to}`);
+            function callBatchMailer(task, callback) {
+                console.log(`processing ${task.to}`);
 
-            let mailOptions = {
-                from: 'Global Leadership Platform <thinklead@comms.thinklead.co.za>',
-                to: ''+task.to,
-                bcc: ''+task.bcc,
-                subject: ''+task.subject,
-                text: ''+task.msgTxt,
-                html: ''+task.msgHTML
+                let mailOptions = {
+                    from: 'Global Leadership Platform <thinklead@comms.thinklead.co.za>',
+                    to: ''+task.to,
+                    bcc: ''+task.bcc,
+                    subject: ''+task.subject,
+                    text: ''+task.msgTxt,
+                    html: ''+task.msgHTML
+                };
+
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.log("Error sending mails 2: ",error);
+                        failurenew_email.push(task.to);
+                        return callback();
+                    }else{
+                        console.log('Message sent: %s', info.messageId);
+                        successnew_email.push(task.to);
+                        return callback();
+                    }
+                    
+                });
+                
+            }        
+
+            // create a queue object with concurrency 10
+            var q = async.queue(callBatchMailer, 10);
+
+            // assign a callback
+            q.drain = function() {
+                console.log("success new user emails: ",successnew_email);
+                console.log("failure new user emails: ", failurenew_email);
+                console.log('All New User Emails have been processed');
             };
 
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.log("Error sending mails 2: ",error);
-                    failurenew_email.push(task.to);
-                    return callback();
-                }else{
-                    console.log('Message sent: %s', info.messageId);
-                    successnew_email.push(task.to);
-                    return callback();
-                }
-                
+            // add some items to the queue (batch-wise)
+            q.push(listofnewemails, function(err) {
+                console.log('finished processing item');
             });
-            
-        }        
-
-        // create a queue object with concurrency 10
-        var q = async.queue(callBatchMailer, 10);
-
-        // assign a callback
-        q.drain = function() {
-            console.log("success new user emails: ",successnew_email);
-            console.log("failure new user emails: ", failurenew_email);
-            console.log('All New User Emails have been processed');
-        };
-
-        // add some items to the queue (batch-wise)
-        q.push(listofnewemails, function(err) {
-            console.log('finished processing item');
-        });
+        }// End if Email not Blocked
 
     };
 
@@ -230,26 +244,32 @@ module.exports = function (){
             maxMessages: 100
         });
 
-        var unsubscribelink = config.serverurl+'m13-unsubscribeUsers?'+link;
-        let htmlTemplate = this.htmlTemplate(options, unsubscribelink, options.companyURL);
+        // Check if Email is blocked
+        var isBlocked = that.bouncedEmails(options.to);
+        console.log(options.to+" isBlocked: "+ isBlocked);
         
-        let mailOptions = {
-            from: 'Global Leadership Platform <thinklead@comms.thinklead.co.za>',
-            to: ''+options.to,
-            subject: ''+options.subject,
-            text: ''+options.msgTxt,
-            html: htmlTemplate
-        };
-
-        // send mail with defined transport object
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return console.log("Error sending mails 3: ",error);
-            }else{
-                return console.log('Message sent: %s', info.messageId);
-            }
+        if(isBlocked == false){
+            var unsubscribelink = config.serverurl+'m13-unsubscribeUsers?'+link;
+            let htmlTemplate = this.htmlTemplate(options, unsubscribelink, options.companyURL);
             
-        });
+            let mailOptions = {
+                from: 'Global Leadership Platform <thinklead@comms.thinklead.co.za>',
+                to: ''+options.to,
+                subject: ''+options.subject,
+                text: ''+options.msgTxt,
+                html: htmlTemplate
+            };
+
+            // send mail with defined transport object
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return console.log("Error sending mails 3: ",error);
+                }else{
+                    return console.log('Message sent: %s', info.messageId);
+                }
+                
+            });
+        }//End if Email is not Blocked
     
     };
 
@@ -361,8 +381,8 @@ module.exports = function (){
         })
         .catch(function (err) {
             // API call failed...
-            console.log("error on request: ", err.statusCode);
-            console.log("error: ", err.error);
+            // console.log("error on request: ", err.statusCode);
+            // console.log("error: ", err.error);
         });
     }
 
@@ -386,6 +406,7 @@ module.exports = function (){
         // New Edcon => -LOs4iZh3Y9LSiNtpWlH
         // Old Edcon => -LBPcsCl4Dp7BsYB8fjE
         // OneConnect => -LDVbbRyIMhukVtTVQ0n
+        // BLSA => -LT2GkDrMhj3Tsx7KCme
 
         /**
          *  Old Implementation
@@ -394,6 +415,8 @@ module.exports = function (){
             return "https://oneconnect.thinklead.co.za/"
         else if((companyID == "-LOs4iZh3Y9LSiNtpWlH") || (companyID == "-LBPcsCl4Dp7BsYB8fjE")) 
             return "https://edcon.thinklead.co.za/"
+        else if(companyID == "-LT2GkDrMhj3Tsx7KCme") 
+            return "https://blsa.thinklead.co.za/"
         else 
             return "https://thinklead.app/"
 
@@ -417,7 +440,9 @@ module.exports = function (){
             "theov@uj.ac.za": true,"<Debbie@econetmedia.com>": true,"Debbie@econetmedia.com": true,"demo@motovantage.co.za": true, "<demo@hugegroup.com>": true,"<demo@mediclinic.co.za>": true, "<demo@miway.co.za>": true,"<demo@motovantage.co.za>": true,"<demo@spar.co.za>": true,
             "<edith@unltdgrp.com>": true,"edith@unltdgrp.com": true,"<garethg@energysecurity.co.za>": true,"garethg@energysecurity.co.za": true,"<gordon@gordontredgold.com>": true,"gordon@gordontredgold.com": true,"<lara@peacefulmind.co.za>": true,"lara@peacefulmind.co.za": true,"<mantsha@oneconnnect.co.za>": true,"mantsha@oneconnnect.co.za": true,
             "<Nkululeko.Ngcobo@avsoft.co.za>": true,"Nkululeko.Ngcobo@avsoft.co.za": true,
-            "<servaas.duplessis@eoh.com>": true,"servaas.duplessis@eoh.com": true,"<willem@gous.ws>": true,"willem@gous.ws": true
+            "<servaas.duplessis@eoh.com>": true,"servaas.duplessis@eoh.com": true,
+            "<willem@gous.ws>": true,"willem@gous.ws": true,"<bertie@aliberti.co.za>": true,"bertie@aliberti.co.za": true,
+            "<vuyokazi.bata@yahoo.co.uk>": true,"vuyokazi.bata@yahoo.co.uk": true
         }
 
         return blockedEmail[email] ? true : false;
@@ -463,7 +488,6 @@ module.exports = function (){
                         userinfo.email = email;
 
                         var isBlocked = that.bouncedEmails(email);
-
                         console.log(email+" isBlocked: "+ isBlocked);
 
                         if(isBlocked == false){

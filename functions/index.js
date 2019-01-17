@@ -72,9 +72,10 @@ var removeUser = require('./modules/remove-user');
 var unshortenURL = require('./modules/unshorten-url');
 var writeOperations = require('./modules/write-operations');
 var usersDeleted = require('./modules/user-deleted');
-
+ 
 var elasticsearch = require('./modules/elasticsearch')
-var userSearch = require('./modules/user-search')
+var userSearch = require('./modules/user-search');
+var app = require('./modules/authenticated-https');
 
 // var removeBadAccounts = require('./modules/remove-badaccounts');
 
@@ -104,6 +105,7 @@ exports.m23 = usersDeleted
 // exports.m08 = removeBadAccounts
 exports.m25 = elasticsearch
 exports.m26 = userSearch
+
 
 var userToken = new handleNotifications();
 var updateAppAnalytics = new appAnalytics();
@@ -398,7 +400,7 @@ function loadUsers(userID) {
   return defer;
 }
 
-exports.unshortenUserURLs = functions.https.onRequest((req, res) => {
+app.get('/unshortenUserURLs', (req, res) => {
   var TinyURL = require('tinyurl');
   var userURL = url + "#/lead/user/sign-up";
 
@@ -407,6 +409,9 @@ exports.unshortenUserURLs = functions.https.onRequest((req, res) => {
   });
 
 })
+
+exports.WebApi = functions.https.onRequest(app);
+
 
 exports.manageAllUsers = functions.https.onRequest((req, res) => {
   var manageAllUsers = new manageUsers();

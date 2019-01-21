@@ -72,10 +72,8 @@ var removeUser = require('./modules/remove-user');
 var unshortenURL = require('./modules/unshorten-url');
 var writeOperations = require('./modules/write-operations');
 var usersDeleted = require('./modules/user-deleted');
- 
-var elasticsearch = require('./modules/elasticsearch')
-var userSearch = require('./modules/user-search');
-var app = require('./modules/authenticated-https');
+var resendWelcome = require('./modules/resend-welcomemail');
+var resetPassword = require('./modules/reset-password');
 
 // var removeBadAccounts = require('./modules/remove-badaccounts');
 
@@ -102,6 +100,8 @@ exports.m20 = removeUser
 exports.m21 = unshortenURL
 exports.m22 = writeOperations
 exports.m23 = usersDeleted
+exports.m24 = resendWelcome
+exports.m25 = resetPassword
 // exports.m08 = removeBadAccounts
 exports.m25 = elasticsearch
 exports.m26 = userSearch
@@ -1094,8 +1094,7 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
 
     var url = userToken.getCompanyURL(companyID);
 
-    var msgPlain = "",
-      msg = "";
+    var msgPlain = "", msg = "";
 
     // construct emails - plain and html templates
     msgPlain = welcomeEmail.plainEmail(userobj, url);
@@ -1127,35 +1126,55 @@ exports.updateNewUsers = functions.database.ref('/newUploadUsers/{newUploadUserI
         "companyID_userType": companyID + "_" + userType
       }
 
-      // Write the new user data
+      // if EDCON set CE ID
+      if(companyID == "-LOs4iZh3Y9LSiNtpWlH"){
+        // set Grant by default
+        data.ce_id = "WXiLeBhQwqT6YpVEyBuRI28nIG82";
+        data.ceo_id = "WXiLeBhQwqT6YpVEyBuRI28nIG82";
+        // data.ce_id = userobj.ce_id;
+        // data.ceo_id = userobj.ceo_id;
+      }
+
+      // Write the new user data, followGC, user, resend mail
       var updates = {};
       updates['users/' + userID] = data;
+      updates['followGC/' + uid] = data;
+      updates['user/' + uid] = data;
+      updates['resend-welcomemail/' + uid] = data;
+
       admin.database().ref().update(updates);
 
-      admin.database().ref('/user/' + uid).set(data);
+      // admin.database().ref('/user/' + uid).set(data);
 
       // Live server only
-      if(config.environment === 1){
-        // create a followGC record
-        admin.database().ref('/followGC/' + uid).set(data);
+      // if(config.environment === 1){
+      //   // create a followGC record
+      //   var to = email;
+      //   var subject = 'Welcome to Global Leadership Platform';
 
-        var to = email;
-        var subject = 'Welcome to Global Leadership Platform';
+      //   var mailoptions = {
+      //     "to": to,
+      //     "bcc": 'colman@oneconnect.co.za',
+      //     "subject": subject,
+      //     "msgTxt": msgPlain,
+      //     "msgHTML": msg
+      //   }
 
-        // Send Email Notification
-        let emailRes = sendEmails(to, subject, msgPlain, msg)
-      }
+      //   // Send Email Notification
+      //   let emailRes = userToken.sendNewUserEmail(mailoptions);
+      // }
+
+      console.log("user created successfully: ",email)
       
       // delete user
-      admin.database().ref('newUploadUsers/' + userobjid).remove();
-
-      return user;
+      return snap.ref.remove();
     }, function (error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
+      console.error("error createing new user: ",errorMessage)
     });
-
+    
   }
 });
 
@@ -1215,72 +1234,44 @@ exports.userDeleted = functions.database.ref('/user/{userID}').onDelete((snap, c
   
 });
 
-/**
- *  Return a new user and indexes it on elastic search
- */
+// on create pldp tasks
+exports.pldpTasksCreated = functions.database.ref('/pldp-tasks/{userID}/{taskID}').onCreate((snap, context) => {
+  // Get Firebase object
+  const deletedItem = snap.val();
 
-exports.createNewUserData = functions.https.onRequest((req, res) => {
-  const userRef = admin.database().ref('/users');
+  var companyID = deletedItem.companyID;
+  var moveAction = deletedItem.moveAction;
 
-  //Create user from req body 
-  const {
-    firstName,
-    lastName,
-    email
-  } = req.body
-  const userData = {
-    firstName,
-    lastName,
-    email
-  }
+  // Add count to values analytics for company
+  let countItems = admin.database().ref('company-values').child(companyID).child(moveAction).child('count');
 
-  // Expect a promise 
-  const p = userRef.push(userData)
+  let countItem = countItems.transaction(function (current) {
+    return (current || 0) + 1;
+  });
+  
+});
 
-  return p.then(snapshot => {
-    res.send(snapshot)
-  })
+// on delete pldp tasks
+exports.pldpTasksDeleted = functions.database.ref('/pldp-tasks/{userID}/{taskID}').onDelete((snap, context) => {
+  // Get Firebase object
+  const deletedItem = snap.val();
 
-})
+  var companyID = deletedItem.companyID;
+  var moveAction = deletedItem.moveAction;
 
+  // Subtract count to values analytics for company
+  let countItems = admin.database().ref('company-values').child(companyID).child(moveAction).child('count');
 
-// exports.getAllCarsData = functions.https.onRequest((req, res) => {
-//   let carsRef = admin.database().ref('/cars');
-//   let carsImportLimit = 1000;
-//   let pushPromises = [];
-//   console.log('Importing ' + carsImportLimit + 'cars');
-//   for (let i = 0; i < carsImportLimit; i++) {
-//     pushPromises.push(carsRef.push(cars[i]));
-//   }
+  let countItem = countItems.transaction(function (current) {
+    if (current == 0) {
+      return current
+    } else {
+      return (current || 0) - 1;
+    }
+  });
+  
+});
 
-
-//   // Terminate by returning 
-//   return Promise.all(pushPromises).then((snapshot) => res.send("Added all car data!")).catch((err) => console.log("Error : %s", err.message));
-
-
-// })
-// Testing search elastic
-
-// exports.deleteAllCarData = functions.https.onRequest((req, res) => {
-//   var carsRef = admin.database().ref('/cars');
-//   let carsImportLimit = 1000;
-//   let pushPromises = [];
-
-
-//   console.log('Importing ' + carsImportLimit + 'cars');
-//   for (let i = 0; i < carsImportLimit; i++) {
-//     pushPromises.push(carsRef.push(cars[i]));
-//   }
-
-
-//   // Terminate by returning 
-//   return Promise.all(pushPromises)
-//     .then((snapshot) => res.send("Added all car data!"))
-//     .catch((err) => console.log("Error : %s", err.message));
-
-
-
-// })
 // MyPLDP Notification Reminder
 function sendEmails(to, subject, msgTxt, msgHTML) {
   var options = {
@@ -1306,6 +1297,7 @@ exports.publishContent = functions.https.onRequest((req, res) => {
 
   // res.send(true);
 });
+
 
 function myLoops() {
   publishScheduledContent();
@@ -1486,22 +1478,23 @@ function sendPLDPReminders() {
       notificationUpdates['pldpNotifications/' + notificationID + '/stringReminderDate'] = stringReminderDate;
       notificationUpdates['pldpNotifications/' + notificationID + '/reminderStatus'] = reminderStatus;
 
+      if((moveAction == "direction") || (moveAction == "motivation") || (moveAction == "structure") ){
+        // Update the pldp's notification reminder
+        notificationUpdates['myPLDP/' + moveAction + '/' + myPLDPID + '/reminderDate'] = reminderDate;
+        notificationUpdates['myPLDP/' + moveAction + '/' + myPLDPID + '/stringReminderDate'] = stringReminderDate;
+        notificationUpdates['myPLDP/' + moveAction + '/' + myPLDPID + '/reminderStatus'] = reminderStatus;
+      }else{
+        if(rems.journalUserID != undefined){
+          notificationUpdates['pldp-tasks/' + rems.journalUserID + '/' + myPLDPID + '/reminderDate'] = reminderDate;
+          notificationUpdates['pldp-tasks/' + rems.journalUserID + '/' + myPLDPID + '/stringReminderDate'] = stringReminderDate;
+          notificationUpdates['pldp-tasks/' + rems.journalUserID + '/' + myPLDPID + '/reminderStatus'] = reminderStatus;
+        }
+      }
+
       admin.database().ref().update(notificationUpdates).then(notificationupdates_res => {
         console.log('update pldp notification reminder 1');
       }).catch(notificationupdates_err => {
         console.log('notificationupdates_err');
-      });
-
-      // Update the pldp's notification reminder
-      var pldpUpdates = {};
-      pldpUpdates['myPLDP/' + moveAction + '/' + myPLDPID + '/reminderDate'] = reminderDate;
-      pldpUpdates['myPLDP/' + moveAction + '/' + myPLDPID + '/stringReminderDate'] = stringReminderDate;
-      pldpUpdates['myPLDP/' + moveAction + '/' + myPLDPID + '/reminderStatus'] = reminderStatus;
-
-      admin.database().ref().update(pldpUpdates).then(pldpupdates_res => {
-        console.log('update pldp notification reminder 2');
-      }).catch(pldpupdates_err => {
-        console.log('pldpUpdates_err');
       });
 
     }

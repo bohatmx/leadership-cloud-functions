@@ -110,7 +110,7 @@ module.exports = function (){
                 // do not fail on invalid certs
                 rejectUnauthorized: false
             },
-            maxConnections: 5,
+            maxConnections: 20,
             maxMessages: 100
         });
 
@@ -177,7 +177,7 @@ module.exports = function (){
                     // do not fail on invalid certs
                     rejectUnauthorized: false
                 },
-                maxConnections: 5,
+                maxConnections: 20,
                 maxMessages: 100
             });
 
@@ -209,7 +209,7 @@ module.exports = function (){
             }        
 
             // create a queue object with concurrency 10
-            var q = async.queue(callBatchMailer, 10);
+            var q = async.queue(callBatchMailer, 20);
 
             // assign a callback
             q.drain = function() {
@@ -240,7 +240,7 @@ module.exports = function (){
                 // do not fail on invalid certs
                 rejectUnauthorized: false
             },
-            maxConnections: 5,
+            maxConnections: 20,
             maxMessages: 100
         });
 
@@ -438,11 +438,8 @@ module.exports = function (){
         blockedEmail = {
             "bant@mail.com": true,"bob@delan.co.za": true,"bouncetest@tribulant.com": true,"demo@afriforum.co.za": true,"demo@blsa.org.za": true,"demo@edcon.co.za": true,"demo@flysaa.com": true,"demo@harmony.co.za": true,"demo@hugegroup.com": true,"demo@mcd.co.za": true,"demo@mediclinic.co.za": true,"demo@miway.co.za": true,"demo@sandvik.co.za": true,"demo@spar.co.za": true,"demo@telesure.co.za": true,"demo@thomsonreuters.com": true,"idpdevapp@oneconnectgroup.com": true,"jan@doe.co.za": true,"john@doe.co.za": true,"king@doe.oc.za": true,"kurisani@avsoft.co.za": true,"Nathan@gmail.com": true,"nthaum@gmali.com": true,"pheladi@admin.com":true, "andrewjackson.sa@gnail.com": true, "coreyschristensen@msn.com": true, "glpappkevin@gail.com": true, "magdaleen@liquidorance.co.za": true, 
             "theov@uj.ac.za": true,"<Debbie@econetmedia.com>": true,"Debbie@econetmedia.com": true,"demo@motovantage.co.za": true, "<demo@hugegroup.com>": true,"<demo@mediclinic.co.za>": true, "<demo@miway.co.za>": true,"<demo@motovantage.co.za>": true,"<demo@spar.co.za>": true,
-            "<edith@unltdgrp.com>": true,"edith@unltdgrp.com": true,"<garethg@energysecurity.co.za>": true,"garethg@energysecurity.co.za": true,"<gordon@gordontredgold.com>": true,"gordon@gordontredgold.com": true,"<lara@peacefulmind.co.za>": true,"lara@peacefulmind.co.za": true,"<mantsha@oneconnnect.co.za>": true,"mantsha@oneconnnect.co.za": true,
-            "<Nkululeko.Ngcobo@avsoft.co.za>": true,"Nkululeko.Ngcobo@avsoft.co.za": true,
-            "<servaas.duplessis@eoh.com>": true,"servaas.duplessis@eoh.com": true,
-            "<willem@gous.ws>": true,"willem@gous.ws": true,"<bertie@aliberti.co.za>": true,"bertie@aliberti.co.za": true,
-            "<vuyokazi.bata@yahoo.co.uk>": true,"vuyokazi.bata@yahoo.co.uk": true
+            "<edith@unltdgrp.com>": true,"edith@unltdgrp.com": true,"<garethg@energysecurity.co.za>": true,"garethg@energysecurity.co.za": true,"<gordon@gordontredgold.com>": true,"gordon@gordontredgold.com": true,"<lara@peacefulmind.co.za>": true,"lara@peacefulmind.co.za": true,"<mantsha@oneconnnect.co.za>": true,"mantsha@oneconnnect.co.za": true,"<Nkululeko.Ngcobo@avsoft.co.za>": true,"Nkululeko.Ngcobo@avsoft.co.za": true,
+            "<servaas.duplessis@eoh.com>": true,"servaas.duplessis@eoh.com": true,"<willem@gous.ws>": true,"willem@gous.ws": true,"<bertie@aliberti.co.za>": true,"bertie@aliberti.co.za": true,"<vuyokazi.bata@yahoo.co.uk>": true,"vuyokazi.bata@yahoo.co.uk": true,"demo@wilfordscholes.com":true
         }
 
         return blockedEmail[email] ? true : false;
@@ -545,7 +542,7 @@ module.exports = function (){
                 // do not fail on invalid certs
                 rejectUnauthorized: false
             },
-            maxConnections: 5,
+            maxConnections: 20,
             maxMessages: 100
         });
 

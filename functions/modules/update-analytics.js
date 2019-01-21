@@ -666,45 +666,74 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
         });
         
 
-    }else if(updateType == "upduser"){
-        // Edcon Company ID: -LOs4iZh3Y9LSiNtpWlH
-        // OneConnect Company ID: -LDVbbRyIMhukVtTVQ0n
-        // Edcon Test Server ID: -LNUyClmWi7ezjSI5E2q
+    }else if(updateType == "updateTasksCount"){
 
-        var usersupdate = admin.database().ref('/users').once('value').then(function(snapshot) {
+        var usersupdate = admin.database().ref('/pldp-tasks').once('value').then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
     
                 var childKey = childSnapshot.key;
                 var childData = childSnapshot.val();
-                // var userID = childData.userID;
+                
+                for (var x in childData){
+                    var companyID = childData[x].companyID;
+                    var moveAction = childData[x].moveAction;
 
-                if(!childData.userID){
-                    console.log( "childKey: ",childKey);
+                    // Add count to values analytics for company
+                    let countItems = admin.database().ref('company-values').child(companyID).child(moveAction).child('count');
+
+                    let countItem = countItems.transaction(function (current) {
+                        return (current || 0) + 1;
+                    });
+
+                    console.log("parent key: ", childKey,"childkey:", x)
                 }
-                // var uid = childData.uid;
-                // var companyID = childData.companyID;
-                // var companyID_userType = childData.companyID_userType;
-                // var userDescription = childData.userDescription;
-                // var userType = childData.userType;
-                // var updates = {};
+                
+            });
 
-                // if(userType == 8){
-                //     updates["users/"+userID+"/companyID_userType"]=companyID+"_10";
-                //     updates["users/"+userID+"/userDescription"]="Corporate I-Leader";
-                //     updates["users/"+userID+"/userType"]=10;
+        });
 
-                //     updates["user/"+uid+"/companyID_userType"]=companyID+"_10";
-                //     updates["user/"+uid+"/userDescription"]="Corporate I-Leader";
-                //     updates["user/"+uid+"/userType"]=10;
+    }
+    else if(updateType == "upduser"){
+        // Edcon Company ID: -LOs4iZh3Y9LSiNtpWlH
+        // OneConnect Company ID: -LDVbbRyIMhukVtTVQ0n
+        // Edcon Test Server ID: -LNUyClmWi7ezjSI5E2q
+
+        var usersupdate = admin.database().ref('/myPLDP').child('direction').orderByChild("companyID").equalTo('-LDVbbRyIMhukVtTVQ0n').once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
     
-                //     var updateuser = admin.database().ref().update(updates).then(() =>{
-                //         return console.log("user updated: ",userID);
-                //     }).catch(posts_err => {
-                //         console.log('update error: ', posts_err);
-                //     });
+                var childKey = childSnapshot.key;
+                var childData = childSnapshot.val();
 
-                //     // console.log("user: ", updates);
-                // }
+                var moveAction = "-LWZn0X4oYY9docklOWL";
+                var moveActionDesc = "Structure";
+
+                var notificationID = childData.notificationID;
+                var journalUserID = childData.journalUserID;
+                var myPLDPID = childData.myPLDPID;
+
+                childData.moveAction = moveAction;
+                childData.moveActionDesc = moveActionDesc;
+
+                if(notificationID.length > 0){
+                    var notificationUpdates = {};
+                    notificationUpdates['pldpNotifications/' + notificationID + '/moveAction'] = moveAction;
+                    notificationUpdates['pldpNotifications/' + notificationID + '/moveActionDesc'] = moveActionDesc;
+
+                    admin.database().ref().update(notificationUpdates).then(notificationupdates_res => {
+                        console.log('update pldp notification reminder 1');
+                    }).catch(notificationupdates_err => {
+                        console.log('notificationupdates_err');
+                    });
+                }
+
+
+                // push new record to pldp tasks
+                admin.database().ref('/pldp-tasks').child(journalUserID).child(myPLDPID).set(childData).then(res => {
+                    console.log('update pldp tasks');
+                    childSnapshot.ref.remove();
+                }).catch(err => {
+                    console.log('pldp tasks err');
+                });
 
             });
 
@@ -828,15 +857,14 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
         });
 
     }else if(updateType == "userRecord"){
-        var uid = "9mpv4kuFNTZryzEv0LhKYpxqQBC3";
+        var uid = "ceuMVpVagSRIpPQ7Xh154DOQDVy1";
 
         // var uid = "srgiSWBqBjSnBlb3xxR5ua2IX9F3";
         // emailVerified: false
         // password: "Pass@1234"
 
         admin.auth().updateUser(uid, {
-            emailVerified: true,
-            password: "pass1234"
+            emailVerified: true
         })
         .then(function(userRecord) {
             // See the UserRecord reference doc for the contents of userRecord.

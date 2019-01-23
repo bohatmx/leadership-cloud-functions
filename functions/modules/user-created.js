@@ -1,59 +1,22 @@
-
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const config = require('./config.js');
-var url = config.url;
 
-exports.userCreated = functions.database.ref('/users/{userID}').onCreate((snap, context) => {
-    var user = snap.val();
-    const userID = snap.key;
+// New user account created
+exports.userCreated = functions.database.ref('/user/{userID}').onCreate((snap, context) => {
+  // Get Firebase object
+  const user = snap.val();
 
-    if(userID != undefined){
-      var TinyURL = require('tinyurl');
-      var dbUserRef = admin.database().ref('/users');
-      var userRef = admin.database().ref('/user');
-      var uid = user.uid;
+  if (user) {
+    // Specify Algolia's objectID using the Firebase object key
+    var companyID = user.companyID;
 
-      console.log("Create TinyURL for userID: "+userID+"  uid: "+uid);
+    if (companyID != undefined) {
+      // Add count to users analytics for users
+      let countItems = admin.database().ref('company-analytics').child(companyID).child('counts').child('noofusers');
+      let currentCount = countItems.transaction(function (current) {
+        return (current || 0) + 1;
+      });
 
-      if(uid != undefined){
-        userRef.child(uid).set(user, function(error) {
-          if (error) {
-            // The write failed...
-            console.log("Error setting new user at server.");
-          } else {
-            // Data saved successfully!
-            console.log("New user added successfully.")
-          }
-        });
-
-        var userURL = url+"#/lead/"+userID+"/sign-up";
-
-        TinyURL.shorten(userURL, function(res) {
-            dbUserRef.child(userID).child("userURL").set(res, function(error) {
-              if (error) {
-                // The write failed...
-                console.log("Error setting new userURL 1.");
-              } else {
-                // Data saved successfully!
-                console.log("New userURL 1 added successfully.")
-              }
-            });
-
-            userRef.child(uid).child("userURL").set(res, function(error) {
-              if (error) {
-                // The write failed...
-                console.log("Error setting new userURL 2.");
-              } else {
-                // Data saved successfully!
-                console.log("New userURL 2 added successfully.")
-              }
-            });
-
-        });
-
-      } //End if uid not undefined
-
-    } //End if userID not undefined
-  
-  });
+    }
+  }
+});

@@ -856,33 +856,6 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
             return snapshot;
         });
 
-    }else if(updateType == "userRecord"){
-        var uid = "ceuMVpVagSRIpPQ7Xh154DOQDVy1";
-
-        // var uid = "srgiSWBqBjSnBlb3xxR5ua2IX9F3";
-        // emailVerified: false
-        // password: "Pass@1234"
-
-        admin.auth().updateUser(uid, {
-            emailVerified: true
-        })
-        .then(function(userRecord) {
-            // See the UserRecord reference doc for the contents of userRecord.
-            console.log("Successfully updated user", userRecord.toJSON());
-        })
-        .catch(function(error) {
-            console.log("Error updating user:", error);
-        });
-            
-        // admin.auth().getUser(uid)
-        // .then(function(userRecord) {
-        //     // See the UserRecord reference doc for the contents of userRecord.
-        //     console.log("Successfully fetched user data:", userRecord.toJSON());
-        // })
-        // .catch(function(error) {
-        //     console.log("Error fetching user data:", error);
-        // });
-
     }else if(updateType == "updatePostAnalytics"){
         var usersupdate = admin.database().ref('/user-clicks').orderByChild('clickType').equalTo('posts').once('value').then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {

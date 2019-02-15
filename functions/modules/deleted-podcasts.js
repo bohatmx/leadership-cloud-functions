@@ -27,7 +27,7 @@ exports.deletedPodcasts = functions.database.ref('/podcasts/{podcastID}').onDele
     // Add count to users analytics for thoughts
     let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('podcasts');
     let countItem = countItems.transaction(function (current) {
-      if (current == 0) {
+      if ((current == 0) || (current == undefined)) {
         return current
       } else {
         return (current || 0) - 1;

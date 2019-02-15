@@ -27,7 +27,7 @@ exports.deletedThoughts = functions.database.ref('/dailyThoughts/{dailyThoughtID
       let countItems = admin.database().ref('users').child(journalUserID).child('analytics').child('thoughts');
   
       let countItem = countItems.transaction(function (current) {
-        if (current == 0) {
+        if ((current == 0) || (current == undefined)) {
           return current
         } else {
           return (current || 0) - 1;

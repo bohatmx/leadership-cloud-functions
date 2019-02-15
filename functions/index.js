@@ -1,13 +1,13 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-// admin.initializeApp();
+admin.initializeApp();
 
 // Test Server
-var serviceAccount = require("./service/glp-test-firebase-adminsdk-58xlx-84586619f2.json");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://glp-test.firebaseio.com"
-});
+// var serviceAccount = require("./service/glp-test-firebase-adminsdk-58xlx-84586619f2.json");
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://glp-test.firebaseio.com"
+// });
 
 
 // Live Server

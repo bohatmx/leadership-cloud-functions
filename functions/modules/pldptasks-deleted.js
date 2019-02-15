@@ -13,7 +13,7 @@ exports.pldpTasksDeleted = functions.database.ref('/pldp-tasks/{userID}/{taskID}
   let countItems = admin.database().ref('company-values').child(companyID).child(moveAction).child('count');
 
   let countItem = countItems.transaction(function (current) {
-    if (current == 0) {
+    if ((current == 0) || (current == undefined)) {
       return current
     } else {
       return (current || 0) - 1;

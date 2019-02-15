@@ -17,10 +17,10 @@ exports.usersDeleted = functions.database.ref('/users/{userID}').onDelete((snap,
     let countItems = admin.database().ref('company-analytics').child(companyID).child('counts').child('noofusers');
 
     let countItem = countItems.transaction(function (current) {
-        if (current == 0) {
-        return current
+        if ((current == 0) || (current == undefined)) {
+            return current
         } else {
-        return (current || 0) - 1;
+            return (current || 0) - 1;
         }
     });
   

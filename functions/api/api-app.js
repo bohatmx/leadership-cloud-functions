@@ -1,27 +1,20 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const express = require('express');
+var express = require('express');
 
-const cors = require('cors')({
-    origin: true
+var cors = require('cors')({
+    origin: true,
+    allowedHeaders: ['Origin','X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "optionsSuccessStatus": 200
 });
 
-const MESSAGE = '142'
-const app = express();
+var app = express();
 
 // Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
-// The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
-// `Authorization: Bearer <Firebase ID Token>`.
-// when decoded successfully, the ID Token content will be added as `req.user`.
 const validateFirebaseIdToken = (req, res, next) => {
 
     if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
-        // console.error('No Firebase ID token was passed as a Bearer token in the Authorization header.',
-        //     'Make sure you authorize your request by providing the following HTTP header:',
-        //     'Authorization: Bearer <Firebase ID Token>',
-        //     'or by passing a "__session" cookie.');
-
-        // res.status(403).send('');
         res.status(403).json({"code": "403", "status": "Unauthorized", "message": "You Are Unauthorized!"})
         return;
     }
@@ -42,24 +35,54 @@ const validateFirebaseIdToken = (req, res, next) => {
 };
 
 app.use(cors);
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-app.use('/',validateFirebaseIdToken);
+// app.use('/',validateFirebaseIdToken);
 
 // -------- include data modules --------------- //
+const config = require('./config');
 var getData = require('./get-data');
+var postData = require('./post-data');
+var patchData = require('./update-data');
+var delData = require('./delete-data');
 var requestData = new getData();
-var self = this;
+var newPostData = new postData();
+var updateData = new patchData();
+var deleteData = new delData();
 
-// Generic routes to GET, POST, PUT, PATCH and DELETE data
-app.route('/')
+// Generic routes to GET, POST data
+app.route('/:name')
   .get(function (request, response) {
-        var tblref = request.query.tblref;
+    if(request.params.name === "companyanalytics"){
+        var tblref, companyID, param1, param2  = "";
+        tblref = config.endpoints[request.params.name]
+
+        companyID = request.query.companyID
+        param1 = request.query.param1 || ""
+        param2 = request.query.param2 || ""
+
+        if((tblref == undefined) || (tblref == null)){
+            response.status(400).json({"code": "400", "status": "Failure", "message": "Invalid / Missing endpoint"})
+            return;
+        }
+        else if((companyID == undefined) || (companyID == null) || (companyID.trim() == "")){
+            response.status(400).json({"code": "400", "status": "Failure", "message": "Invalid / Missing id"})
+            return;
+        }
+
+        var genericPath = tblref.trim()+'/'+companyID.trim()+'/'+param1.trim()+'/'+param2.trim();
+
+        requestData.generic(genericPath, response);
+    }
+    else{
+        var tblref = "";
+        if(request.params.name === "users") tblref = "user";
+        else tblref = config.endpoints[request.params.name];
+        
         var tblcol = request.query.tblcol;
         var tblval = request.query.tblval;
         var limit = request.query.limit === undefined ? 10 : Number (request.query.limit);
-
-        // response.json({"code": "400", "status": "Failure", "message": limit})
-        // return;
 
         // if filtering data by column else fetch all
         if((tblcol != undefined) && (tblcol != null) ){
@@ -83,24 +106,69 @@ app.route('/')
                 return;
             }
         }
-        
-  })
-  .post(function (req, res) {
-    res.send('POST API')
-  })
-  .put(function (req, res) {
-    res.send('Update the book')
-  })
-  .patch(function (req, res) {
-    res.send('Update the book')
-  })
-  .delete(function (req, res) {
-    res.send('Update the book')
+    } // end if not compnay id
+   })
+  .post(function (request, response) {
+    // check endpoint ref
+    var dbref = config.endpoints[request.params.name]
+    if(dbref == undefined){
+        response.status(400).json({"code": "400", "status": "Failure","message":"Unavailable endpoint! Please check the api endpoint you are posting to."});
+        return;
+    }
+    newPostData[request.params.name](request.params.name, request.body, response);
+    // response.status(200).send(JSON.stringify(request.body, null, 2))
   })
 
+  // Generic routes to PUT, PATCH and DELETE data
+app.route('/:name/:id')
+.get(function (request, response) {
+    if((request.params.name === "companyvalues") || (request.params.name === "pldptasks")){
+        var tblref, id = "";
+        tblref = config.endpoints[request.params.name]
+        id = request.params.id
+
+        if((tblref == undefined) || (tblref == null)){
+            response.status(400).json({"code": "400", "status": "Failure", "message": "Invalid / Missing endpoint"})
+            return;
+        }
+        else if((id == undefined) || (id == null) || (id.trim() == "")){
+            response.status(400).json({"code": "400", "status": "Failure", "message": "Invalid / Missing id"})
+            return;
+        }
+
+        requestData.id(tblref, id, response);
+    }else{
+        response.status(400).json({"code": "400", "status": "Failure", "message": "Invalid route or endpoint"})
+        return;
+    }
+
+})
+.put(function (request, response) {
+  //update data
+  updateData.patch(request.params.name, request.params.id, request.body, response);
+})
+.patch(function (request, response) {
+    //update data
+    updateData.patch(request.params.name, request.params.id, request.body, response);
+})
+.delete(function (request, response) {
+  //delete data
+  deleteData.delete(request.params.name, request.params.id, request.body, response);
+})
 
 app.use((req, res, next) => {
-    next();
+    const error = new Error('Route not found!');
+    // error.status(404);
+    next(error);
+})
+
+app.use((error, req, res, next) => {
+    res.status(error.status || 500);
+    res.json({
+        error: {
+            message: error.message
+        }
+    });
 })
 
 module.exports = app;

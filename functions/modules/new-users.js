@@ -3,6 +3,9 @@ const admin = require('firebase-admin');
 
 var handleNotifications = require('./handle-notifications');
 var userToken = new handleNotifications();
+var userWelcomeEmail = require('./welcome-email');
+const config = require('./config.js');
+var welcomeEmail = new userWelcomeEmail();
 
 exports.newUsers = functions.database.ref('/newUploadUsers/{newUploadUserID}').onCreate((snap, context) => {
   // Get Firebase object
@@ -97,6 +100,6 @@ exports.newUsers = functions.database.ref('/newUploadUsers/{newUploadUserID}').o
       var errorMessage = error.message;
       console.error("error createing new user: ",errorMessage)
     });
-    
+
   }
 });

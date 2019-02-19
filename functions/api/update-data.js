@@ -26,6 +26,7 @@ module.exports = function (){
 
         var updates = {};
         const entries = Object.entries(body);
+        
         for (const [key, value] of entries) {
             if(name === "users") {
                 updates[`${dbref}/${id}/` + key] = value;

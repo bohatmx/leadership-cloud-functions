@@ -586,6 +586,48 @@ module.exports = function (){
             return;
         });
     }
+    // New company values
+    this.companyvalues = function (name, body, response) {
+        // check if all fields are provided
+        if((!body.companyID) || (!body.companyName) || (!body.valueDesc) ){
+            response.status(400).json({"code": "400", "status": "Failure","message":"There are some missing fields, please check before posting."});
+            return;
+        }
+
+        if((!body.companyID.trim()) || (!body.companyName.trim()) || (!body.valueDesc.trim()) ){
+            response.status(400).json({"code": "400", "status": "Failure","message":"There are some missing fields, please check before posting."});
+            return;
+        }
+
+        // set tbl ref
+        var dbref = config.endpoints[name];
+
+        var status='active',valueID,dateRegistered,
+        companyID_status = body.companyID+'_active';
+        
+        dateRegistered = Date.now();
+
+        // Generate postID
+        valueID = admin.database().ref(dbref).push().key;
+
+        body.valueID = valueID;
+        body.status = status;
+        body.companyID_status = companyID_status;
+        body.dateRegistered = dateRegistered;
+
+        // Write the new podcast's data
+        var updates = {};
+        updates[`/${dbref}/` + valueID] = body;
+
+        admin.database().ref().update(updates).then(() => {
+            response.status(200).json({"code": "200", "status": "Success","payload": body});
+            return;
+        })
+        .catch((err) => {
+            response.status(400).json({"code": "400", "status": "Failure", "message": `${err.message}`})
+            return;
+        });
+    }
     // New feedback
     this.feedback = function (name, body, response) {
         // set tbl ref

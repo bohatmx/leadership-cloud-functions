@@ -9,10 +9,12 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
+    "@google-cloud/storage": "^2.4.2",
     "@sendgrid/mail": "^6.2.1",
     "algoliasearch": "^3.24.10",
     "async": "^2.6.1",
     "body-parser": "^1.18.3",
+    "child-process-promise": "^2.2.1",
     "cors": "^2.8.5",
     "curl": "^0.1.4",
     "dotenv": "^5.0.0",
@@ -26,6 +28,7 @@
     "http": "0.0.0",
     "infinite-loop": "^0.2.2",
     "lodash": "^4.17.11",
+    "mkdirp-promise": "^5.0.1",
     "nodemailer-direct-transport": "^3.3.2",
     "nodemailer2": "^2.7.1",
     "request": "^2.87.0",

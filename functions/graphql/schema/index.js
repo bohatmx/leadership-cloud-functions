@@ -2,38 +2,105 @@ const { ApolloServer, gql } = require('apollo-server-express');
 const resolvers = require('../resolvers');
 
 const typeDefs = gql`
-	# ---------------- Example for Search Demo ----------------------
-	type IceCream {
-		id: Int!
-		name: String!
-		description: String!
-		rating: Float
-		searchField: String
+	type UserResults {
+		users: [User]!
+		nextToken: String
 	}
 
-	input CreateIceCreamInput {
-		name: String!
-		description: String!
-		rating: Float
+	type VideoResults {
+		videos: [Video]!
+		nextToken: String
 	}
 
-	input TableIceCreamFilterInput {
-		id: TableIDFilterInput
-		name: TableStringFilterInput
-		description: TableStringFilterInput
-		rating: TableFloatFilterInput
-		searchField: TableStringFilterInput
+	type PodcastResults {
+		podcasts: [Podcast]!
+		nextToken: String
 	}
 
-	input TableIDFilterInput {
-		id: Int!
+	type ArticleResults {
+		articles: [Article]!
+		nextToken: String
 	}
 
-	input TableFloatFilterInput {
-		rating: Float!
+	type ThoughtResults {
+		thoughts: [Thought]!
+		nextToken: String
 	}
 
-	input TableStringFilterInput {
+	# ----------------------------------
+
+	type User {
+		userID: String!
+		email: String
+		firstName: String
+		lastName: String
+	}
+
+	type Video {
+		videoID: String!
+		userName: String!
+		photoURL: String
+		caption: String
+		description: String
+		companyName: String
+		url: String
+		user: [User]
+	}
+
+	type Podcast {
+		userID: String!
+		userName: String!
+		title: String!
+		companyName: String
+		photoURL: String
+		podcastID: String!
+	}
+
+	type Thought {
+		journalUserID: String!
+		journalUserName: String!
+		logo: String
+		photoURL: String
+		slogan: String
+		title: String
+		dailyThoughtID: String!
+		dailyThoughtDescription: String
+		stringDateRegistered: String
+		subtitle: String
+		userType: String
+		companyName: String
+		companyID: String!
+	}
+
+	type Article {
+		articleLink: String
+		articleTypeDescription: String
+		body: String
+		companyID: String
+		companyName: String
+		dailyThoughtDescription: String
+		journalUserID: String!
+		journalUserName: String!
+		newsID: String!
+		photoURL: String
+		stringDateRegistered: String
+		subtitle: String
+		title: String
+		userType: String
+	}
+
+	# the schema allows the following query:
+	type Query {
+		listUsers(filter: FilterInput, limit: Int!, nextToken: String): UserResults
+		listThoughts(filter: FilterInput, limit: Int!, nextToken: String): ThoughtResults
+		listVideos(filter: FilterInput, limit: Int!, nextToken: String): VideoResults
+		listPodcasts(filter: FilterInput, limit: Int!, nextToken: String): PodcastResults
+		listArticles(filter: FilterInput, limit: Int!, nextToken: String): ArticleResults
+	}
+
+	# this schema allows the following mutation:
+
+	input FilterInput {
 		ne: String
 		eq: String
 		le: String
@@ -45,89 +112,6 @@ const typeDefs = gql`
 		between: [String]
 		beginsWith: String
 	}
-
-	type IceCreamConnection {
-		items: [IceCream]!
-		nextToken: String
-	}
-
-	# mutation create {
-	# 	createIceCream(input: {
-	# 		name: "Peanut Butter World"
-	# 		description: "Milk chocolate ice cream with peanut buttery swirls & chocolate cookie swirls"
-	# 	}) {
-	# 		name
-	# 	}
-	# }
-
-	# ----------------------------------
-
-	type Author {
-		id: Int! # the ! means that every author object _must_ have an id
-		firstName: String
-		lastName: String
-		posts: [Post] # the list of Posts by this author
-	}
-
-	type Post {
-		id: Int!
-		title: String
-		author: Author
-		votes: Int
-	}
-
-	type User {
-		email: String
-		firstName: String
-		lastName: String
-	}
-
-	type SearchPosts {
-		posts: [Post]
-		nexToken: String
-	}
-
-	# the schema allows the following query:
-	type Query {
-		posts: [Post]
-		author(id: Int!): Author
-		users: [User]
-		searchPosts(filter: String, limit: Int, nextToken: String): SearchPosts
-		getIceCream(id: Int): IceCream
-		listIceCreams(filter: TableIceCreamFilterInput, limit: Int, nextToken: String): IceCreamConnection
-	}
-
-	# this schema allows the following mutation:
-	type Mutation {
-		upvotePost(postId: Int!): Post
-		#listUsers(filter: TableUserFilterInput, limit: Int, nextToken: String): UserResults
-		createIceCream(input: CreateIceCreamInput): IceCream
-	}
-	#  IceCreamConnection.items must be Input Type but got: [IceCream]
-	# input UserResults {
-	# 	user: TableUserFilterInput
-	# 	nextToken: String
-	# }
-
-	# input TableUserFilterInput {
-	# 	firstName: TableStringFilterInput
-	# 	lastName: TableStringFilterInput
-	# 	email: TableStringFilterInput
-	# 	searchField: TableStringFilterInput
-	# }
-
-	# input TableStringFilterInput {
-	# 	ne: String
-	# 	eq: String
-	# 	le: String
-	# 	lt: String
-	# 	ge: String
-	# 	gt: String
-	# 	contains: String
-	# 	notContains: String
-	# 	between: [String]
-	# 	beginsWith: String
-	# }
 `;
 const graphqlServer = new ApolloServer({
 	typeDefs,

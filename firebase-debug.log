@@ -1,0 +1,116 @@
+[debug] [2019-04-08T09:17:48.934Z] ----------------------------------------------------------------------
+[debug] [2019-04-08T09:17:48.936Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\OneConnect\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2019-04-08T09:17:48.937Z] CLI Version:   6.3.0
+[debug] [2019-04-08T09:17:48.937Z] Platform:      win32
+[debug] [2019-04-08T09:17:48.937Z] Node Version:  v8.12.0
+[debug] [2019-04-08T09:17:48.938Z] Time:          Mon Apr 08 2019 11:17:48 GMT+0200 (South Africa Standard Time)
+[debug] [2019-04-08T09:17:48.938Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-04-08T09:17:49.000Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-04-08T09:17:49.001Z] > authorizing via signed-in user
+[debug] [2019-04-08T09:17:49.001Z] [iam] checking project glp-test for permissions ["firebase.projects.get"]
+[debug] [2019-04-08T09:17:49.004Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/glp-test:testIamPermissions  
+
+[debug] [2019-04-08T09:17:51.107Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-08T09:17:51.108Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/glp-test  
+ 
+[debug] [2019-04-08T09:17:52.792Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\OneConnect\Documents\GitHub\leadership-cloud-functions'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2019-04-08T09:18:17.662Z] Fetching environment
+[debug] [2019-04-08T09:18:17.665Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/805735980290:getServerAppConfig  
+ 
+[debug] [2019-04-08T09:18:18.398Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-08T09:18:18.399Z] Starting @google-cloud/functions-emulator
+[debug] [2019-04-08T09:18:31.774Z] Parsing function triggers
+[info] +  functions: m20.removeUser: http://localhost:5000/glp-test/us-central1/m20-removeUser
+[info] +  functions: m06.updateFollowers: http://localhost:5000/glp-test/us-central1/m06-updateFollowers
+[info] +  functions: m21.unshortenURL: http://localhost:5000/glp-test/us-central1/m21-unshortenURL
+[info] +  functions: m40.sendUserReminders: http://localhost:5000/glp-test/us-central1/m40-sendUserReminders
+[info] +  functions: m08.updateAnalytics: http://localhost:5000/glp-test/us-central1/m08-updateAnalytics
+[info] +  functions: api: http://localhost:5000/glp-test/us-central1/api
+[info] +  functions: m07.testMails: http://localhost:5000/glp-test/us-central1/m07-testMails
+[info] +  functions: m13.unsubscribeUsers: http://localhost:5000/glp-test/us-central1/m13-unsubscribeUsers
+[info] +  functions: m39.publishContent: http://localhost:5000/glp-test/us-central1/m39-publishContent
+[debug] [2019-04-08T10:39:14.896Z] ----------------------------------------------------------------------
+[debug] [2019-04-08T10:39:14.898Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\OneConnect\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2019-04-08T10:39:14.899Z] CLI Version:   6.3.0
+[debug] [2019-04-08T10:39:14.899Z] Platform:      win32
+[debug] [2019-04-08T10:39:14.899Z] Node Version:  v8.12.0
+[debug] [2019-04-08T10:39:14.900Z] Time:          Mon Apr 08 2019 12:39:14 GMT+0200 (South Africa Standard Time)
+[debug] [2019-04-08T10:39:14.900Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-04-08T10:39:15.022Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-04-08T10:39:15.022Z] > authorizing via signed-in user
+[debug] [2019-04-08T10:39:15.022Z] [iam] checking project glp-test for permissions ["firebase.projects.get"]
+[debug] [2019-04-08T10:39:15.022Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2019-04-08T10:39:15.022Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2019-04-08T10:39:16.553Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-08T10:39:16.618Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/glp-test:testIamPermissions  
+
+[debug] [2019-04-08T10:39:18.662Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-08T10:39:18.662Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/glp-test  
+ 
+[debug] [2019-04-08T10:39:20.358Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\OneConnect\Documents\GitHub\leadership-cloud-functions'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2019-04-08T10:39:47.767Z] Fetching environment
+[debug] [2019-04-08T10:39:47.785Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/805735980290:getServerAppConfig  
+ 
+[debug] [2019-04-08T10:39:48.516Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-08T10:39:48.516Z] Starting @google-cloud/functions-emulator
+[debug] [2019-04-08T10:40:02.849Z] Parsing function triggers
+[info] +  functions: m07.testMails: http://localhost:5000/glp-test/us-central1/m07-testMails
+[info] +  functions: m08.updateAnalytics: http://localhost:5000/glp-test/us-central1/m08-updateAnalytics
+[info] +  functions: m06.updateFollowers: http://localhost:5000/glp-test/us-central1/m06-updateFollowers
+[info] +  functions: m13.unsubscribeUsers: http://localhost:5000/glp-test/us-central1/m13-unsubscribeUsers
+[info] +  functions: m20.removeUser: http://localhost:5000/glp-test/us-central1/m20-removeUser
+[info] +  functions: m21.unshortenURL: http://localhost:5000/glp-test/us-central1/m21-unshortenURL
+[info] +  functions: m39.publishContent: http://localhost:5000/glp-test/us-central1/m39-publishContent
+[info] +  functions: m40.sendUserReminders: http://localhost:5000/glp-test/us-central1/m40-sendUserReminders
+[info] +  functions: api: http://localhost:5000/glp-test/us-central1/api
+[debug] [2019-04-08T13:05:05.360Z] ----------------------------------------------------------------------
+[debug] [2019-04-08T13:05:05.367Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\OneConnect\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2019-04-08T13:05:05.367Z] CLI Version:   6.3.0
+[debug] [2019-04-08T13:05:05.368Z] Platform:      win32
+[debug] [2019-04-08T13:05:05.368Z] Node Version:  v8.12.0
+[debug] [2019-04-08T13:05:05.369Z] Time:          Mon Apr 08 2019 15:05:05 GMT+0200 (South Africa Standard Time)
+[debug] [2019-04-08T13:05:05.369Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-04-08T13:05:05.543Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-04-08T13:05:05.545Z] > authorizing via signed-in user
+[debug] [2019-04-08T13:05:05.545Z] [iam] checking project glp-test for permissions ["firebase.projects.get"]
+[debug] [2019-04-08T13:05:05.548Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2019-04-08T13:05:05.548Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2019-04-08T13:05:06.136Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-08T13:05:06.182Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/glp-test:testIamPermissions  
+
+[debug] [2019-04-08T13:05:08.222Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-08T13:05:08.222Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/glp-test  
+ 
+[debug] [2019-04-08T13:05:09.923Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\OneConnect\Documents\GitHub\leadership-cloud-functions'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2019-04-08T13:05:50.244Z] Fetching environment
+[debug] [2019-04-08T13:05:50.270Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/805735980290:getServerAppConfig  
+ 
+[debug] [2019-04-08T13:05:51.061Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-08T13:05:51.061Z] Starting @google-cloud/functions-emulator
+[debug] [2019-04-08T13:06:12.781Z] Parsing function triggers
+[info] +  functions: m07.testMails: http://localhost:5000/glp-test/us-central1/m07-testMails
+[info] +  functions: m08.updateAnalytics: http://localhost:5000/glp-test/us-central1/m08-updateAnalytics
+[info] +  functions: m13.unsubscribeUsers: http://localhost:5000/glp-test/us-central1/m13-unsubscribeUsers
+[info] +  functions: m20.removeUser: http://localhost:5000/glp-test/us-central1/m20-removeUser
+[info] +  functions: m21.unshortenURL: http://localhost:5000/glp-test/us-central1/m21-unshortenURL
+[info] +  functions: m39.publishContent: http://localhost:5000/glp-test/us-central1/m39-publishContent
+[info] +  functions: m40.sendUserReminders: http://localhost:5000/glp-test/us-central1/m40-sendUserReminders
+[info] +  functions: api: http://localhost:5000/glp-test/us-central1/api
+[info] +  functions: m06.updateFollowers: http://localhost:5000/glp-test/us-central1/m06-updateFollowers

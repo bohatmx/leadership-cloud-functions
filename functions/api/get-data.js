@@ -24,7 +24,7 @@ module.exports = function (){
                 response.status(200).json({"code": "200", "status": "Success","data": tblres });
             }
             else{
-                response.status(400).json({"code": "400", "status": "Failure", "message": "No record(s) found."})
+                response.status(400).json({"code": "400", "status": "Failure", "message": "No record(s) found 1. "+tblref+" col: "+colref+" colval: "+colval})
             }
         });
     }

@@ -925,6 +925,7 @@ module.exports = function() {
     } else {
       reminderStatus = "Sent";
       body.reminderFrequency = "Does not repeat";
+      stringReminderDate = body.stringReminderDate;
     }
 
     stringDateRegistered = new Date(body.dateRegistered).toLocaleString();

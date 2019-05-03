@@ -1,6 +1,6 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+// admin.initializeApp();
 
 // Test Server
 // var serviceAccount = require("./service/glp-test-firebase-adminsdk-58xlx-84586619f2.json");
@@ -10,61 +10,61 @@ admin.initializeApp();
 // });
 
 // Live Server
-// var serviceAccount = require("./service/leadershipplatform-158316-firebase-adminsdk-goitz-f99dd5b92d.json");
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   databaseURL: "https://leadershipplatform-158316.firebaseio.com"
-// });
+var serviceAccount = require("./service/leadershipplatform-158316-firebase-adminsdk-goitz-f99dd5b92d.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://leadershipplatform-158316.firebaseio.com"
+});
 
-const config = require('./modules/config.js');
+const config = require("./modules/config.js");
 
-const commentsIn = require('./modules/comments-in');
-var updateUserURL = require('./modules/update-userurl');
-var tokenRefresh = require('./modules/token-refresh');
-var newReminderIn = require('./modules/reminders-in');
-var newFollowers = require('./modules/new-followers');
-var updateFollowers = require('./modules/update-followers');
-var testMails = require('./modules/test-mails');
-var updateAnalytics = require('./modules/update-analytics');
-var commentsDeleted = require('./modules/comments-deleted');
-var likesDeleted = require('./modules/likes-deleted');
-var userLikes = require('./modules/user-likes');
-var userClicks = require('./modules/user-clicks');
-var unsubscribeUsers = require('./modules/unsubscribe-users');
-var userSubscribed = require('./modules/user-subscribed');
-var userUnsubscribed = require('./modules/user-unsubscribed');
-var appNotifications = require('./modules/app-notifications');
-var analyticsNotifications = require('./modules/analytics-notifications');
-var mailNotifications = require('./modules/mail-notifications');
-var followGC = require('./modules/follow-gc');
-var removeUser = require('./modules/remove-user');
-var unshortenURL = require('./modules/unshorten-url');
-var writeOperations = require('./modules/write-operations');
-var usersDeleted = require('./modules/user-deleted');
-var resendWelcome = require('./modules/resend-welcomemail');
-var resetPassword = require('./modules/reset-password');
+const commentsIn = require("./modules/comments-in");
+var updateUserURL = require("./modules/update-userurl");
+var tokenRefresh = require("./modules/token-refresh");
+var newReminderIn = require("./modules/reminders-in");
+var newFollowers = require("./modules/new-followers");
+var updateFollowers = require("./modules/update-followers");
+var testMails = require("./modules/test-mails");
+var updateAnalytics = require("./modules/update-analytics");
+var commentsDeleted = require("./modules/comments-deleted");
+var likesDeleted = require("./modules/likes-deleted");
+var userLikes = require("./modules/user-likes");
+var userClicks = require("./modules/user-clicks");
+var unsubscribeUsers = require("./modules/unsubscribe-users");
+var userSubscribed = require("./modules/user-subscribed");
+var userUnsubscribed = require("./modules/user-unsubscribed");
+var appNotifications = require("./modules/app-notifications");
+var analyticsNotifications = require("./modules/analytics-notifications");
+var mailNotifications = require("./modules/mail-notifications");
+var followGC = require("./modules/follow-gc");
+var removeUser = require("./modules/remove-user");
+var unshortenURL = require("./modules/unshorten-url");
+var writeOperations = require("./modules/write-operations");
+var usersDeleted = require("./modules/user-deleted");
+var resendWelcome = require("./modules/resend-welcomemail");
+var resetPassword = require("./modules/reset-password");
 
 // Create modules for all functions within indexjs
-var newThoughts = require('./modules/new-thoughts');
-var deletedThoughts = require('./modules/deleted-thoughts');
-var newArticles = require('./modules/new-articles');
-var deletedArticles = require('./modules/deleted-articles');
-var newPodcasts = require('./modules/new-podcasts');
-var deletedPodcasts = require('./modules/deleted-podcasts');
-var newVideos = require('./modules/new-videos');
-var deletedVideos = require('./modules/deleted-videos');
-var newFeedback = require('./modules/new-feedback');
-var newUsers = require('./modules/new-users');
-var userCreated = require('./modules/user-created');
-var pldpTasksCreated = require('./modules/pldptasks-created');
-var pldpTasksDeleted = require('./modules/pldptasks-deleted');
-var publishContent = require('./modules/publish-content');
-var sendUserReminders = require('./modules/pldp-reminders');
+var newThoughts = require("./modules/new-thoughts");
+var deletedThoughts = require("./modules/deleted-thoughts");
+var newArticles = require("./modules/new-articles");
+var deletedArticles = require("./modules/deleted-articles");
+var newPodcasts = require("./modules/new-podcasts");
+var deletedPodcasts = require("./modules/deleted-podcasts");
+var newVideos = require("./modules/new-videos");
+var deletedVideos = require("./modules/deleted-videos");
+var newFeedback = require("./modules/new-feedback");
+var newUsers = require("./modules/new-users");
+var userCreated = require("./modules/user-created");
+var pldpTasksCreated = require("./modules/pldptasks-created");
+var pldpTasksDeleted = require("./modules/pldptasks-deleted");
+var publishContent = require("./modules/publish-content");
+var sendUserReminders = require("./modules/pldp-reminders");
 
-var onImageUploaded = require('./modules/image-uploaded');
+var onImageUploaded = require("./modules/image-uploaded");
 
 // ----------------- API MODULE -------------------- //
-var app = require('./api/api-app');
+var app = require("./api/api-app");
 
 // ---------------- GRAPHQL MODULE ----------------- //
 

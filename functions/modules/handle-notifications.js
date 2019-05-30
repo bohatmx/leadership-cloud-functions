@@ -241,21 +241,21 @@ module.exports = function() {
         };
 
         // Only send emails on live environment
-        if (config.environment === 1) {
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.log("Error sending mails 2: ", error);
-              failurenew_email.push(task.to);
-              return callback();
-            } else {
-              console.log("Message sent: %s", info.messageId);
-              successnew_email.push(task.to);
-              return callback();
-            }
-          });
-        } else {
-          console.log("Test environment...not sending any emails 222");
-        }
+        // if (config.environment === 1) {
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log("Error sending mails 2: ", error);
+            failurenew_email.push(task.to);
+            return callback();
+          } else {
+            console.log("Message sent: %s", info.messageId);
+            successnew_email.push(task.to);
+            return callback();
+          }
+        });
+        // } else {
+        //   console.log("Test environment...not sending any emails 222");
+        // }
       }
 
       // create a queue object with concurrency 10
@@ -298,7 +298,8 @@ module.exports = function() {
     console.log(options.to + " isBlocked: " + isBlocked);
 
     if (isBlocked == false) {
-      var unsubscribelink = config.serverurl[config.environment] + "m13-unsubscribeUsers?" + link;
+      var unsubscribelink =
+        config.serverurl[config.environment] + "m13-unsubscribeUsers?" + link;
       let htmlTemplate = this.htmlTemplate(
         options,
         unsubscribelink,

@@ -30,7 +30,7 @@ exports.resendWelcome = functions.database
     // Send Email Notification
     var options = {
       to: to,
-      bcc: "colman@oneconnect.co.za",
+      bcc: "colman@oneconnect.co.za, denver@oneconnect.co.za",
       subject: subject,
       msgTxt: msgPlain,
       msgHTML: msg

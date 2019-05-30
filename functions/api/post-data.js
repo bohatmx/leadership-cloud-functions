@@ -176,6 +176,14 @@ module.exports = function() {
       publish_status = body.companyID + "_ilead_" + status;
     }
 
+    // If posting to I-Lead (Public)
+    if (user_type === 3) {
+      companyID_status = config.publicAppID + "_" + status;
+      // overwrite companyID with publicID
+      body.companyID = config.publicAppID;
+      publish_status = config.publicAppID + "_" + status;
+    }
+
     body.active = active;
     body.status = status;
     body.companyID_status = companyID_status;
@@ -509,12 +517,13 @@ module.exports = function() {
 
     if (body.attachment === false) {
       if (!body.author.trim()) {
-        response.status(400).json({
-          code: "400",
-          status: "Failure",
-          message: "There are some missing fields, please check before posting."
-        });
-        return;
+        // response.status(400).json({
+        //   code: "400",
+        //   status: "Failure",
+        //   message: "There are some missing fields, please check before posting."
+        // });
+        // return;
+        body.author = "";
       }
       company_status = "general_true";
       dailyThoughtDescription =
@@ -668,12 +677,14 @@ module.exports = function() {
 
     if (body.attachment === false) {
       if (!body.author.trim()) {
-        response.status(400).json({
-          code: "400",
-          status: "Failure",
-          message: "There are some missing fields, please check before posting."
-        });
-        return;
+        // response.status(400).json({
+        //   code: "400",
+        //   status: "Failure",
+        //   message: "There are some missing fields, please check before posting."
+        // });
+        // return;
+
+        body.author = "";
       }
       company_status = "general_true";
       dailyThoughtDescription =

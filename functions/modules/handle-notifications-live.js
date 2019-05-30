@@ -23,12 +23,12 @@ sgMail.setApiKey(
 
 module.exports = function() {
   var that = this;
-  this.serverKey = config.serverKey[config.environment];
+  this.serverKey = config.serverKey;
   this.project_id = config.senderID;
 
   this.headers = {
     Accept: "application/json",
-    Authorization: config.serverKey[config.environment],
+    Authorization: config.serverKey,
     "Content-Type": "application/json"
   };
 
@@ -155,8 +155,8 @@ module.exports = function() {
         // do not fail on invalid certs
         rejectUnauthorized: false
       },
-      maxConnections: 150,
-      maxMessages: 5
+      maxConnections: 20,
+      maxMessages: 100
     });
 
     // Check if Email is blocked
@@ -181,19 +181,14 @@ module.exports = function() {
       //     return error;
       // });
 
-      // Only send emails on live environment
-      if (config.environment === 1) {
-        // send mail with defined transport object
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            return console.log("Error sending mails 1: ", error);
-          } else {
-            return console.log("Message sent: %s", info.messageId);
-          }
-        });
-      } else {
-        console.log("Test environment...not sending any emails 111");
-      }
+      // send mail with defined transport object
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log("Error sending mails 1: ", error);
+        } else {
+          return console.log("Message sent: %s", info.messageId);
+        }
+      });
     }
   };
 
@@ -224,8 +219,8 @@ module.exports = function() {
           // do not fail on invalid certs
           rejectUnauthorized: false
         },
-        maxConnections: 150,
-        maxMessages: 5
+        maxConnections: 20,
+        maxMessages: 100
       });
 
       function callBatchMailer(task, callback) {
@@ -240,26 +235,21 @@ module.exports = function() {
           html: "" + task.msgHTML
         };
 
-        // Only send emails on live environment
-        if (config.environment === 1) {
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.log("Error sending mails 2: ", error);
-              failurenew_email.push(task.to);
-              return callback();
-            } else {
-              console.log("Message sent: %s", info.messageId);
-              successnew_email.push(task.to);
-              return callback();
-            }
-          });
-        } else {
-          console.log("Test environment...not sending any emails 222");
-        }
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log("Error sending mails 2: ", error);
+            failurenew_email.push(task.to);
+            return callback();
+          } else {
+            console.log("Message sent: %s", info.messageId);
+            successnew_email.push(task.to);
+            return callback();
+          }
+        });
       }
 
       // create a queue object with concurrency 10
-      var q = async.queue(callBatchMailer, 5);
+      var q = async.queue(callBatchMailer, 20);
 
       // assign a callback
       q.drain = function() {
@@ -289,8 +279,8 @@ module.exports = function() {
         // do not fail on invalid certs
         rejectUnauthorized: false
       },
-      maxConnections: 150,
-      maxMessages: 5
+      maxConnections: 20,
+      maxMessages: 100
     });
 
     // Check if Email is blocked
@@ -298,7 +288,8 @@ module.exports = function() {
     console.log(options.to + " isBlocked: " + isBlocked);
 
     if (isBlocked == false) {
-      var unsubscribelink = config.serverurl[config.environment] + "m13-unsubscribeUsers?" + link;
+      var unsubscribelink =
+        config.serverurl[config.environment] + "m13-unsubscribeUsers?" + link;
       let htmlTemplate = this.htmlTemplate(
         options,
         unsubscribelink,
@@ -313,19 +304,14 @@ module.exports = function() {
         html: htmlTemplate
       };
 
-      // Only send emails on live environment
-      if (config.environment === 1) {
-        // send mail with defined transport object
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            return console.log("Error sending mails 3: ", error);
-          } else {
-            return console.log("Message sent: %s", info.messageId);
-          }
-        });
-      } else {
-        console.log("Test environment...not sending any emails 333");
-      }
+      // send mail with defined transport object
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log("Error sending mails 3: ", error);
+        } else {
+          return console.log("Message sent: %s", info.messageId);
+        }
+      });
     } //End if Email is not Blocked
   };
 
@@ -480,23 +466,31 @@ module.exports = function() {
     // OneConnect => -LDVbbRyIMhukVtTVQ0n
     // BLSA => -LT2GkDrMhj3Tsx7KCme
 
-    // Live environment
-    if (config.environment === 1) {
-      //
-      if (companyID == "-LDVbbRyIMhukVtTVQ0n")
-        return "https://oneconnect.thinklead.co.za/";
-      else if (
-        companyID == "-LOs4iZh3Y9LSiNtpWlH" ||
-        companyID == "-LBPcsCl4Dp7BsYB8fjE"
-      )
-        return "https://edcon.thinklead.co.za/";
-      else if (companyID == "-LT2GkDrMhj3Tsx7KCme")
-        return "https://blsa.thinklead.co.za/";
-      else return "https://thinklead.app/";
-    } else {
-      //return test url
-      return config.url[0];
-    }
+    /**
+     *  Old Implementation
+     */
+    if (companyID == "-LDVbbRyIMhukVtTVQ0n")
+      return "https://oneconnect.thinklead.co.za/";
+    else if (
+      companyID == "-LOs4iZh3Y9LSiNtpWlH" ||
+      companyID == "-LBPcsCl4Dp7BsYB8fjE"
+    )
+      return "https://edcon.thinklead.co.za/";
+    else if (companyID == "-LT2GkDrMhj3Tsx7KCme")
+      return "https://blsa.thinklead.co.za/";
+    else return "https://thinklead.app/";
+
+    // Test Server
+    // return "https://glp-test.firebaseapp.com/"
+
+    /**
+     *  Refactored Implementation
+     */
+
+    //  if (companies[companyID])
+    //         return companies[companyID].url
+    //  else
+    //     return companies['-KgsUcgfo7z1U9MXgd9i'].url  //  as default return "https://thinklead.app/"
   };
 
   this.bouncedEmails = function(email) {
@@ -666,8 +660,8 @@ module.exports = function() {
         // do not fail on invalid certs
         rejectUnauthorized: false
       },
-      maxConnections: 150,
-      maxMessages: 5
+      maxConnections: 20,
+      maxMessages: 100
     });
 
     // transporter.close();
@@ -693,26 +687,21 @@ module.exports = function() {
         html: htmlTemplate
       };
 
-      // Only send emails on live environment
-      if (config.environment === 1) {
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.log("Error sending mails: ", error);
-            failure_email.push(task.email);
-            return callback();
-          } else {
-            console.log("Message sent: %s", info.messageId);
-            success_email.push(task.email);
-            return callback();
-          }
-        });
-      } else {
-        console.log("Test environment...not sending any emails 444");
-      }
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log("Error sending mails: ", error);
+          failure_email.push(task.email);
+          return callback();
+        } else {
+          console.log("Message sent: %s", info.messageId);
+          success_email.push(task.email);
+          return callback();
+        }
+      });
     }
 
     // create a queue object with concurrency 10
-    var q = async.queue(callBatchMailer, 5);
+    var q = async.queue(callBatchMailer, 10);
 
     // assign a callback
     q.drain = function() {

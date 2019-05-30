@@ -1,22 +1,19 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-// admin.initializeApp();
 
-// Test Server
-// var serviceAccount = require("./service/glp-test-firebase-adminsdk-58xlx-84586619f2.json");
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   databaseURL: "https://glp-test.firebaseio.com"
-// });
+// get configurations
+const config = require("./modules/config.js");
 
 // Live Server
-var serviceAccount = require("./service/leadershipplatform-158316-firebase-adminsdk-goitz-f99dd5b92d.json");
+var serviceAccount = require(`./service/${
+  config.serviceaccount[config.environment]
+}`);
+
+// Initialize App
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://leadershipplatform-158316.firebaseio.com"
+  databaseURL: config.databaseurl[config.environment]
 });
-
-const config = require("./modules/config.js");
 
 const commentsIn = require("./modules/comments-in");
 var updateUserURL = require("./modules/update-userurl");
@@ -62,6 +59,9 @@ var publishContent = require("./modules/publish-content");
 var sendUserReminders = require("./modules/pldp-reminders");
 
 var onImageUploaded = require("./modules/image-uploaded");
+
+var createPosts = require("./modules/create-posts");
+var removePosts = require("./modules/remove-posts");
 
 // ----------------- API MODULE -------------------- //
 var app = require("./api/api-app");
@@ -109,6 +109,8 @@ exports.m38 = pldpTasksDeleted;
 exports.m39 = publishContent;
 exports.m40 = sendUserReminders;
 exports.m41 = onImageUploaded;
+exports.m42 = createPosts;
+exports.m43 = removePosts;
 
 //
 exports.api = functions.https.onRequest(app);

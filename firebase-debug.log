@@ -1,0 +1,36 @@
+[debug] [2019-04-22T06:49:30.732Z] ----------------------------------------------------------------------
+[debug] [2019-04-22T06:49:30.735Z] Command:       /usr/local/Cellar/node/11.6.0/bin/node /usr/local/bin/firebase serve --only functions
+[debug] [2019-04-22T06:49:30.736Z] CLI Version:   6.7.0
+[debug] [2019-04-22T06:49:30.736Z] Platform:      darwin
+[debug] [2019-04-22T06:49:30.736Z] Node Version:  v11.6.0
+[debug] [2019-04-22T06:49:30.737Z] Time:          Mon Apr 22 2019 08:49:30 GMT+0200 (South Africa Standard Time)
+[debug] [2019-04-22T06:49:30.737Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-04-22T06:49:30.757Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-04-22T06:49:30.758Z] > authorizing via signed-in user
+[debug] [2019-04-22T06:49:30.758Z] [iam] checking project leadershipplatform-158316 for permissions ["firebase.projects.get"]
+[debug] [2019-04-22T06:49:30.760Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/leadershipplatform-158316:testIamPermissions  
+
+[debug] [2019-04-22T06:49:33.121Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-22T06:49:33.124Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/leadershipplatform-158316  
+ 
+[debug] [2019-04-22T06:49:35.037Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/devcole/projects/leadership-cloud-functions'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2019-04-22T06:49:35.737Z] Fetching environment
+[debug] [2019-04-22T06:49:35.740Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/438289288307:getServerAppConfig  
+ 
+[debug] [2019-04-22T06:49:36.637Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-22T06:49:36.638Z] Starting @google-cloud/functions-emulator
+[debug] [2019-04-22T06:49:38.748Z] Parsing function triggers
+[info] ✔  functions: m13.unsubscribeUsers: http://localhost:5000/leadershipplatform-158316/us-central1/m13-unsubscribeUsers
+[info] ✔  functions: m08.updateAnalytics: http://localhost:5000/leadershipplatform-158316/us-central1/m08-updateAnalytics
+[info] ✔  functions: m20.removeUser: http://localhost:5000/leadershipplatform-158316/us-central1/m20-removeUser
+[info] ✔  functions: m06.updateFollowers: http://localhost:5000/leadershipplatform-158316/us-central1/m06-updateFollowers
+[info] ✔  functions: m07.testMails: http://localhost:5000/leadershipplatform-158316/us-central1/m07-testMails
+[info] ✔  functions: m21.unshortenURL: http://localhost:5000/leadershipplatform-158316/us-central1/m21-unshortenURL
+[info] ✔  functions: m39.publishContent: http://localhost:5000/leadershipplatform-158316/us-central1/m39-publishContent
+[info] ✔  functions: api: http://localhost:5000/leadershipplatform-158316/us-central1/api
+[info] ✔  functions: m40.sendUserReminders: http://localhost:5000/leadershipplatform-158316/us-central1/m40-sendUserReminders

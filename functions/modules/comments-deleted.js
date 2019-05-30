@@ -11,7 +11,7 @@ exports.deletedThoughts = functions.database.ref('/comments/{commentID}').onDele
     let countCompany = admin.database().ref('company-analytics').child(companyID).child('counts').child('comments');
 
     let companyCount = countCompany.transaction(function(current) {
-        if(current == 0){
+        if((current == 0) || (current == undefined)){
             return current
         }else{
             return (current || 0) - 1;
@@ -21,7 +21,7 @@ exports.deletedThoughts = functions.database.ref('/comments/{commentID}').onDele
     let countUser = admin.database().ref('users-analytics').child(companyID).child(journalUserID).child('counts').child('comments');
 
     let userCount = countUser.transaction(function(current) {
-        if(current == 0){
+        if((current == 0) || (current == undefined)){
             return current
         }else{
             return (current || 0) - 1;

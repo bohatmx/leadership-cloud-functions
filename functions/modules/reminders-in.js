@@ -19,12 +19,6 @@ exports.newReminderIn = functions.database.ref('/pldpNotifications/{notification
       // if not defined set default url
       if(photoURL == undefined || photoURL == "undefined") photoURL = "https://firebasestorage.googleapis.com/v0/b/leadershipplatform-158316.appspot.com/o/mailassets%2Fdefault-user.png?alt=media&token=ea955943-9b02-4cd9-95c0-cd1436569498";
 
-      console.log("userInfo: ",userInfo[journalUserID])
-      console.log("firstName: ",firstName)
-      console.log("photoURL: ",photoURL)
-      console.log("notificationID: ",notificationID)
-      console.log("-------------------------")
-
       admin.database().ref('pldpNotifications/'+notificationID+"/photoURL").set(photoURL);
       
   }).catch(err => {

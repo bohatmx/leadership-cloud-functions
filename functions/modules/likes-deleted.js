@@ -11,9 +11,9 @@ exports.deletedThoughts = functions.database.ref('/user-likes/{userPost}').onDel
     let countCompany = admin.database().ref('company-analytics').child(companyID).child('counts').child('likes');
 
     let companyCount = countCompany.transaction(function(current) {
-        if(current == 0){
+        if ((current == 0) || (current == undefined)) {
             return current
-        }else{
+        } else {
             return (current || 0) - 1;
         }
     });
@@ -21,9 +21,9 @@ exports.deletedThoughts = functions.database.ref('/user-likes/{userPost}').onDel
     let countUser = admin.database().ref('users-analytics').child(companyID).child(journalUserID).child('counts').child('likes');
 
     let userCount = countUser.transaction(function(current) {
-        if(current == 0){
+        if ((current == 0) || (current == undefined)) {
             return current
-        }else{
+        } else {
             return (current || 0) - 1;
         }
     });

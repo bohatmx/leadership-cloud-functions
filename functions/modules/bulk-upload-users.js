@@ -18,77 +18,129 @@
 // email report
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-var userID = "";
-var userObj = {};
-
 var log = [];
 
-init = function() {
+exports.bulkUploadUsers = functions.database
+  .ref("/bulkUploadUsers/{fileData}")
+  .onCreate((snap, context) => {
+    init(snap.val());
+    return snap.ref.remove();
+  });
+
+//-------
+initUserData = function(params, uid) {
+  return {
+    companyID: params.companyID,
+    companyName: params.companyName,
+    dateRegistered: params.dateRegistered,
+    email: params.email,
+    firstName: params.firstName,
+    lastName: params.lastName,
+    password: params.password,
+    stringDateRegistered: params.stringDateRegistered,
+    userDescription: params.userDescription,
+    uid: uid,
+    userID: params.userID,
+    userType: params.userType,
+    inviteSent: true,
+    companyID_userType: params.companyID + "_" + params.userType
+  };
+}
+
+//-------
+init = function(file) {
   log.push("Log of users created.");
+  parseFile(file);
 }
 
 //-------
-emailReport = function() {
-  updates["log-emailuserscreated/" + uid] = log.join("<br/>").toString();
+parseFile = function(file) {
+  for (let user in file) {
+    createFirebaseUserKey();
+    createFirebaseAuthUser(user);
+  }
 }
 
 //-------
-createUser = function() {
-  //create firebase auth user
-  createFirebaseAuthUser();
-
-  //create firebase users
-  insertFirebaseUserTable();
-
-  //create firebase user
-  insertFirebaseUsersTable();
-
-  //create user to follow global leader
-  followFirebaseGlobalContributor();
-}
-
-createFirebaseAuthUser = function() {
+createFirebaseUserKey = function() {
   userID = admin
     .database()
     .ref()
     .child("users")
     .push().key;
+}
 
+//-------
+createFirebaseAuthUser = function(params) {
   admin
     .auth()
     .createUser({
-      email: email,
+      email: params.email,
       emailVerified: false,
-      password: password,
-      displayName: displayName,
+      password: params.password,
+      displayName: params.displayName,
       disabled: false
-    }).then(function(user) {
-      user.uid;
-    })
+    }).then(function(result) {
+      let user = initUserData(result, user.uid);
+      createUser(user);
+      buildReport("Success user created", userObj.firstName + " " + userObj.lastName);
+    }, function(error) {
+      buildReport("Error creating user", error.code + " - " + error.message);
+    });
 }
 
+//-------
+createUser = function(userObj) {
+  var updates = {};
 
-initUserData = function(userObj) {
-  userObj = {
-    companyID: userObj.companyID,
-    companyName: userObj.companyName,
-    dateRegistered: userObj.dateRegistered,
-    email: userObj.email,
-    firstName: userObj.firstName,
-    lastName: userObj.lastName,
-    password: userObj.password,
-    stringDateRegistered: userObj.stringDateRegistered,
-    userDescription: userObj.userDescription,
-    uid: null,
-    userID: userObj.userID,
-    userType: userObj.userType,
-    inviteSent: true,
-    companyID_userType: userObj.companyID + "_" + userObj.userType
-  };
+  //validate user email and cell value
+  validateUser(userObj);
+
+  //create firebase users
+  insertFirebaseUserTable(updates, userObj);
+
+  //create firebase user
+  insertFirebaseUsersTable(updates, userObj);
+
+  //create user to follow global leader
+  followFirebaseGlobalContributor(updates, userObj);
+
+  //culminate all updates and publish
+  updateFirebaseDatabase(updates)
+
+  //send welcom email
+  sendEmail(userObj);
+
+  //send email report to author of bulk upload
+  emailReport();
 }
 
+//-------
+followFirebaseGlobalContributor = function(updates, params) {
+  updates["followGC/" + params.uid] = params.data;
+}
+
+//-------
+insertFirebaseUsersTable = function(updates, params) {
+  updates["users/" + userID] = params.data;
+}
+
+//-------
+insertFirebaseUserTable = function(updates, params) {
+  updates["user/" + params.uid] = params;
+}
+
+//-------
+updateFirebaseDatabase = function(updates) {
+  admin
+    .database()
+    .ref()
+    .update(updates);
+}
+
+//-------
 customUserData = function(params) {
-  //
+  //For EDCON assign the following values
   switch (params) {
     case "-LOs4iZh3Y9LSiNtpWlH":
       userObj.ce_id = "WXiLeBhQwqT6YpVEyBuRI28nIG82";
@@ -98,8 +150,10 @@ customUserData = function(params) {
 }
 
 //-------
-parseFile = function() {
-
+validateUser = function(params) {
+  validateCell(params);
+  validateColumns(params);
+  validateEmail(params);
 }
 
 //-------
@@ -129,4 +183,18 @@ validateEmail = function(params) {
 //-------
 buildReport = function(message, value) {
   log.push("- " + message + ": " + value);
+}
+
+//-------
+sendEmail = function(params) {
+  if (config.environment === 1) {
+    updates["resend-welcomemail/" + params.uid] = params;
+  } else {
+    updates["resend-welcomemail/" + params.uid] = params;
+  }
+}
+
+//-------
+emailReport = function() {
+  updates["log-emailuserscreated/" + uid] = log.join("<br/>").toString();
 }

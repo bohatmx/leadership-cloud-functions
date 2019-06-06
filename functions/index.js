@@ -58,11 +58,10 @@ var pldpTasksCreated = require("./modules/pldptasks-created");
 var pldpTasksDeleted = require("./modules/pldptasks-deleted");
 var publishContent = require("./modules/publish-content");
 var sendUserReminders = require("./modules/pldp-reminders");
-
 var onImageUploaded = require("./modules/image-uploaded");
-
 var createPosts = require("./modules/create-posts");
 var removePosts = require("./modules/remove-posts");
+var userExists = require("./modules/user-exists");
 
 // ----------------- API MODULE -------------------- //
 var app = require("./api/api-app");
@@ -113,6 +112,7 @@ exports.m40 = sendUserReminders;
 exports.m41 = onImageUploaded;
 exports.m42 = createPosts;
 exports.m43 = removePosts;
+exports.m44 = userExists;
 
 //
 exports.api = functions.https.onRequest(app);

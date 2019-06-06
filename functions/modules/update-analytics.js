@@ -1341,33 +1341,27 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
           }
         });
       });
-  } else if (updateType == "updatePhotosColor") {
-    console.log("triggered 123 123 123");
+  } else if (updateType == "getFollowersList") {
+    var cnt = 0;
+    admin
+      .database()
+      .ref("/followers/-Kx8HDnAkFF5ErwaPBPg")
+      .once("value")
+      .then(function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          var childKey = childSnapshot.key;
+          var childData = childSnapshot.val();
 
-    (async () => {
-      const dominantColor = await getColorFromURL("./cat.jpg");
-      console.log("dominant color: ", dominantColor);
-    })();
-    // admin
-    //   .database()
-    //   .ref("/photos")
-    //   .once("value")
-    //   .then(function(snapshot) {
-    //     console.log("got snapshot");
-    //     snapshot.forEach(function(childSnapshot) {
-    //       var childKey = childSnapshot.key;
-    //       var childData = childSnapshot.val();
-    //       if (childData.dailyThoughtID) {
-    //         if (childData.url) {
-    //           ce.topColours(childData.url, true, function(colours) {
-    //             console.log(colours);
-    //           });
-    //         }
-    //         console.log("thought image: ", childData.dailyThoughtID);
-    //       } else if (childData.newsID) {
-    //         console.log("thought image: ", childData.newsID);
-    //       }
-    //     });
-    //   });
+          if (childKey == "-LFv_Q9vyq4b2weHE-ry") {
+            console.log("index: ", childKey, " cnt: ", cnt);
+            console.log("data: ", childData, " cnt: ", cnt);
+          }
+
+          // console.log("index: ",childKey," cnt: ",cnt)
+          // console.log("data: ",childData," cnt: ",cnt)
+
+          cnt++;
+        });
+      });
   }
 });

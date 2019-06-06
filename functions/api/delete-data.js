@@ -80,6 +80,14 @@ module.exports = function() {
       }
 
       updates[`${dbref}/${id}/${body.myPLDPID}`] = null;
+
+      if (body.notificationID != undefined) {
+        console.log("delete notification: ", body.notificationID);
+        admin
+          .database()
+          .ref("pldpNotifications/" + body.notificationID)
+          .remove();
+      }
     } else {
       if (name === "users") {
         updates[`${dbref}/${id}`] = null;

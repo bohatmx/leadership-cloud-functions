@@ -21,10 +21,11 @@ const admin = require("firebase-admin");
 var log = [];
 
 exports.bulkUploadUsers = functions.database
-  .ref("/bulkUploadUsers/{fileData}")
+  .ref("/bulkUploadUsers")
   .onCreate((snap, context) => {
-    init(snap.val());
-    return snap.ref.remove();
+    console.log('received data', snap.val());
+    // init(snap.val());
+    // return snap.ref.remove();
   });
 
 //-------

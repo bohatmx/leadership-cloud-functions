@@ -156,7 +156,7 @@ module.exports = function() {
         rejectUnauthorized: false
       },
       maxConnections: 150,
-      maxMessages: 5
+      maxMessages: 100
     });
 
     // Check if Email is blocked
@@ -225,7 +225,7 @@ module.exports = function() {
           rejectUnauthorized: false
         },
         maxConnections: 150,
-        maxMessages: 5
+        maxMessages: 100
       });
 
       function callBatchMailer(task, callback) {
@@ -290,7 +290,7 @@ module.exports = function() {
         rejectUnauthorized: false
       },
       maxConnections: 150,
-      maxMessages: 5
+      maxMessages: 100
     });
 
     // Check if Email is blocked
@@ -500,6 +500,30 @@ module.exports = function() {
     }
   };
 
+  this.getPldpUrl = function(companyID) {
+    // Signed up corporate
+    // New Edcon => -LOs4iZh3Y9LSiNtpWlH
+    // Old Edcon => -LBPcsCl4Dp7BsYB8fjE
+    // OneConnect => -LDVbbRyIMhukVtTVQ0n
+    // BLSA => -LT2GkDrMhj3Tsx7KCme
+
+    // Live environment
+    if (config.environment === 1) {
+      //
+      if (companyID == "-LDVbbRyIMhukVtTVQ0n") return "my-pldp";
+      else if (
+        companyID == "-LOs4iZh3Y9LSiNtpWlH" ||
+        companyID == "-LBPcsCl4Dp7BsYB8fjE"
+      )
+        return "my-pldp";
+      else if (companyID == "-LT2GkDrMhj3Tsx7KCme") return "my-pldp";
+      else return "pldp";
+    } else {
+      //return test url
+      return "pldp";
+    }
+  };
+
   this.bouncedEmails = function(email) {
     blockedEmail = {
       "bant@mail.com": true,
@@ -559,7 +583,8 @@ module.exports = function() {
       "bertie@aliberti.co.za": true,
       "<vuyokazi.bata@yahoo.co.uk>": true,
       "vuyokazi.bata@yahoo.co.uk": true,
-      "demo@wilfordscholes.com": true
+      "demo@wilfordscholes.com": true,
+      "test@oneconnect.co.za": true
     };
 
     return blockedEmail[email] ? true : false;
@@ -581,6 +606,7 @@ module.exports = function() {
 
         console.log("mail options: ", options);
         console.log("received followers to send email to");
+        var cnt = 0;
 
         // console.log(listofemails.length);
 
@@ -596,11 +622,11 @@ module.exports = function() {
           console.log("company url: ", companyURL);
           console.log("company id: ", companyID);
           console.log("Email: ", email);
+          console.log("childData: ", childData);
+          console.log("cnt: ", cnt);
 
           var userinfo = {};
           userinfo.companyURL = companyURL;
-
-          console.log("company url: ", userinfo.companyURL);
 
           if (email != undefined) {
             if (all == true) {
@@ -630,20 +656,21 @@ module.exports = function() {
               }
             }
           }
+          cnt++;
           // console.log("email : ",email);
         });
 
         // console.log("listofemails: ",listofemails);
 
-        if (listofemails && listofemails.length > 0) {
-          console.log("list of emails to notify: ", listofemails);
-          that.massMailer(options);
-        } else {
-          console.error(
-            "Length of listofemails is less than zero: ",
-            listofemails
-          );
-        }
+        // if (listofemails && listofemails.length > 0) {
+        //   console.log("list of emails to notify: ", listofemails);
+        //   that.massMailer(options);
+        // } else {
+        //   console.error(
+        //     "Length of listofemails is less than zero: ",
+        //     listofemails
+        //   );
+        // }
 
         return snapshot;
       });
@@ -668,7 +695,7 @@ module.exports = function() {
         rejectUnauthorized: false
       },
       maxConnections: 150,
-      maxMessages: 5
+      maxMessages: 100
     });
 
     // transporter.close();

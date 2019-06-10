@@ -28,12 +28,15 @@ exports.writeOperations = functions.database
     if (context.params.writeCategory === "disableUserElastic") {
       const writeOperationsObj = snap.val();
       var uid = writeOperationsObj.uid;
+      console.log("writeOperationsObj: ", writeOperationsObj);
 
-      if (writeOperationsObj.disabled != undefined) {
-        var disabled = writeOperationsObj.disabled;
-      } else {
-        var disabled = true;
+      var disabled = writeOperationsObj.disabled;
+
+      if (disabled == undefined) {
+        disabled = true;
       }
+
+      console.log("disabled: ", disabled);
 
       // Disable User Authentication
       if (uid) {

@@ -155,7 +155,7 @@ module.exports = function() {
         // do not fail on invalid certs
         rejectUnauthorized: false
       },
-      maxConnections: 150,
+      maxConnections: 10,
       maxMessages: 100
     });
 
@@ -224,7 +224,7 @@ module.exports = function() {
           // do not fail on invalid certs
           rejectUnauthorized: false
         },
-        maxConnections: 150,
+        maxConnections: 10,
         maxMessages: 100
       });
 
@@ -259,7 +259,7 @@ module.exports = function() {
       }
 
       // create a queue object with concurrency 10
-      var q = async.queue(callBatchMailer, 5);
+      var q = async.queue(callBatchMailer, 100);
 
       // assign a callback
       q.drain = function() {
@@ -289,7 +289,7 @@ module.exports = function() {
         // do not fail on invalid certs
         rejectUnauthorized: false
       },
-      maxConnections: 150,
+      maxConnections: 10,
       maxMessages: 100
     });
 
@@ -584,7 +584,9 @@ module.exports = function() {
       "<vuyokazi.bata@yahoo.co.uk>": true,
       "vuyokazi.bata@yahoo.co.uk": true,
       "demo@wilfordscholes.com": true,
-      "test@oneconnect.co.za": true
+      "test@oneconnect.co.za": true,
+      "nk@mail.com": true,
+      "peanut@mail.com": true
     };
 
     return blockedEmail[email] ? true : false;
@@ -662,15 +664,15 @@ module.exports = function() {
 
         // console.log("listofemails: ",listofemails);
 
-        // if (listofemails && listofemails.length > 0) {
-        //   console.log("list of emails to notify: ", listofemails);
-        //   that.massMailer(options);
-        // } else {
-        //   console.error(
-        //     "Length of listofemails is less than zero: ",
-        //     listofemails
-        //   );
-        // }
+        if (listofemails && listofemails.length > 0) {
+          console.log("list of emails to notify: ", listofemails);
+          that.massMailer(options);
+        } else {
+          console.error(
+            "Length of listofemails is less than zero: ",
+            listofemails
+          );
+        }
 
         return snapshot;
       });
@@ -694,7 +696,7 @@ module.exports = function() {
         // do not fail on invalid certs
         rejectUnauthorized: false
       },
-      maxConnections: 150,
+      maxConnections: 10,
       maxMessages: 100
     });
 
@@ -740,7 +742,7 @@ module.exports = function() {
     }
 
     // create a queue object with concurrency 10
-    var q = async.queue(callBatchMailer, 5);
+    var q = async.queue(callBatchMailer, 100);
 
     // assign a callback
     q.drain = function() {

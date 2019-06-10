@@ -29,12 +29,18 @@ exports.writeOperations = functions.database
       const writeOperationsObj = snap.val();
       var uid = writeOperationsObj.uid;
 
+      if (writeOperationsObj.disabled != undefined) {
+        var disabled = writeOperationsObj.disabled;
+      } else {
+        var disabled = true;
+      }
+
       // Disable User Authentication
       if (uid) {
         admin
           .auth()
           .updateUser(uid, {
-            disabled: true
+            disabled: disabled
           })
           .then(function(userRecord) {
             // Update Elastic search record

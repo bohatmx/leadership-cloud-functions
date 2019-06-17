@@ -725,18 +725,20 @@ module.exports = function() {
 
       // Only send emails on live environment
       if (config.environment === 1) {
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.log("Error sending mails: ", error);
-            failure_email.push(task.email);
-            return callback();
-          } else {
-            console.log("Message sent: %s", info.messageId);
-            success_email.push(task.email);
-            return callback();
-          }
-        });
+        self.newMails(mailOptions);
+        // transporter.sendMail(mailOptions, (error, info) => {
+        //   if (error) {
+        //     console.log("Error sending mails: ", error);
+        //     failure_email.push(task.email);
+        //     return callback();
+        //   } else {
+        //     console.log("Message sent: %s", info.messageId);
+        //     success_email.push(task.email);
+        //     return callback();
+        //   }
+        // });
       } else {
+        self.newMails(mailOptions);
         console.log("Test environment...not sending any emails 444");
       }
     }
@@ -753,6 +755,116 @@ module.exports = function() {
 
     // add some items to the queue (batch-wise)
     q.push(listofemails, function(err) {
+      console.log("finished processing item");
+    });
+  };
+
+  this.newMails = function(mail_options) {
+    var new_mail_id = admin
+      .database()
+      .ref()
+      .child("newMails")
+      .push().key;
+
+    mail_options.new_mail_id = new_mail_id;
+
+    var data = {
+      new_mail_id: new_mail_id,
+      mail_date: Date.now(),
+      mail_status: "unsent",
+      mail_options: mail_options
+    };
+
+    // Write the new rating data
+    var updates = {};
+    updates["/newMails/" + new_mail_id] = data;
+    admin
+      .database()
+      .ref()
+      .update(updates);
+  };
+
+  this.updateNewMails = function(new_mail_id, mail_status) {
+    // Write the new rating data
+    var updates = {};
+    updates["/newMails/" + new_mail_id + "/mail_status"] = mail_status;
+    admin
+      .database()
+      .ref()
+      .update(updates);
+  };
+
+  this.sendNewMails = function(options) {
+    var listofnewemails = [];
+    var successnew_email = [];
+    var failurenew_email = [];
+    var self = this;
+
+    console.log("new mail options: ", options);
+
+    listofnewemails.push(options);
+
+    var transporter = nodemailer.createTransport({
+      pool: true,
+      host: "comms.thinklead.co.za",
+      port: 465,
+      secure: true,
+      auth: {
+        user: "thinklead@comms.thinklead.co.za",
+        pass: "wR3(7FPMQvUwa-u&"
+      },
+      tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false
+      },
+      maxConnections: 10,
+      maxMessages: 100
+    });
+
+    function callBatchMailer(task, callback) {
+      console.log(`processing ${task.to}`);
+
+      let mailOptions = {
+        from: task.from,
+        to: "" + task.to,
+        subject: "" + task.subject,
+        text: "" + task.text,
+        html: "" + task.html
+      };
+
+      // Only send emails on live environment
+      if (config.environment === 1) {
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log("Error sending new mail: ", error);
+            failurenew_email.push(task.to);
+            self.updateNewMails(task.new_mail_id, "failed");
+            return callback();
+          } else {
+            console.log("New message sent: %s", info.messageId);
+            self.updateNewMails(task.new_mail_id, "sent");
+            successnew_email.push(task.to);
+            return callback();
+          }
+        });
+      } else {
+        self.updateNewMails(task.new_mail_id, "test env sent");
+        console.log("Test environment...not sending any emails 222");
+      }
+    }
+
+    // create a queue object with concurrency 10
+    var q = async.queue(callBatchMailer, 100);
+
+    // assign a callback
+    q.drain = function() {
+      console.log("success new email: ", successnew_email);
+      console.log("failure new email: ", failurenew_email);
+      console.log("New Email have been processed");
+    };
+
+    // add some items to the queue (batch-wise)
+    q.push(listofnewemails, function(err) {
       console.log("finished processing item");
     });
   };

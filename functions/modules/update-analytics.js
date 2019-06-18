@@ -1345,14 +1345,14 @@ exports.updateAnalytics = functions.https.onRequest((req, res) => {
     var cnt = 0;
     admin
       .database()
-      .ref("/followers/-Kx8HDnAkFF5ErwaPBPg")
+      .ref("/followers/-L9oRc-AzVjpEIxjFGkB")
       .once("value")
       .then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
           var childKey = childSnapshot.key;
           var childData = childSnapshot.val();
 
-          if (childKey == "-LFv_Q9vyq4b2weHE-ry") {
+          if (childKey == "-Kx8HDnAkFF5ErwaPBPg") {
             console.log("index: ", childKey, " cnt: ", cnt);
             console.log("data: ", childData, " cnt: ", cnt);
           }

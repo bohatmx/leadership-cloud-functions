@@ -62,6 +62,7 @@ var createPosts = require("./modules/create-posts");
 var removePosts = require("./modules/remove-posts");
 var userExists = require("./modules/user-exists");
 var sendUnsentMails = require("./modules/send-unsentmails");
+var cleanFollowers = require("./modules/clean-followers");
 
 // ----------------- API MODULE -------------------- //
 var app = require("./api/api-app");
@@ -113,6 +114,7 @@ exports.m42 = createPosts;
 exports.m43 = removePosts;
 exports.m44 = userExists;
 exports.m45 = sendUnsentMails;
+exports.m46 = cleanFollowers;
 
 //
 exports.api = functions.https.onRequest(app);

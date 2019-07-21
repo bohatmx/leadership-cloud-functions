@@ -51,7 +51,7 @@ exports.newUsers = functions.database
         .auth()
         .createUser({
           email: email,
-          emailVerified: false,
+          emailVerified: true,
           password: password,
           displayName: displayName,
           disabled: false

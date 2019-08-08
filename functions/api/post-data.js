@@ -17,7 +17,7 @@ module.exports = function() {
       return;
     }
 
-    // check if all fields are provided
+    // check if  all fields are provided
     if (
       !body.companyID.trim() ||
       !body.companyName.trim() ||
@@ -37,7 +37,7 @@ module.exports = function() {
       return;
     }
 
-    if (body.dailyThoughtType < 0 || body.dailyThoughtType > 3) {
+    if (body.dailyThoughtType < 0 || body.dailyThoughtType > 4) {
       response.status(400).json({
         code: "400",
         status: "Failure",
@@ -195,12 +195,29 @@ module.exports = function() {
     body.stringDateScheduled = stringDateScheduled;
     body.dateUpdated = dateUpdated;
 
-    // Generate postID
-    dailyThoughtID = admin
-      .database()
-      .ref(dbref)
-      .push().key;
-    body.dailyThoughtID = dailyThoughtID;
+    if (body.dailyThoughtType === 4) {
+      dbref = config.endpoints["groupposts"] + "/" + body.groupid;
+
+      // Generate postID
+      dailyThoughtID = admin
+        .database()
+        .ref(dbref)
+        .push().key;
+
+      body.dailyThoughtID = dailyThoughtID;
+      body.postID = dailyThoughtID;
+      body.postGroupType = name;
+      body.postGroupType_status = name + "_" + status;
+      body.GroupType_status = dailyThoughtID + "_" + name + "_" + status;
+    } else {
+      // Generate postID
+      dailyThoughtID = admin
+        .database()
+        .ref(dbref)
+        .push().key;
+
+      body.dailyThoughtID = dailyThoughtID;
+    }
 
     // Write the new thought's data
     var updates = {};
@@ -231,6 +248,10 @@ module.exports = function() {
 
     // set body data
     updates[`/${dbref}/` + dailyThoughtID] = body;
+    if (body.dailyThoughtType === 4) {
+      var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+      updates[`/${dbref_2}/` + dailyThoughtID] = body;
+    }
     admin
       .database()
       .ref()
@@ -310,7 +331,7 @@ module.exports = function() {
       body.articleType < 0 ||
       body.articleType > 2 ||
       body.dailyThoughtType < 0 ||
-      body.dailyThoughtType > 2
+      body.dailyThoughtType > 4
     ) {
       response.status(400).json({
         code: "400",
@@ -384,12 +405,28 @@ module.exports = function() {
     body.dateUpdated = dateUpdated;
     body.articleDate = dateUpdated;
 
-    // Generate postID
-    newsID = admin
-      .database()
-      .ref(dbref)
-      .push().key;
-    body.newsID = newsID;
+    if (body.dailyThoughtType === 4) {
+      dbref = config.endpoints["groupposts"] + "/" + body.groupid;
+
+      // Generate postID
+      newsID = admin
+        .database()
+        .ref(dbref)
+        .push().key;
+      body.newsID = newsID;
+
+      body.postID = newsID;
+      body.postGroupType = name;
+      body.postGroupType_status = name + "_" + status;
+      body.GroupType_status = newsID + "_" + name + "_" + status;
+    } else {
+      // Generate postID
+      newsID = admin
+        .database()
+        .ref(dbref)
+        .push().key;
+      body.newsID = newsID;
+    }
 
     // Write the new thought's data
     var updates = {};
@@ -420,6 +457,10 @@ module.exports = function() {
 
     // set body data
     updates[`/${dbref}/` + newsID] = body;
+    if (body.dailyThoughtType === 4) {
+      var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+      updates[`/${dbref_2}/` + newsID] = body;
+    }
 
     admin
       .database()
@@ -578,16 +619,36 @@ module.exports = function() {
     body.stringDateScheduled = stringDateScheduled;
     body.podcastSize = podcastSize;
 
-    // Generate postID
-    podcastID = admin
-      .database()
-      .ref(dbref)
-      .push().key;
-    body.podcastID = podcastID;
+    if (body.dailyThoughtType === 4) {
+      dbref = config.endpoints["groupposts"] + "/" + body.groupid;
+
+      // Generate postID
+      podcastID = admin
+        .database()
+        .ref(dbref)
+        .push().key;
+      body.podcastID = podcastID;
+
+      body.postID = podcastID;
+      body.postGroupType = name;
+      body.postGroupType_status = name + "_" + status;
+      body.GroupType_status = podcastID + "_" + name + "_" + status;
+    } else {
+      // Generate postID
+      podcastID = admin
+        .database()
+        .ref(dbref)
+        .push().key;
+      body.podcastID = podcastID;
+    }
 
     // Write the new podcast's data
     var updates = {};
     updates[`/${dbref}/` + podcastID] = body;
+    if (body.dailyThoughtType === 4) {
+      var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+      updates[`/${dbref_2}/` + podcastID] = body;
+    }
     admin
       .database()
       .ref()
@@ -745,16 +806,36 @@ module.exports = function() {
     body.videoSize = videoSize;
     body.lengthInSeconds = lengthInSeconds;
 
-    // Generate postID
-    videoID = admin
-      .database()
-      .ref(dbref)
-      .push().key;
-    body.videoID = videoID;
+    if (body.dailyThoughtType === 4) {
+      dbref = config.endpoints["groupposts"] + "/" + body.groupid;
+
+      // Generate postID
+      videoID = admin
+        .database()
+        .ref(dbref)
+        .push().key;
+      body.videoID = videoID;
+
+      body.postID = videoID;
+      body.postGroupType = name;
+      body.postGroupType_status = name + "_" + status;
+      body.GroupType_status = videoID + "_" + name + "_" + status;
+    } else {
+      // Generate postID
+      videoID = admin
+        .database()
+        .ref(dbref)
+        .push().key;
+      body.videoID = videoID;
+    }
 
     // Write the new podcast's data
     var updates = {};
     updates[`/${dbref}/` + videoID] = body;
+    if (body.dailyThoughtType === 4) {
+      var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+      updates[`/${dbref_2}/` + videoID] = body;
+    }
     admin
       .database()
       .ref()
@@ -1696,12 +1777,12 @@ module.exports = function() {
         .ref()
         .child(
           "/" +
-            dbref +
-            "/" +
-            body.postID.trim() +
-            "/comments/" +
-            body.parentID.trim() +
-            "/subComments"
+          dbref +
+          "/" +
+          body.postID.trim() +
+          "/comments/" +
+          body.parentID.trim() +
+          "/subComments"
         )
         .push().key;
 
@@ -1740,13 +1821,13 @@ module.exports = function() {
       // post comments
       updates[
         "/" +
-          dbref +
-          "/" +
-          body.postID.trim() +
-          "/comments/" +
-          body.parentID +
-          "/subComments/" +
-          subcommentID
+        dbref +
+        "/" +
+        body.postID.trim() +
+        "/comments/" +
+        body.parentID +
+        "/subComments/" +
+        subcommentID
       ] = data;
       updates[
         "/comments/" + body.parentID + "/subComments" + subcommentID
@@ -1795,13 +1876,13 @@ module.exports = function() {
       // post comments
       updates[
         "/" +
-          dbref +
-          "/" +
-          body.postID.trim() +
-          "/comments/" +
-          body.parentID +
-          "/subComments/" +
-          body.commentID
+        dbref +
+        "/" +
+        body.postID.trim() +
+        "/comments/" +
+        body.parentID +
+        "/subComments/" +
+        body.commentID
       ] = null;
       updates[
         "/comments/" + body.parentID + "/subComments/" + body.commentID

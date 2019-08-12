@@ -247,10 +247,19 @@ module.exports = function() {
     }
 
     // set body data
-    updates[`/${dbref}/` + dailyThoughtID] = body;
     if (body.dailyThoughtType === 4) {
       var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+
+      if(body.status === "unpublished"){
+        dbref = "group-posts-unpublished";
+        updates[`/${dbref}/` + body.postID] = body;
+      }else{
+        updates[`/${dbref}/` + dailyThoughtID] = body;
+      }
+
       updates[`/${dbref_2}/` + dailyThoughtID] = body;
+    }else{
+      updates[`/${dbref}/` + dailyThoughtID] = body;
     }
     admin
       .database()
@@ -456,10 +465,19 @@ module.exports = function() {
     }
 
     // set body data
-    updates[`/${dbref}/` + newsID] = body;
     if (body.dailyThoughtType === 4) {
       var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+
+      if(body.status === "unpublished"){
+        dbref = "group-posts-unpublished";
+        updates[`/${dbref}/` + body.postID] = body;
+      }else{
+        updates[`/${dbref}/` + newsID] = body;
+      }
+
       updates[`/${dbref_2}/` + newsID] = body;
+    }else{
+      updates[`/${dbref}/` + newsID] = body;
     }
 
     admin
@@ -644,11 +662,21 @@ module.exports = function() {
 
     // Write the new podcast's data
     var updates = {};
-    updates[`/${dbref}/` + podcastID] = body;
     if (body.dailyThoughtType === 4) {
       var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+
+      if(body.status === "unpublished"){
+        dbref = "group-posts-unpublished";
+        updates[`/${dbref}/` + body.postID] = body;
+      }else{
+        updates[`/${dbref}/` + podcastID] = body;
+      }
+
       updates[`/${dbref_2}/` + podcastID] = body;
+    }else{
+      updates[`/${dbref}/` + podcastID] = body;
     }
+
     admin
       .database()
       .ref()
@@ -831,11 +859,21 @@ module.exports = function() {
 
     // Write the new podcast's data
     var updates = {};
-    updates[`/${dbref}/` + videoID] = body;
     if (body.dailyThoughtType === 4) {
       var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+
+      if(body.status === "unpublished"){
+        dbref = "group-posts-unpublished";
+        updates[`/${dbref}/` + body.postID] = body;
+      }else{
+        updates[`/${dbref}/` + videoID] = body;
+      }
+
       updates[`/${dbref_2}/` + videoID] = body;
+    }else{
+      updates[`/${dbref}/` + videoID] = body;
     }
+    
     admin
       .database()
       .ref()

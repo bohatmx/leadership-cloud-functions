@@ -592,6 +592,80 @@ module.exports = function() {
     return blockedEmail[email] ? true : false;
   };
 
+  this.sendGroupMails = function(options) {
+    var all = options.all;
+    var postcompanyID = options.companyID;
+    var companyURL = "https://thinklead.app/";
+
+    var getfollowers = admin
+      .database()
+      .ref("/company_groups_users/"+options.companyID+"/" + options.groupid)
+      .once("value")
+      .then(function(snapshot) {
+        listofemails = [];
+        success_email = [];
+        failure_email = [];
+
+        console.log("mail options: ", options);
+        console.log("received followers to send email to");
+        var cnt = 0;
+
+        // console.log(listofemails.length);
+
+        snapshot.forEach(function(childSnapshot) {
+          var childKey = childSnapshot.key;
+          var childData = childSnapshot.val();
+
+          var email = childData.email;
+          var companyName = childData.companyName;
+          var companyID = childData.companyID;
+
+          companyURL = that.getCompanyURL(companyID);
+          console.log("company url: ", companyURL);
+          console.log("company id: ", companyID);
+          console.log("Email: ", email);
+          console.log("childData: ", childData);
+          console.log("cnt: ", cnt);
+
+          var userinfo = {};
+          userinfo.companyURL = companyURL;
+
+          if (email != undefined) {
+            if (options.userID != childData.userID) {
+              console.log("sending to all");
+              console.log("Subscribed, push to emails ", email);
+              userinfo.email = email;
+
+              var isBlocked = that.bouncedEmails(email);
+              console.log(email + " isBlocked: " + isBlocked);
+
+              if (isBlocked == false) {
+                listofemails.push(userinfo);
+              }
+            } 
+          }
+          cnt++;
+          // console.log("email : ",email);
+        });
+
+        // console.log("listofemails: ",listofemails);
+
+        if (listofemails && listofemails.length > 0) {
+          console.log("list of emails to notify: ", listofemails);
+          that.massMailer(options);
+        } else {
+          console.error(
+            "Length of listofemails is less than zero: ",
+            listofemails
+          );
+        }
+
+        return snapshot;
+      });
+
+    return getfollowers;
+  };
+  
   this.sendBatchMails = function(options) {
     var all = options.all;
     var postcompanyID = options.companyID;

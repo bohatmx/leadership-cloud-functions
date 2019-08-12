@@ -13,7 +13,12 @@ exports.mailNotifications = functions.database.ref('/mailNotifications/{mailNoti
     console.log(all)
     console.log(options)
 
-    var mailres = userToken.sendBatchMails(options);
+    if(options.groupid != undefined){
+        var mailres = userToken.sendGroupMails(options);
+    }else{
+        var mailres = userToken.sendBatchMails(options);
+    }
+    
 
     return snap.ref.remove();
 });

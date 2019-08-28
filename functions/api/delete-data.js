@@ -33,7 +33,9 @@ module.exports = function() {
     if (name === "users") {
       dbref = name;
       var dbref2 = "user";
-    } else dbref = config.endpoints[name];
+    } else {
+      dbref = config.endpoints[name];
+    }
 
     if (dbref == undefined) {
       response.status(400).json({
@@ -93,7 +95,21 @@ module.exports = function() {
         updates[`${dbref}/${id}`] = null;
         updates[`${dbref2}/${id}`] = null;
       } else {
-        updates[`${dbref}/${id}`] = null;
+        if (body.dailyThoughtType === 4) {
+          var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+          dbref = config.endpoints["groupposts"] + "/" + body.groupid;
+
+          if(body.status === "unpublished"){
+            dbref = "group-posts-unpublished";
+            updates[`/${dbref}/${id}`] = null;
+          }else{
+            updates[`/${dbref}/${id}`] = null;
+          }
+
+          updates[`/${dbref_2}/${id}`] = null;
+        }else{
+          updates[`${dbref}/${id}`] = null;
+        }
       }
     }
 

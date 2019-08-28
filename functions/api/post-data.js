@@ -636,6 +636,7 @@ module.exports = function() {
     body.stringDateRegistered = stringDateRegistered;
     body.stringDateScheduled = stringDateScheduled;
     body.podcastSize = podcastSize;
+    body.journalUserID = body.userID;
 
     if (body.dailyThoughtType === 4) {
       dbref = config.endpoints["groupposts"] + "/" + body.groupid;
@@ -833,6 +834,7 @@ module.exports = function() {
     body.stringDateScheduled = stringDateScheduled;
     body.videoSize = videoSize;
     body.lengthInSeconds = lengthInSeconds;
+    body.journalUserID = body.userID;
 
     if (body.dailyThoughtType === 4) {
       dbref = config.endpoints["groupposts"] + "/" + body.groupid;

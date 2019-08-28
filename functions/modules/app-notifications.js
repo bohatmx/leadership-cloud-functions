@@ -66,7 +66,7 @@ exports.appNotifications = functions.database.ref('/appNotifications/{appNotific
 					console.log("notify to all");
 					console.log("Subscribed, push to app notification ", childKey);
 
-					if(options.userID != notificationData.journalUserID){
+					if(notificationData.journalUserID.trim()+'' != childData.userID.trim()+''){
 						var newNotificationID = admin.database().ref().child('group-notifications/'+childKey).push().key;
 						notificationData.newNotificationID = newNotificationID;
 						// Write the new notification's data

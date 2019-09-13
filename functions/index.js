@@ -40,6 +40,7 @@ var unshortenURL = require("./modules/unshorten-url");
 var writeOperations = require("./modules/write-operations");
 var usersDeleted = require("./modules/user-deleted");
 var resendWelcome = require("./modules/resend-welcomemail");
+var groupNewNotifications = require("./modules/group-new-notifications");
 var resetPassword = require("./modules/reset-password");
 
 // Create modules for all functions within indexjs
@@ -119,6 +120,7 @@ exports.m44 = userExists;
 exports.m45 = sendUnsentMails;
 exports.m46 = cleanFollowers;
 exports.m47 = newGroupPosts;
+exports.m48 = groupNewNotifications;
 
 //
 exports.api = functions.https.onRequest(app);

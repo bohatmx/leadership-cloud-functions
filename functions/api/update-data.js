@@ -312,13 +312,36 @@ module.exports = function() {
 
     var updates = {};
 
+    if (body.dailyThoughtType === 4) {
+      dbref = config.endpoints["groupposts"] + "/" + body.groupid;
+
+      body.postGroupType = name;
+      body.postGroupType_status = name + "_" + status;
+      body.GroupType_status = body.postID + "_" + name + "_" + status;
+    } 
+
     for (var key in body) {
       if (body.hasOwnProperty(key)) {
         if (name === "users") {
           updates[`${dbref}/${id}/` + key] = body[key];
           updates[`${dbref2}/${uid}/` + key] = body[key];
         } else {
-          updates[`${dbref}/${id}/` + key] = body[key];
+          // set body data
+          if (body.dailyThoughtType === 4) {
+            var dbref_2 = config.endpoints["companygroupposts"] + "/" + body.companyID;
+
+            if(body.status === "unpublished"){
+              dbref = "group-posts-unpublished";
+              updates[`/${dbref}/${id}/` + key] = body[key];
+            }else{
+              updates[`/${dbref}/${id}/` + key] = body[key];
+            }
+
+            updates[`/${dbref_2}/${id}/` + key] = body[key];
+          }else{
+            updates[`${dbref}/${id}/` + key] = body[key];
+          }
+          
         }
       }
     }

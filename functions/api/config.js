@@ -17,7 +17,9 @@ module.exports = {
     companyanalytics: "company-analytics",
     tutorials: "tutorials",
     resetpassword: "reset-password",
-    postsanalytics: "posts-analytics"
+    postsanalytics: "posts-analytics",
+    groupposts: "group-posts",
+    companygroupposts: "company-group-posts"
   },
   userTypesDesc: {
     3: "I-Leader",
@@ -36,7 +38,8 @@ module.exports = {
   dailyThoughtTypeString: {
     1: "Internal Daily Thought",
     2: "Global Daily Thought",
-    3: "I-LEAD Thought"
+    3: "I-LEAD Thought",
+    4: "Group Post"
   },
   postStatus: ["approved", "declined", "pending", "unpublished"]
 };

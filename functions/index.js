@@ -7,7 +7,7 @@ const config = require("./modules/config.js");
 // Live Server
 var serviceAccount = require(`./service/${
   config.serviceaccount[config.environment]
-}`);
+  }`);
 
 // Initialize App
 admin.initializeApp({
@@ -63,6 +63,8 @@ var createPosts = require("./modules/create-posts");
 var removePosts = require("./modules/remove-posts");
 var userExists = require("./modules/user-exists");
 var sendUnsentMails = require("./modules/send-unsentmails");
+var cleanFollowers = require("./modules/clean-followers");
+var newGroupPosts = require("./modules/new-group-post");
 
 // ----------------- API MODULE -------------------- //
 var app = require("./api/api-app");
@@ -115,6 +117,8 @@ exports.m42 = createPosts;
 exports.m43 = removePosts;
 exports.m44 = userExists;
 exports.m45 = sendUnsentMails;
+exports.m46 = cleanFollowers;
+exports.m47 = newGroupPosts;
 
 //
 exports.api = functions.https.onRequest(app);

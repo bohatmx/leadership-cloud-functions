@@ -2,6 +2,8 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const config = require("./config.js");
 
+var counter = 0;
+
 // on create or update daily thoughts
 exports.createPosts = functions.database
   .ref("/createPosts/{createPostsID}")
@@ -19,44 +21,47 @@ exports.createPosts = functions.database
   });
 
 function createNewPosts(post, postType) {
+  counter++;
   console.log("new post: ", post);
   console.log("new postType: ", postType);
 
-  var keyField = config.postKeyFields[postType];
-  var id = post[keyField];
+  if (counter < 2) {
+    var keyField = config.postKeyFields[postType];
+    var id = post[keyField];
 
-  var newItemID = admin
-    .database()
-    .ref()
-    .child(config.postTypes[postType])
-    .push().key;
+    var newItemID = admin
+      .database()
+      .ref()
+      .child(config.postTypes[postType])
+      .push().key;
 
-  post[keyField] = newItemID;
+    post[keyField] = newItemID;
 
-  // Write the new notification's data
-  var updates = {};
-  updates["/" + config.postTypes[postType] + "/" + newItemID] = post;
+    // Write the new notification's data
+    var updates = {};
+    updates["/" + config.postTypes[postType] + "/" + newItemID] = post;
 
-  admin
-    .database()
-    .ref(config.postTypes[postType] + "/" + newItemID)
-    .set(post)
-    .then(update_res => {
-      console.log(
-        "Success created post published id: " +
-          newItemID +
-          " old id: " +
-          id +
-          " postType: " +
-          postType
-      );
-    })
-    .catch(error => {
-      console.log(
-        "Error updating post published id " +
-          newItemID +
-          " postType: " +
-          postType
-      );
-    });
+    admin
+      .database()
+      .ref(config.postTypes[postType] + "/" + newItemID)
+      .set(post)
+      .then(update_res => {
+        console.log(
+          "Success created post published id: " +
+            newItemID +
+            " old id: " +
+            id +
+            " postType: " +
+            postType
+        );
+      })
+      .catch(error => {
+        console.log(
+          "Error updating post published id " +
+            newItemID +
+            " postType: " +
+            postType
+        );
+      });
+  }
 }

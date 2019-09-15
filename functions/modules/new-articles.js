@@ -76,10 +76,12 @@ exports.newArticles = functions.database.ref('/news/{newsID}').onCreate((snap, c
       "photoURL": photoURL,
       "notificationMsg": journalUserName + ' posted an article about: ' + body,
       "userName": journalUserName,
-      "notificationURL": 'filtered-articles/#/' + notificationItemID,
+      "notificationURL": 'filtered-articles?fromemail=true/#/' + notificationItemID,
       "userID": journalUserID,
       "companyID": companyID,
-      "all": all
+      "all": all,
+      notificationType: 'article',
+      postID: notificationItemID
     }
 
     var newNotification = userToken.createNotifications(all, options, notificationData);
@@ -97,10 +99,12 @@ exports.newArticles = functions.database.ref('/news/{newsID}').onCreate((snap, c
       "photoURL": photoURL,
       "notificationMsg": journalUserName + ' posted an article about: ' + body,
       "userName": journalUserName,
-      "notificationURL": 'filtered-articles/#/' + notificationItemID,
+      "notificationURL": 'filtered-articles?fromemail=true/#/' + notificationItemID,
       "userID": journalUserID,
       "companyID": companyID,
-      "all": all
+      "all": all,
+      notificationType: 'article',
+      postID: notificationItemID
     }
 
     var newNotification = userToken.createNotifications(all, options, notificationData);

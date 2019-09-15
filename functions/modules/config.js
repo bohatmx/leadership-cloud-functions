@@ -32,15 +32,27 @@ module.exports = {
   },
   postTypes: {
     thought: "dailyThoughts",
+    dailyThoughts: "dailyThoughts",
     article: "news",
     podcast: "podcasts",
-    video: "videos"
+    video: "videos",
+    thoughts: "dailyThoughts",
+    articles: "news",
+    news: "news",
+    podcasts: "podcasts",
+    videos: "videos"
   },
   postKeyFields: {
     thought: "dailyThoughtID",
+    dailyThoughts: "dailyThoughtID",
     article: "newsID",
     podcast: "podcastID",
-    video: "videoID"
+    video: "videoID",
+    thoughts: "dailyThoughtID",
+    articles: "newsID",
+    news: "newsID",
+    podcasts: "podcastID",
+    videos: "videoID"
   }
 };
 

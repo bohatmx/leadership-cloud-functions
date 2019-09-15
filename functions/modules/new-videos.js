@@ -92,10 +92,12 @@ exports.newVideos = functions.database
           photoURL: photoURL,
           notificationMsg: journalUserName + " posted a video about " + title,
           userName: journalUserName,
-          notificationURL: "filtered-videos/#/" + notificationItemID,
+          notificationURL: "filtered-videos?fromemail=true/#/" + notificationItemID,
           userID: journalUserID,
           companyID: companyID,
-          all: all
+          all: all,
+          notificationType: 'video',
+          postID: notificationItemID
         };
 
         // Add count to users analytics for thoughts
@@ -127,10 +129,12 @@ exports.newVideos = functions.database
           photoURL: photoURL,
           notificationMsg: journalUserName + " posted a video about " + title,
           userName: journalUserName,
-          notificationURL: "filtered-videos/#/" + notificationItemID,
+          notificationURL: "filtered-videos?fromemail=true/#/" + notificationItemID,
           userID: journalUserID,
           companyID: companyID,
-          all: all
+          all: all,
+          notificationType: 'video',
+          postID: notificationItemID
         };
 
         // Add count to users analytics for thoughts

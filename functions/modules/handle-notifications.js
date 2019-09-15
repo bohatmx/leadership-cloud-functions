@@ -68,15 +68,15 @@ module.exports = function() {
       .push().key;
     analyticsUpdates[
       "analyticsNotifications/" +
-        analyticsNotificationID +
-        "/" +
-        "analyticsNotificationID"
+      analyticsNotificationID +
+      "/" +
+      "analyticsNotificationID"
     ] = analyticsNotificationID;
     analyticsUpdates[
       "analyticsNotifications/" +
-        analyticsNotificationID +
-        "/" +
-        "notificationData"
+      analyticsNotificationID +
+      "/" +
+      "notificationData"
     ] = notificationData;
     analyticsUpdates[
       "analyticsNotifications/" + analyticsNotificationID + "/" + "all"
@@ -592,14 +592,60 @@ module.exports = function() {
     return blockedEmail[email] ? true : false;
   };
 
+  this.sendSingleMail = function(options) {
+    var companyURL = "https://thinklead.app/";
+    var link = ""
+
+    var getfollowers = admin
+      .database()
+      .ref("/users/" + options.to_user)
+      .once("value")
+      .then(function(snapshot) {
+
+        console.log("mail options: ", options);
+        console.log("received followers to send email to");
+
+        var childData = snapshot.val();
+        var email = childData.email;
+        var companyID = childData.companyID;
+
+        companyURL = that.getCompanyURL(companyID);
+        console.log("company url: ", companyURL);
+        console.log("company id: ", companyID);
+        console.log("Email: ", email);
+        console.log("childData: ", childData);
+
+        if (email != undefined) {
+          options.email = email
+          options.companyURL = companyURL
+          link =
+            "email=" +
+            email +
+            "&type=comment&action=" +
+            childData.uid +
+            "&notification=" +
+            options.to_user;
+
+          that.sendNodeEmail(options, link)
+        }
+
+        return snapshot;
+      });
+
+    return getfollowers;
+  };
+
   this.sendGroupMails = function(options) {
     var all = options.all;
     var postcompanyID = options.companyID;
     var companyURL = "https://thinklead.app/";
+    var blockedNo = 0;
+    var subscribedNo = 0;
+    var cnt = 0;
 
     var getfollowers = admin
       .database()
-      .ref("/company_groups_users/"+options.companyID+"/" + options.groupid)
+      .ref("/company_groups_users/" + options.companyID + "/" + options.groupid)
       .once("value")
       .then(function(snapshot) {
         listofemails = [];
@@ -608,7 +654,6 @@ module.exports = function() {
 
         console.log("mail options: ", options);
         console.log("received followers to send email to");
-        var cnt = 0;
 
         // console.log(listofemails.length);
 
@@ -629,6 +674,7 @@ module.exports = function() {
 
           var userinfo = {};
           userinfo.companyURL = companyURL;
+          userinfo.userObj = childData;
 
           if (email != undefined) {
             if (options.userID != childData.userID) {
@@ -641,8 +687,11 @@ module.exports = function() {
 
               if (isBlocked == false) {
                 listofemails.push(userinfo);
+                subscribedNo++;
+              } else {
+                blockedNo++;
               }
-            } 
+            }
           }
           cnt++;
           // console.log("email : ",email);
@@ -652,6 +701,9 @@ module.exports = function() {
 
         if (listofemails && listofemails.length > 0) {
           console.log("list of emails to notify: ", listofemails);
+          options.blockedNo = blockedNo
+          options.subscribedNo = subscribedNo
+          options.totalNo = cnt
           that.massMailer(options);
         } else {
           console.error(
@@ -665,11 +717,14 @@ module.exports = function() {
 
     return getfollowers;
   };
-  
+
   this.sendBatchMails = function(options) {
     var all = options.all;
     var postcompanyID = options.companyID;
     var companyURL = "https://thinklead.app/";
+    var blockedNo = 0;
+    var subscribedNo = 0;
+    var cnt = 0;
 
     var getfollowers = admin
       .database()
@@ -682,7 +737,7 @@ module.exports = function() {
 
         console.log("mail options: ", options);
         console.log("received followers to send email to");
-        var cnt = 0;
+
 
         // console.log(listofemails.length);
 
@@ -703,6 +758,7 @@ module.exports = function() {
 
           var userinfo = {};
           userinfo.companyURL = companyURL;
+          userinfo.userObj = childData;
 
           if (email != undefined) {
             if (all == true) {
@@ -715,6 +771,9 @@ module.exports = function() {
 
               if (isBlocked == false) {
                 listofemails.push(userinfo);
+                subscribedNo++;
+              } else {
+                blockedNo++;
               }
             } else {
               if (companyID == postcompanyID) {
@@ -728,6 +787,9 @@ module.exports = function() {
 
                 if (isBlocked == false) {
                   listofemails.push(userinfo);
+                  subscribedNo++;
+                } else {
+                  blockedNo++;
                 }
               }
             }
@@ -740,6 +802,9 @@ module.exports = function() {
 
         if (listofemails && listofemails.length > 0) {
           console.log("list of emails to notify: ", listofemails);
+          options.blockedNo = blockedNo
+          options.subscribedNo = subscribedNo
+          options.totalNo = cnt
           that.massMailer(options);
         } else {
           console.error(
@@ -794,7 +859,8 @@ module.exports = function() {
         to: "" + task.email,
         subject: "" + options.subject,
         text: "" + options.msgTxt,
-        html: htmlTemplate
+        html: htmlTemplate,
+        notificationOptions: options
       };
 
       // Only send emails on live environment
@@ -852,31 +918,83 @@ module.exports = function() {
     // Write the new rating data
     var updates = {};
     updates["/newMails/" + new_mail_id] = data;
+    updates["/posts-notifications-detail/" + mail_options.notificationOptions.postID] = mail_options.notificationOptions;
+
+    if (mail_options.notificationOptions) {
+      updates["/posts-analytics/" + mail_options.notificationOptions.postID+"/all"] = mail_options.notificationOptions.all ? mail_options.notificationOptions.all : true;
+      updates["/posts-analytics/" + mail_options.notificationOptions.postID+"/totalNo"] = mail_options.notificationOptions.totalNo ? mail_options.notificationOptions.totalNo : 0;
+      updates["/posts-analytics/" + mail_options.notificationOptions.postID+"/subscribedNo"] = mail_options.notificationOptions.subscribedNo ? mail_options.notificationOptions.subscribedNo : 0;
+      updates["/posts-analytics/" + mail_options.notificationOptions.postID+"/blockedNo"] = mail_options.notificationOptions.blockedNo ? mail_options.notificationOptions.blockedNo : 0;
+    }
+    
     admin
       .database()
       .ref()
-      .update(updates);
+      .update(updates, function (error) {
+        if (error) {
+          console.log('error updating new mails')
+        }
+      });
   };
 
-  this.updateNewMails = function(new_mail_id, mail_status) {
+  this.updateNewMails = function(new_mail_id, mail_status, log, prev_mail_status) {
     // Write the new rating data
     var updates = {};
     updates["/newMails/" + new_mail_id + "/mail_status"] = mail_status;
+    updates["/newMails/" + new_mail_id + "/log"] = log;
+
+    console.log("preparing updates - mail id: ", new_mail_id)
+
     admin
       .database()
       .ref()
-      .update(updates);
+      .update(updates, function (error) {
+        if (error) {
+          console.log("Error updating mail status data:", error);
+        } else {
+          if (log.notificationOptions && log.notificationOptions.postID) {
+            if (prev_mail_status === "unsent") {
+              console.log("prev status: ", prev_mail_status, "post id: ", log.notificationOptions.postID)
+              // let countStatus = admin.database().ref("/posts-analytics").child(log.notificationOptions.postID).child(mail_status);
+              // let currentCount = countStatus.transaction(function (current) {
+              //   return (current || 0) + 1;
+              // });
+            } else {
+              // resent
+              if (mail_status !== prev_mail_status) {
+                console.log("prev status 2: ", prev_mail_status, "post id: ", log.notificationOptions.postID)
+                // increase current status count if status is sent or failed
+                let countStatus = admin.database().ref("/posts-analytics").child(log.notificationOptions.postID).child(mail_status);
+                let currentCount = countStatus.transaction(function (current) {
+                  return (current || 0) + 1;
+                });
+
+                // reduce resent status
+                let resendStatus = admin.database().ref("/posts-analytics").child(log.notificationOptions.postID).child(prev_mail_status);
+                let resendCount = resendStatus.transaction(function (current) {
+                  if ((current == 0) || (current == undefined)) {
+                    return (current || 0)
+                  } else {
+                    return (current || 0) - 1;
+                  }
+                });
+              }
+            }
+          }
+          
+        }
+      });
   };
 
-  this.sendNewMails = function(options) {
-    var listofnewemails = [];
+  this.sendNewMails = function(listofnewemails, prev_mail_status) {
+    // var listofnewemails = [];
     var successnew_email = [];
     var failurenew_email = [];
     var self = this;
 
-    console.log("new mail options: ", options);
+    console.log("new mails list: ", listofnewemails);
 
-    listofnewemails.push(options);
+    // listofnewemails.push(options);
 
     var transporter = nodemailer.createTransport({
       pool: true,
@@ -891,7 +1009,7 @@ module.exports = function() {
         // do not fail on invalid certs
         rejectUnauthorized: false
       },
-      maxConnections: 10,
+      maxConnections: 100,
       maxMessages: 100
     });
 
@@ -912,17 +1030,60 @@ module.exports = function() {
           if (error) {
             console.log("Error sending new mail: ", error);
             failurenew_email.push(task.to);
-            self.updateNewMails(task.new_mail_id, "failed");
+            var errorCode = error.responseCode.toString()
+            var errorResponse = error.response
+            var errorCommand = error.command
+            var errorTime = Date.now()
+
+            let status = "failed"
+            // if its a too many connection problem, set the record to be resent
+            if (errorCode === "421") {
+              status = "resend"
+            }
+
+            var log = {
+              error: {
+                errorCode,
+                errorResponse,
+                errorCommand,
+                errorTime
+              },
+              status,
+              new_mail_id: task.new_mail_id,
+              notificationOptions: task.notificationOptions ? task.notificationOptions : {}
+            }
+
+            self.updateNewMails(task.new_mail_id, status, log, prev_mail_status);
             return callback();
           } else {
             console.log("New message sent: %s", info.messageId);
-            self.updateNewMails(task.new_mail_id, "sent");
+            let status = "sent"
+
+            var log = {
+              error: {},
+              status,
+              newMailId: task.new_mail_id,
+              notificationOptions: task.notificationOptions ? task.notificationOptions : {},
+              messageId: info.messageId
+            }
+
+            self.updateNewMails(task.new_mail_id, status, log, prev_mail_status);
             successnew_email.push(task.to);
             return callback();
           }
         });
       } else {
-        self.updateNewMails(task.new_mail_id, "test env sent");
+        let status = "test_env_sent"
+
+        var log = {
+          error: {},
+          status,
+          newMailId: task.new_mail_id,
+          notificationOptions: task.notificationOptions ? task.notificationOptions : {},
+          messageId: "test server"
+        }
+
+        self.updateNewMails(task.new_mail_id, status, log, "test_env_unsent");
         console.log("Test environment...not sending any emails 222");
       }
     }
@@ -935,6 +1096,7 @@ module.exports = function() {
       console.log("success new email: ", successnew_email);
       console.log("failure new email: ", failurenew_email);
       console.log("New Email have been processed");
+      transporter.close();
     };
 
     // add some items to the queue (batch-wise)

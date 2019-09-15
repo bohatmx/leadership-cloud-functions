@@ -1,36 +1,66 @@
-[debug] [2019-04-22T06:49:30.732Z] ----------------------------------------------------------------------
-[debug] [2019-04-22T06:49:30.735Z] Command:       /usr/local/Cellar/node/11.6.0/bin/node /usr/local/bin/firebase serve --only functions
-[debug] [2019-04-22T06:49:30.736Z] CLI Version:   6.7.0
-[debug] [2019-04-22T06:49:30.736Z] Platform:      darwin
-[debug] [2019-04-22T06:49:30.736Z] Node Version:  v11.6.0
-[debug] [2019-04-22T06:49:30.737Z] Time:          Mon Apr 22 2019 08:49:30 GMT+0200 (South Africa Standard Time)
-[debug] [2019-04-22T06:49:30.737Z] ----------------------------------------------------------------------
+[debug] [2019-09-13T06:07:22.196Z] ----------------------------------------------------------------------
+[debug] [2019-09-13T06:07:22.198Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only functions
+[debug] [2019-09-13T06:07:22.199Z] CLI Version:   7.0.2
+[debug] [2019-09-13T06:07:22.199Z] Platform:      darwin
+[debug] [2019-09-13T06:07:22.199Z] Node Version:  v10.15.3
+[debug] [2019-09-13T06:07:22.200Z] Time:          Fri Sep 13 2019 09:07:22 GMT+0300 (East Africa Time)
+[debug] [2019-09-13T06:07:22.200Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2019-04-22T06:49:30.757Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2019-04-22T06:49:30.758Z] > authorizing via signed-in user
-[debug] [2019-04-22T06:49:30.758Z] [iam] checking project leadershipplatform-158316 for permissions ["firebase.projects.get"]
-[debug] [2019-04-22T06:49:30.760Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/leadershipplatform-158316:testIamPermissions  
+[debug] [2019-09-13T06:07:22.211Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-09-13T06:07:22.212Z] > authorizing via signed-in user
+[debug] [2019-09-13T06:07:22.212Z] [iam] checking project glp-test for permissions ["firebase.projects.get"]
+[debug] [2019-09-13T06:07:22.214Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/glp-test:testIamPermissions  
 
-[debug] [2019-04-22T06:49:33.121Z] <<< HTTP RESPONSE 200
-[debug] [2019-04-22T06:49:33.124Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/leadershipplatform-158316  
+[debug] [2019-09-13T06:07:24.117Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-13T06:07:24.119Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/glp-test  
  
-[debug] [2019-04-22T06:49:35.037Z] <<< HTTP RESPONSE 200
-[info] 
-[info] === Serving from '/Users/devcole/projects/leadership-cloud-functions'...
-[info] 
-[info] i  functions: Preparing to emulate functions.
-[debug] [2019-04-22T06:49:35.737Z] Fetching environment
-[debug] [2019-04-22T06:49:35.740Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/438289288307:getServerAppConfig  
+[debug] [2019-09-13T06:07:25.735Z] <<< HTTP RESPONSE 200
+[warn] ⚠  Your requested "node" version "8" doesn't match your global version "10"
+[debug] [2019-09-13T06:07:25.749Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/805735980290:getServerAppConfig  
  
-[debug] [2019-04-22T06:49:36.637Z] <<< HTTP RESPONSE 200
-[debug] [2019-04-22T06:49:36.638Z] Starting @google-cloud/functions-emulator
-[debug] [2019-04-22T06:49:38.748Z] Parsing function triggers
-[info] ✔  functions: m13.unsubscribeUsers: http://localhost:5000/leadershipplatform-158316/us-central1/m13-unsubscribeUsers
-[info] ✔  functions: m08.updateAnalytics: http://localhost:5000/leadershipplatform-158316/us-central1/m08-updateAnalytics
-[info] ✔  functions: m20.removeUser: http://localhost:5000/leadershipplatform-158316/us-central1/m20-removeUser
-[info] ✔  functions: m06.updateFollowers: http://localhost:5000/leadershipplatform-158316/us-central1/m06-updateFollowers
-[info] ✔  functions: m07.testMails: http://localhost:5000/leadershipplatform-158316/us-central1/m07-testMails
-[info] ✔  functions: m21.unshortenURL: http://localhost:5000/leadershipplatform-158316/us-central1/m21-unshortenURL
-[info] ✔  functions: m39.publishContent: http://localhost:5000/leadershipplatform-158316/us-central1/m39-publishContent
-[info] ✔  functions: api: http://localhost:5000/leadershipplatform-158316/us-central1/api
-[info] ✔  functions: m40.sendUserReminders: http://localhost:5000/leadershipplatform-158316/us-central1/m40-sendUserReminders
+[debug] [2019-09-13T06:07:26.244Z] <<< HTTP RESPONSE 200
+[info] ✔  functions: Emulator started at http://localhost:5000
+[info] i  functions: Watching "/Users/devcole/projects/leadership-cloud-functions/functions" for Cloud Functions...
+[debug] [2019-09-13T06:07:26.638Z] Functions runtime initialized.
+[debug] [2019-09-13T06:07:26.639Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
+[debug] [2019-09-13T06:07:26.756Z] firebase-admin has been stubbed.
+[debug] [2019-09-13T06:07:49.908Z] Accepted request GET /assets/vendors/base/vendors.bundle.js --> base
+[debug] [2019-09-13T06:07:49.919Z] Accepted request GET /assets/demo/default/base/scripts.bundle.js --> default
+[debug] [2019-09-13T06:07:49.943Z] Accepted request GET /static/css/main.b1a48016.css --> main.b1a48016.css
+[debug] [2019-09-13T06:07:49.952Z] Accepted request GET /assets/demo/default/custom/crud/forms/widgets/select2.js --> default
+[debug] [2019-09-13T06:07:49.961Z] Accepted request GET /assets/vendors/custom/datatables/datatables.bundle.js --> custom
+[debug] [2019-09-13T06:07:49.973Z] Accepted request GET /static/js/main.7e09ca8c.js --> main.7e09ca8c.js
+[debug] [2019-09-13T06:07:51.209Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "default"
+[debug] [2019-09-13T06:07:51.211Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
+[debug] [2019-09-13T06:07:51.220Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "main.b1a48016.css"
+[debug] [2019-09-13T06:07:51.223Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
+[debug] [2019-09-13T06:07:51.228Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "default"
+[debug] [2019-09-13T06:07:51.232Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
+[debug] [2019-09-13T06:07:51.239Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "custom"
+[debug] [2019-09-13T06:07:51.242Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
+[debug] [2019-09-13T06:07:51.250Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "base"
+[debug] [2019-09-13T06:07:51.257Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
+[debug] [2019-09-13T06:07:51.287Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "main.7e09ca8c.js"
+[debug] [2019-09-13T06:07:51.290Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
+[debug] [2019-09-13T06:07:51.496Z] firebase-admin has been stubbed.
+[debug] [2019-09-13T06:07:51.510Z] firebase-admin has been stubbed.
+[debug] [2019-09-13T06:07:51.511Z] firebase-admin has been stubbed.
+[debug] [2019-09-13T06:07:51.512Z] firebase-admin has been stubbed.
+[debug] [2019-09-13T06:07:51.534Z] firebase-admin has been stubbed.
+[debug] [2019-09-13T06:07:51.554Z] firebase-admin has been stubbed.
+[debug] [2019-09-13T06:09:49.910Z] Accepted request GET /assets/vendors/base/vendors.bundle.js --> base
+[debug] [2019-09-13T06:09:49.917Z] Accepted request GET /assets/demo/default/base/scripts.bundle.js --> default
+[debug] [2019-09-13T06:09:50.336Z] Functions runtime initialized.
+[debug] [2019-09-13T06:09:50.336Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "base"
+[debug] [2019-09-13T06:09:50.338Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
+[info] i  functions: Beginning execution of "default"
+[debug] [2019-09-13T06:09:50.339Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
+[debug] [2019-09-13T06:09:50.444Z] firebase-admin has been stubbed.
+[debug] [2019-09-13T06:09:50.445Z] firebase-admin has been stubbed.

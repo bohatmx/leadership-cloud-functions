@@ -62,6 +62,7 @@ var createPosts = require("./modules/create-posts");
 var removePosts = require("./modules/remove-posts");
 var userExists = require("./modules/user-exists");
 var sendUnsentMails = require("./modules/send-unsentmails");
+var resendUnsentMails = require("./modules/resend-unsentmails");
 var cleanFollowers = require("./modules/clean-followers");
 var newGroupPosts = require("./modules/new-group-post");
 
@@ -117,6 +118,7 @@ exports.m44 = userExists;
 exports.m45 = sendUnsentMails;
 exports.m46 = cleanFollowers;
 exports.m47 = newGroupPosts;
+exports.m48 = resendUnsentMails;
 
 //
 exports.api = functions.https.onRequest(app);

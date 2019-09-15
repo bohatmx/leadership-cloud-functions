@@ -13,7 +13,7 @@ exports.mailNotifications = functions.database.ref('/mailNotifications/{mailNoti
     console.log(all)
     console.log(options)
 
-    if(options.groupid != undefined){
+    if (options.groupid != undefined && options.groupid.trim() != "" ){
         var mailres = userToken.sendGroupMails(options);
     }else{
         var mailres = userToken.sendBatchMails(options);

@@ -100,7 +100,6 @@ module.exports = function () {
             msg += '<br><br>'
             msg += '<b>Best Regards,</b> <br>'
             msg += '<b>Global Leadership Platform.</b><br>'
-        } else {
         }
     // Harmony Welcome Email
     else if (companyID == '-L7tBAMWWXVrLwgrBell') {

@@ -25,6 +25,7 @@ var testMails = require("./modules/test-mails");
 var updateAnalytics = require("./modules/update-analytics");
 var commentsDeleted = require("./modules/comments-deleted");
 var likesDeleted = require("./modules/likes-deleted");
+var bulkUploadUsers = require("./modules/bulk-upload-users");
 var userLikes = require("./modules/user-likes");
 var userClicks = require("./modules/user-clicks");
 var unsubscribeUsers = require("./modules/unsubscribe-users");
@@ -39,6 +40,7 @@ var unshortenURL = require("./modules/unshorten-url");
 var writeOperations = require("./modules/write-operations");
 var usersDeleted = require("./modules/user-deleted");
 var resendWelcome = require("./modules/resend-welcomemail");
+var groupNewNotifications = require("./modules/group-new-notifications");
 var resetPassword = require("./modules/reset-password");
 
 // Create modules for all functions within indexjs
@@ -105,6 +107,7 @@ exports.m32 = newVideos;
 exports.m33 = deletedVideos;
 exports.m34 = newFeedback;
 exports.m35 = newUsers;
+exports.m35 = bulkUploadUsers;
 exports.m36 = userCreated;
 exports.m37 = pldpTasksCreated;
 exports.m38 = pldpTasksDeleted;
@@ -117,6 +120,7 @@ exports.m44 = userExists;
 exports.m45 = sendUnsentMails;
 exports.m46 = cleanFollowers;
 exports.m47 = newGroupPosts;
+exports.m48 = groupNewNotifications;
 
 //
 exports.api = functions.https.onRequest(app);

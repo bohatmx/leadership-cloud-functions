@@ -6,7 +6,7 @@ var async = require('async')
 // ------------------
 // send an email to all users add to group
 exports.groupNewNotification = functions.database
-  .ref('/group-newnotification/{groupDetails}')
+  .ref('/group-new-notification/{groupDetails}')
   .onCreate((snap, context) => {
     const groupDetails = snap.val()
     const results = []

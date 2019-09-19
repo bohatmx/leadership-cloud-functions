@@ -17,22 +17,22 @@ exports.newCommentsIn = functions.database
     const commentObj = snap.val();
 
     var postID = commentObj.dailyThoughtID;
-    var childRef = "dailyThoughtID";
+    var childRef = config.postKeyFields[commentObj.postType];
     var userID = commentObj.journalUserID;
     var userName = commentObj.journalUserName;
     var photoURL = commentObj.photoURL;
     var notificationItemID = commentObj.dailyThoughtID;
 
-    if (commentObj.postType == "dailyThoughts") childRef = "dailyThoughtID";
-    else if (commentObj.postType == "news") childRef = "newsID";
-    else if (commentObj.postType == "videos") childRef = "videoID";
-    else if (commentObj.postType == "podcasts") childRef = "podcastID";
+    // if (commentObj.postType == "dailyThoughts") childRef = "dailyThoughtID";
+    // else if (commentObj.postType == "news") childRef = "newsID";
+    // else if (commentObj.postType == "videos") childRef = "videoID";
+    // else if (commentObj.postType == "podcasts") childRef = "podcastID";
 
     updateAppAnalytics.addcomments(commentObj);
 
     const postRef = admin
       .database()
-      .ref("/" + commentObj.postType)
+      .ref("/" + config.postTypes[commentObj.postType])
       .orderByChild("" + childRef)
       .equalTo("" + postID)
       .once("value");
@@ -79,6 +79,10 @@ exports.newCommentsIn = functions.database
             }
           }
 
+          if (postObj.groupid != undefined  && postObj.groupid.trim() != "") {
+            click_action = "filtered-group-posts/#/" + postObj.groupid + "/" + postID
+          }
+
           // If the ID of the person commenting is not equal to the person who posted
           if (journalUserID != userID) {
             var notificationData = {
@@ -95,8 +99,15 @@ exports.newCommentsIn = functions.database
               photoURL: photoURL,
               notificationDate: notificationDate,
               seen: false,
-              opened: false
+              opened: false,
+              companyID: postObj.companyID,
+              companyName: postObj.companyName
             };
+
+            if (postObj.groupid != undefined && postObj.groupid.trim() != "") {
+              notificationData.postGroupType = postObj.postGroupType
+              notificationData.groupid = postObj.groupid
+            }
 
             var payload = {
               title: userName + " commented on your " + notificationType,
@@ -106,6 +117,40 @@ exports.newCommentsIn = functions.database
               badge: "1",
               click_action: url + "" + click_action
             };
+            // create email body
+            let msgHTML =
+              "<b>Dear " + journalUserName + ",</b><br><br>";
+            msgHTML += userName + " commented on your " + notificationType +
+            " about: " + notificationTitle + "<br><br>";
+            msgHTML += "<br>";
+            msgHTML += "<b>Best Regards,</b> <br>";
+            msgHTML += "<b>Global Leadership Platform.</b><br>";
+
+            let msgPlain = "Dear " + journalUserName + ",";
+            msgPlain += userName + " commented on your " + notificationType +
+            " about: " + notificationTitle;
+            msgPlain += "";
+            msgPlain += "Best Regards,";
+            msgPlain += "Global Leadership Platform.";
+
+            var subject = "New Comment from "+userName;
+
+            var options = {
+              to: "",
+              to_user: postObj.journalUserID,
+              subject: subject,
+              msgTxt: msgPlain,
+              msgHTML: msgHTML,
+              photoURL: photoURL,
+              notificationMsg: userName + " commented on your " + notificationType,
+              userName: userName,
+              notificationURL: click_action,
+              companyURL: ""
+            };
+            console.log("send email notify: ", options);
+            console.log("new comments notification obj: ", notificationData);
+
+            userToken.sendSingleMail(options);
 
             //  let device_tokens = admin.database().ref('user').orderByChild('userID')
             // .equalTo(journalUserID).once('value')

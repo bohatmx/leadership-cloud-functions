@@ -20,6 +20,7 @@ exports.newGroupPosts = functions.database
     var postGroupType = newPost.postGroupType;
     var journalUserID = "";
     var journalUserName = "";
+    var notificationType = "";
     var notificationDate = Date.now();
     var notificationItemID = postID;
     var photoURL = "";
@@ -56,6 +57,8 @@ exports.newGroupPosts = functions.database
         emailMsg = journalUserName + " posted a thought by " + subtitle;
         subject = journalUserName + " posted a new thought";
 
+        notificationType = "thought"
+
         var notificationData = {
           notificationItemID: notificationItemID,
           notificationType: "thought",
@@ -81,6 +84,7 @@ exports.newGroupPosts = functions.database
         emailMsg = journalUserName + ' posted an article about: "' + body + '"';
         subject = journalUserName + ' posted a new article';
 
+        notificationType = "article"
         var notificationData = {
           notificationItemID: notificationItemID,
           notificationType: "article",
@@ -107,6 +111,7 @@ exports.newGroupPosts = functions.database
         emailMsg = journalUserName + ' posted a ' + podcastDescription.toLowerCase() + ' about: "' + body + '"'
         subject = journalUserName + ' shared a new ' + podcastDescription.toLowerCase();
 
+        notificationType = "podcast"
         var notificationData = {
           notificationItemID: notificationItemID,
           notificationType: "podcast",
@@ -132,6 +137,7 @@ exports.newGroupPosts = functions.database
         emailMsg = journalUserName + ' posted a video about: "' + title + '"';
         subject = journalUserName + " shared a new video"
 
+        notificationType = "video"
         var notificationData = {
           notificationItemID: notificationItemID,
           notificationType: "video",
@@ -180,11 +186,13 @@ exports.newGroupPosts = functions.database
         photoURL: photoURL,
         notificationMsg: emailMsg,
         userName: journalUserName,
-        notificationURL: "filtered-group-posts/#/" + groupid + "/" + notificationItemID,
+        notificationURL: "filtered-group-posts?fromemail=true/#/" + groupid + "/" + notificationItemID,
         userID: journalUserID,
         companyID: companyID,
         all: all,
-        groupid: groupid
+        groupid: groupid,
+        notificationType,
+        postID: notificationItemID
       };
 
       var newNotification = userToken.createNotifications(

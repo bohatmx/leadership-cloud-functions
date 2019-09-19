@@ -110,10 +110,12 @@ exports.newThoughts = functions.database
         photoURL: photoURL,
         notificationMsg: journalUserName + " posted a thought by " + subtitle,
         userName: journalUserName,
-        notificationURL: "filtered-thoughts/#/" + notificationItemID,
+        notificationURL: "filtered-thoughts?fromemail=true/#/" + notificationItemID,
         userID: journalUserID,
         companyID: companyID,
-        all: all
+        all: all,
+        notificationType: 'thought',
+        postID: notificationItemID
       };
 
       var newNotification = userToken.createNotifications(
@@ -152,10 +154,12 @@ exports.newThoughts = functions.database
         photoURL: photoURL,
         notificationMsg: journalUserName + " posted a thought by " + subtitle,
         userName: journalUserName,
-        notificationURL: "filtered-thoughts/#/" + notificationItemID,
+        notificationURL: "filtered-thoughts?fromemail=true/#/" + notificationItemID,
         userID: journalUserID,
         companyID: companyID,
-        all: all
+        all: all,
+        notificationType: 'thought',
+        postID: notificationItemID
       };
 
       var newNotification = userToken.createNotifications(

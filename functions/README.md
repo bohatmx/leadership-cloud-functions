@@ -48,4 +48,6 @@ firebase serve --only functions
 
 # http://{server}/{projectId}/us-central1/{functionName}
 
+http://localhost:5000/glp-test/us-central1/m45-sendUnsentMails  
+
 http://localhost:5000/leadershipplatform-158316/us-central1/m06-updateFollowers

@@ -87,10 +87,12 @@ exports.newPodcasts = functions.database.ref('/podcasts/{podcastID}').onCreate((
           "photoURL": photoURL,
           "notificationMsg": journalUserName + ' posted a ' + podcastDescription.toLowerCase() + ' about: ' + title,
           "userName": journalUserName,
-          "notificationURL": 'filtered-podcasts/#/' + notificationItemID,
+          "notificationURL": 'filtered-podcasts?fromemail=true/#/' + notificationItemID,
           "userID": journalUserID,
           "companyID": companyID,
-          "all": all
+          "all": all,
+          notificationType: 'podcast',
+          postID: notificationItemID
         }
   
         // Add count to users analytics for thoughts
@@ -114,10 +116,12 @@ exports.newPodcasts = functions.database.ref('/podcasts/{podcastID}').onCreate((
           "photoURL": photoURL,
           "notificationMsg": journalUserName + ' posted a ' + podcastDescription.toLowerCase() + ' about: ' + title,
           "userName": journalUserName,
-          "notificationURL": 'filtered-podcasts/#/' + notificationItemID,
+          "notificationURL": 'filtered-podcasts?fromemail=true/#/' + notificationItemID,
           "userID": journalUserID,
           "companyID": companyID,
-          "all": all
+          "all": all,
+          notificationType: 'podcast',
+          postID: notificationItemID
         }
   
         // Add count to users analytics for thoughts

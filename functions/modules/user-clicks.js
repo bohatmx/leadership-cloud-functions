@@ -11,14 +11,14 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
 
     var clickType = clickObj.clickType;
 
-    if(clickType == "posts"){
+    if (clickType == "posts") {
         var clickArea = clickObj.clickArea;
         var postType = clickObj.postType;
         var journalID = clickObj.journalID;
 
         // thoughts
-        if((postType == "thoughts") || (postType == "Thought")){
-            if(clickArea == "viewedUserProfile"){
+        if ((postType == "thoughts") || (postType == "Thought")) {
+            if (clickArea == "viewedUserProfile") {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -32,7 +32,7 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 1 committed');
                     }
                 });
-            }else if((clickArea == "tca-videos") || (clickArea == "tca-links") || (clickArea == "tca-podcasts") ){
+            } else if ((clickArea == "tca-videos") || (clickArea == "tca-links") || (clickArea == "tca-podcasts")) {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('attachmentsclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -46,7 +46,21 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 2 committed');
                     }
                 });
-            }else{
+            } else if (clickArea == "openedFromEmail") {
+                let countCompany = admin.database().ref('posts-analytics').child(journalID).child('openedfromemail');
+
+                let companyCount = countCompany.transaction(function(current) {
+                    return (current || 0) + 1;
+                }, function(error, committed, snapshot) {
+                    if (error) {
+                        console.log('Transaction failed abnormally! openedFromEmail: ', error);
+                    } else if (!committed) {
+                        console.log('Not Committed openedFromEmail: ', committed);
+                    } else {
+                        console.log('Transaction openedFromEmail committed');
+                    }
+                });
+            } else {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -63,8 +77,8 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
             }
         }
         // articles
-        else if((postType == "articles") || (postType == "Article") || (postType == "news")){
-            if(clickArea == "viewedUserProfile"){
+        else if ((postType == "articles") || (postType == "Article") || (postType == "news")) {
+            if (clickArea == "viewedUserProfile") {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -78,7 +92,7 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 4 committed');
                     }
                 });
-            }else if(clickArea == "readArticle") {
+            } else if (clickArea == "readArticle") {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('readarticle');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -92,7 +106,7 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 5 committed');
                     }
                 });
-            }else if((clickArea == "tca-videos") || (clickArea == "tca-links") || (clickArea == "tca-podcasts") ){
+            } else if ((clickArea == "tca-videos") || (clickArea == "tca-links") || (clickArea == "tca-podcasts")) {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('attachmentsclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -106,7 +120,21 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 6 committed');
                     }
                 });
-            }else{
+            } else if (clickArea == "openedFromEmail") {
+                let countCompany = admin.database().ref('posts-analytics').child(journalID).child('openedfromemail');
+
+                let companyCount = countCompany.transaction(function(current) {
+                    return (current || 0) + 1;
+                }, function(error, committed, snapshot) {
+                    if (error) {
+                        console.log('Transaction failed abnormally! openedFromEmail: ', error);
+                    } else if (!committed) {
+                        console.log('Not Committed openedFromEmail: ', committed);
+                    } else {
+                        console.log('Transaction openedFromEmail committed');
+                    }
+                });
+            } else {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -123,8 +151,8 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
             }
         }
         // podcasts
-        else if((postType == "podcasts") || (postType == "voicemail") || (postType == "news") || (postType == "Podcast") || (postType == "Voicemail")){
-            if(clickArea == "viewedUserProfile"){
+        else if ((postType == "podcasts") || (postType == "voicemail") || (postType == "news") || (postType == "Podcast") || (postType == "Voicemail")) {
+            if (clickArea == "viewedUserProfile") {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -138,7 +166,7 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 8 committed');
                     }
                 });
-            }else if(clickArea == "listenedTo") {
+            } else if (clickArea == "listenedTo") {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('listenedto');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -152,7 +180,21 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 9 committed');
                     }
                 });
-            }else{
+            } else if (clickArea == "openedFromEmail") {
+                let countCompany = admin.database().ref('posts-analytics').child(journalID).child('openedfromemail');
+
+                let companyCount = countCompany.transaction(function(current) {
+                    return (current || 0) + 1;
+                }, function(error, committed, snapshot) {
+                    if (error) {
+                        console.log('Transaction failed abnormally! openedFromEmail: ', error);
+                    } else if (!committed) {
+                        console.log('Not Committed openedFromEmail: ', committed);
+                    } else {
+                        console.log('Transaction openedFromEmail committed');
+                    }
+                });
+            } else {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -169,8 +211,8 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
             }
         }
         // vides
-        else if((postType == "Video") || (postType == "videos")){
-            if(clickArea == "viewedUserProfile"){
+        else if ((postType == "Video") || (postType == "videos")) {
+            if (clickArea == "viewedUserProfile") {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('profileclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -184,7 +226,7 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 11 committed');
                     }
                 });
-            }else if(clickArea == "viewed") {
+            } else if (clickArea == "viewed") {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('viewed');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -198,7 +240,21 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 12 committed');
                     }
                 });
-            }else{
+            } else if (clickArea == "openedFromEmail") {
+                let countCompany = admin.database().ref('posts-analytics').child(journalID).child('openedfromemail');
+
+                let companyCount = countCompany.transaction(function(current) {
+                    return (current || 0) + 1;
+                }, function(error, committed, snapshot) {
+                    if (error) {
+                        console.log('Transaction failed abnormally! openedFromEmail: ', error);
+                    } else if (!committed) {
+                        console.log('Not Committed openedFromEmail: ', committed);
+                    } else {
+                        console.log('Transaction openedFromEmail committed');
+                    }
+                });
+            } else {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('otherclicks');
 
                 let companyCount = countCompany.transaction(function(current) {
@@ -217,4 +273,3 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
 
     }
 });
-   

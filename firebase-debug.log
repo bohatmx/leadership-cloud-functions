@@ -1,66 +1,532 @@
-[debug] [2019-09-13T06:07:22.196Z] ----------------------------------------------------------------------
-[debug] [2019-09-13T06:07:22.198Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only functions
-[debug] [2019-09-13T06:07:22.199Z] CLI Version:   7.0.2
-[debug] [2019-09-13T06:07:22.199Z] Platform:      darwin
-[debug] [2019-09-13T06:07:22.199Z] Node Version:  v10.15.3
-[debug] [2019-09-13T06:07:22.200Z] Time:          Fri Sep 13 2019 09:07:22 GMT+0300 (East Africa Time)
-[debug] [2019-09-13T06:07:22.200Z] ----------------------------------------------------------------------
+[debug] [2019-09-21T07:32:46.002Z] ----------------------------------------------------------------------
+[debug] [2019-09-21T07:32:46.005Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy --only functions
+[debug] [2019-09-21T07:32:46.005Z] CLI Version:   7.0.2
+[debug] [2019-09-21T07:32:46.005Z] Platform:      darwin
+[debug] [2019-09-21T07:32:46.005Z] Node Version:  v10.15.3
+[debug] [2019-09-21T07:32:46.006Z] Time:          Sat Sep 21 2019 10:32:46 GMT+0300 (East Africa Time)
+[debug] [2019-09-21T07:32:46.007Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2019-09-13T06:07:22.211Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2019-09-13T06:07:22.212Z] > authorizing via signed-in user
-[debug] [2019-09-13T06:07:22.212Z] [iam] checking project glp-test for permissions ["firebase.projects.get"]
-[debug] [2019-09-13T06:07:22.214Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/glp-test:testIamPermissions  
+[debug] [2019-09-21T07:32:46.021Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-09-21T07:32:46.022Z] > authorizing via signed-in user
+[debug] [2019-09-21T07:32:46.022Z] [iam] checking project glp-test for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2019-09-21T07:32:46.024Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/glp-test:testIamPermissions  
 
-[debug] [2019-09-13T06:07:24.117Z] <<< HTTP RESPONSE 200
-[debug] [2019-09-13T06:07:24.119Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/glp-test  
+[debug] [2019-09-21T07:32:47.788Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'glp-test'...
+[info] 
+[info] i  deploying functions
+[debug] [2019-09-21T07:32:50.609Z] > [functions] package.json contents: {
+  "engines": {
+    "node": "8"
+  },
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase serve --only functions",
+    "shell": "firebase experimental:functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "test": "mocha --reporter spec"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^2.4.2",
+    "@sendgrid/mail": "^6.2.1",
+    "algoliasearch": "^3.24.10",
+    "apollo-server-express": "^2.4.8",
+    "async": "^2.6.1",
+    "body-parser": "^1.18.3",
+    "child-process-promise": "^2.2.1",
+    "color-thief-node": "^1.0.2",
+    "cors": "^2.8.5",
+    "curl": "^0.1.4",
+    "dotenv": "^5.0.0",
+    "elasticsearch": "^15.3.1",
+    "email-validator": "^2.0.4",
+    "express": "^4.16.4",
+    "fast-crc32c": "^1.0.4",
+    "firebase-admin": "^8.2.0",
+    "firebase-functions": "^3.0.2",
+    "fs": "0.0.1-security",
+    "graphql": "^14.2.0",
+    "graphql-tools": "^4.0.4",
+    "http": "0.0.0",
+    "infinite-loop": "^0.2.2",
+    "lodash": "^4.17.11",
+    "mkdirp-promise": "^5.0.1",
+    "nodemailer-direct-transport": "^3.3.2",
+    "nodemailer2": "^2.7.1",
+    "pdfmake": "^0.1.56",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2",
+    "socket.io": "^2.2.0",
+    "tinyurl": "^1.1.2",
+    "url-unshort": "^5.0.0",
+    "xlsjs": "^1.0.1",
+    "xlsx": "^0.11.19"
+  },
+  "private": true,
+  "devDependencies": {
+    "firebase-functions-test": "^0.1.6",
+    "mocha": "^6.1.4"
+  }
+}
+[info] i  functions: ensuring necessary APIs are enabled...
+[debug] [2019-09-21T07:32:50.610Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/cloudfunctions.googleapis.com/projectSettings/glp-test?view=CONSUMER_VIEW  
  
-[debug] [2019-09-13T06:07:25.735Z] <<< HTTP RESPONSE 200
-[warn] ⚠  Your requested "node" version "8" doesn't match your global version "10"
-[debug] [2019-09-13T06:07:25.749Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/805735980290:getServerAppConfig  
+[debug] [2019-09-21T07:32:50.612Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/runtimeconfig.googleapis.com/projectSettings/glp-test?view=CONSUMER_VIEW  
  
-[debug] [2019-09-13T06:07:26.244Z] <<< HTTP RESPONSE 200
-[info] ✔  functions: Emulator started at http://localhost:5000
-[info] i  functions: Watching "/Users/devcole/projects/leadership-cloud-functions/functions" for Cloud Functions...
-[debug] [2019-09-13T06:07:26.638Z] Functions runtime initialized.
-[debug] [2019-09-13T06:07:26.639Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
-[debug] [2019-09-13T06:07:26.756Z] firebase-admin has been stubbed.
-[debug] [2019-09-13T06:07:49.908Z] Accepted request GET /assets/vendors/base/vendors.bundle.js --> base
-[debug] [2019-09-13T06:07:49.919Z] Accepted request GET /assets/demo/default/base/scripts.bundle.js --> default
-[debug] [2019-09-13T06:07:49.943Z] Accepted request GET /static/css/main.b1a48016.css --> main.b1a48016.css
-[debug] [2019-09-13T06:07:49.952Z] Accepted request GET /assets/demo/default/custom/crud/forms/widgets/select2.js --> default
-[debug] [2019-09-13T06:07:49.961Z] Accepted request GET /assets/vendors/custom/datatables/datatables.bundle.js --> custom
-[debug] [2019-09-13T06:07:49.973Z] Accepted request GET /static/js/main.7e09ca8c.js --> main.7e09ca8c.js
-[debug] [2019-09-13T06:07:51.209Z] Functions runtime initialized.
-[info] i  functions: Beginning execution of "default"
-[debug] [2019-09-13T06:07:51.211Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
-[debug] [2019-09-13T06:07:51.220Z] Functions runtime initialized.
-[info] i  functions: Beginning execution of "main.b1a48016.css"
-[debug] [2019-09-13T06:07:51.223Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
-[debug] [2019-09-13T06:07:51.228Z] Functions runtime initialized.
-[info] i  functions: Beginning execution of "default"
-[debug] [2019-09-13T06:07:51.232Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
-[debug] [2019-09-13T06:07:51.239Z] Functions runtime initialized.
-[info] i  functions: Beginning execution of "custom"
-[debug] [2019-09-13T06:07:51.242Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
-[debug] [2019-09-13T06:07:51.250Z] Functions runtime initialized.
-[info] i  functions: Beginning execution of "base"
-[debug] [2019-09-13T06:07:51.257Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
-[debug] [2019-09-13T06:07:51.287Z] Functions runtime initialized.
-[info] i  functions: Beginning execution of "main.7e09ca8c.js"
-[debug] [2019-09-13T06:07:51.290Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
-[debug] [2019-09-13T06:07:51.496Z] firebase-admin has been stubbed.
-[debug] [2019-09-13T06:07:51.510Z] firebase-admin has been stubbed.
-[debug] [2019-09-13T06:07:51.511Z] firebase-admin has been stubbed.
-[debug] [2019-09-13T06:07:51.512Z] firebase-admin has been stubbed.
-[debug] [2019-09-13T06:07:51.534Z] firebase-admin has been stubbed.
-[debug] [2019-09-13T06:07:51.554Z] firebase-admin has been stubbed.
-[debug] [2019-09-13T06:09:49.910Z] Accepted request GET /assets/vendors/base/vendors.bundle.js --> base
-[debug] [2019-09-13T06:09:49.917Z] Accepted request GET /assets/demo/default/base/scripts.bundle.js --> default
-[debug] [2019-09-13T06:09:50.336Z] Functions runtime initialized.
-[debug] [2019-09-13T06:09:50.336Z] Functions runtime initialized.
-[info] i  functions: Beginning execution of "base"
-[debug] [2019-09-13T06:09:50.338Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
-[info] i  functions: Beginning execution of "default"
-[debug] [2019-09-13T06:09:50.339Z] Disabled runtime features: {"functions_config_helper":true,"network_filtering":true,"timeout":true,"memory_limiting":true,"protect_env":true,"admin_stubs":true}
-[debug] [2019-09-13T06:09:50.444Z] firebase-admin has been stubbed.
-[debug] [2019-09-13T06:09:50.445Z] firebase-admin has been stubbed.
+[debug] [2019-09-21T07:32:52.934Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:32:53.034Z] <<< HTTP RESPONSE 200
+[info] ✔  functions: all necessary APIs are enabled
+[debug] [2019-09-21T07:32:53.036Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/glp-test  
+ 
+[debug] [2019-09-21T07:32:54.595Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:32:54.596Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/805735980290:getServerAppConfig  
+ 
+[debug] [2019-09-21T07:32:55.072Z] <<< HTTP RESPONSE 200
+[info] i  functions: preparing functions directory for uploading...
+[debug] [2019-09-21T07:32:55.077Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/glp-test/configs  
+ 
+[debug] [2019-09-21T07:32:55.597Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:32:55.598Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/glp-test/configs/elasticsearch/variables  
+ 
+[debug] [2019-09-21T07:32:55.599Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/glp-test/configs/elasticsearch-2-config/variables  
+ 
+[debug] [2019-09-21T07:32:55.955Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:32:55.956Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/glp-test/configs/elasticsearch-2-config/variables/status/success/4782705175895256504  
+ 
+[debug] [2019-09-21T07:32:56.110Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:32:56.111Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/glp-test/configs/elasticsearch/variables/username  
+ 
+[debug] [2019-09-21T07:32:56.112Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/glp-test/configs/elasticsearch/variables/password  
+ 
+[debug] [2019-09-21T07:32:56.112Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/glp-test/configs/elasticsearch/variables/url  
+ 
+[debug] [2019-09-21T07:32:56.517Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:32:57.029Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:32:57.160Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:32:57.294Z] <<< HTTP RESPONSE 200
+[info] i  functions: packaged functions (260.38 KB) for uploading
+[debug] [2019-09-21T07:32:59.690Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions:generateUploadUrl  
+ 
+[debug] [2019-09-21T07:33:01.080Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:01.081Z] >>> HTTP REQUEST PUT https://storage.googleapis.com/gcf-upload-us-central1-27509c2a-cae9-49ad-b96f-cea95a432be1/3eeb17a6-46ef-4793-b4c8-f503120f9f1d.zip?GoogleAccessId=service-805735980290@gcf-admin-robot.iam.gserviceaccount.com&Expires=1569052980&Signature=e8fKbEOmIh%2FFjioO1EiuSsvvze5LwmwFGJws3%2FUYuGmHT0Pw5gH38ic7jMjIvM3Frdp%2B%2FsVzmFVT7zyfB58ppFgzr3AXPka0XYINofyGwsKn26MzZTIMKdwplGxHBUhRWyitM8%2BTv3InCrOvXMNCUNBwFjs2a0MTDKWWeqtPkUW1Avxbm0mNHMe85iEGMqdGF3ntT7Kc8JJPDDZebaQ9FzD7XcXTti%2FJ5cbwiSTItgny%2FtHV9NQVMWvZC2yq46Vpj6iH2FaCZRlLgIBKm8i9%2Fn1sSi5UlEhjQ3%2F%2B0Lw6thty1SQqWOlPtoAlRaRAJkoO9B2yT9qX9ve1h9RnOnZP0A%3D%3D  
+
+[debug] [2019-09-21T07:33:02.559Z] <<< HTTP RESPONSE 200
+[info] ✔  functions: functions folder uploaded successfully
+[debug] [2019-09-21T07:33:02.565Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/-/functions  
+ 
+[debug] [2019-09-21T07:33:03.295Z] <<< HTTP RESPONSE 200
+[info] i  functions: creating Node.js 8 function m49-groupNewNotification(us-central1)...
+[debug] [2019-09-21T07:33:03.299Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/group-new-notification/{groupDetails}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m01-newCommentsIn(us-central1)...
+[debug] [2019-09-21T07:33:03.300Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/comments/{commentID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m02-updateUserURL(us-central1)...
+[debug] [2019-09-21T07:33:03.301Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/users/{userID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m04-newReminderIn(us-central1)...
+[debug] [2019-09-21T07:33:03.301Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/pldpNotifications/{notificationID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m05-newFollowers(us-central1)...
+[debug] [2019-09-21T07:33:03.301Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/followers/{key}/{userID}","eventType":"providers/google.firebase.database/eventTypes/ref.write","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m06-updateFollowers(us-central1)...
+[debug] [2019-09-21T07:33:03.302Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m07-testMails(us-central1)...
+[debug] [2019-09-21T07:33:03.303Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m08-updateAnalytics(us-central1)...
+[debug] [2019-09-21T07:33:03.303Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m09-deletedThoughts(us-central1)...
+[debug] [2019-09-21T07:33:03.303Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/comments/{commentID}","eventType":"providers/google.firebase.database/eventTypes/ref.delete","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m10-deletedThoughts(us-central1)...
+[debug] [2019-09-21T07:33:03.303Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/user-likes/{userPost}","eventType":"providers/google.firebase.database/eventTypes/ref.delete","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m11-userLikes(us-central1)...
+[debug] [2019-09-21T07:33:03.316Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/user-liked/{userPost}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m12-userClicks(us-central1)...
+[debug] [2019-09-21T07:33:03.316Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/user-clicks/{dateRegistered}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m13-unsubscribeUsers(us-central1)...
+[debug] [2019-09-21T07:33:03.317Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m14-userSubscribed(us-central1)...
+[debug] [2019-09-21T07:33:03.317Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/subscribed/{userID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m15-userUnsubscribed(us-central1)...
+[debug] [2019-09-21T07:33:03.317Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/unsubscribed/{userID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m16-appNotifications(us-central1)...
+[debug] [2019-09-21T07:33:03.318Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/appNotifications/{appNotificationID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m17-analyticsNotifications(us-central1)...
+[debug] [2019-09-21T07:33:03.318Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/analyticsNotifications/{analyticsNotificationID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m18-mailNotifications(us-central1)...
+[debug] [2019-09-21T07:33:03.319Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/mailNotifications/{mailNotificationID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m19-followCreated(us-central1)...
+[debug] [2019-09-21T07:33:03.319Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/followGC/{followID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m20-removeUser(us-central1)...
+[debug] [2019-09-21T07:33:03.320Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m21-unshortenURL(us-central1)...
+[debug] [2019-09-21T07:33:03.320Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m22-writeOperations(us-central1)...
+[debug] [2019-09-21T07:33:03.321Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/writeOperations/{writeCategory}/{writeOperationsID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m23-usersDeleted(us-central1)...
+[debug] [2019-09-21T07:33:03.322Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/users/{userID}","eventType":"providers/google.firebase.database/eventTypes/ref.delete","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m24-resendWelcome(us-central1)...
+[debug] [2019-09-21T07:33:03.322Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/resend-welcomemail/{userID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m25-resetPassword(us-central1)...
+[debug] [2019-09-21T07:33:03.323Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/reset-password/{uid}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m26-newThoughts(us-central1)...
+[debug] [2019-09-21T07:33:03.323Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/dailyThoughts/{dailyThoughtID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m27-deletedThoughts(us-central1)...
+[debug] [2019-09-21T07:33:03.340Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/dailyThoughts/{dailyThoughtID}","eventType":"providers/google.firebase.database/eventTypes/ref.delete","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m28-newArticles(us-central1)...
+[debug] [2019-09-21T07:33:03.343Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/news/{newsID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m29-deletedArticles(us-central1)...
+[debug] [2019-09-21T07:33:03.343Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/news/{newsID}","eventType":"providers/google.firebase.database/eventTypes/ref.delete","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m30-newPodcasts(us-central1)...
+[debug] [2019-09-21T07:33:03.344Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/podcasts/{podcastID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m31-deletedPodcasts(us-central1)...
+[debug] [2019-09-21T07:33:03.344Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/podcasts/{podcastID}","eventType":"providers/google.firebase.database/eventTypes/ref.delete","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m32-newVideos(us-central1)...
+[debug] [2019-09-21T07:33:03.345Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/videos/{videoID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m33-deletedVideos(us-central1)...
+[debug] [2019-09-21T07:33:03.345Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/videos/{videoID}","eventType":"providers/google.firebase.database/eventTypes/ref.delete","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m34-newFeedback(us-central1)...
+[debug] [2019-09-21T07:33:03.346Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/feedback/{feedbackID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m35-bulkUploadUsers(us-central1)...
+[debug] [2019-09-21T07:33:03.349Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/bulkUploadUsers","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m36-userCreated(us-central1)...
+[debug] [2019-09-21T07:33:03.350Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/user/{userID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m37-pldpTasksCreated(us-central1)...
+[debug] [2019-09-21T07:33:03.350Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/pldp-tasks/{userID}/{taskID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m38-pldpTasksDeleted(us-central1)...
+[debug] [2019-09-21T07:33:03.350Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/pldp-tasks/{userID}/{taskID}","eventType":"providers/google.firebase.database/eventTypes/ref.delete","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m39-publishContent(us-central1)...
+[debug] [2019-09-21T07:33:03.351Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m40-sendUserReminders(us-central1)...
+[debug] [2019-09-21T07:33:03.351Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m41-onImageUploaded(us-central1)...
+[debug] [2019-09-21T07:33:03.352Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/buckets/glp-test.appspot.com","eventType":"google.storage.object.finalize","service":"storage.googleapis.com"}}
+[info] i  functions: updating Node.js 8 function m42-createPosts(us-central1)...
+[debug] [2019-09-21T07:33:03.352Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/createPosts/{createPostsID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m43-removePosts(us-central1)...
+[debug] [2019-09-21T07:33:03.353Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/removePosts/{removePostsID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m44-userExists(us-central1)...
+[debug] [2019-09-21T07:33:03.353Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m45-sendUnsentMails(us-central1)...
+[debug] [2019-09-21T07:33:03.354Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m46-cleanFollowers(us-central1)...
+[debug] [2019-09-21T07:33:03.354Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function m47-newGroupPosts(us-central1)...
+[debug] [2019-09-21T07:33:03.354Z] Trigger is:  {"eventTrigger":{"resource":"projects/_/instances/glp-test/refs/group-posts/{groupid}/{postID}","eventType":"providers/google.firebase.database/eventTypes/ref.create","service":"firebaseio.com"}}
+[info] i  functions: updating Node.js 8 function m48-resendUnsentMails(us-central1)...
+[debug] [2019-09-21T07:33:03.355Z] Trigger is:  {"httpsTrigger":{}}
+[info] i  functions: updating Node.js 8 function api(us-central1)...
+[debug] [2019-09-21T07:33:03.356Z] Trigger is:  {"httpsTrigger":{}}
+[info] 
+The following functions are found in your project but do not exist in your local source code:
+	m35-newUsers(us-central1)
+
+If you are renaming a function or changing its region, it is recommended that you create the new function first before deleting the old one to prevent event loss. For more info, visit https://firebase.google.com/docs/functions/manage-functions#modify
+
+[info] i  functions: deleting function m35-newUsers(us-central1)...
+[debug] [2019-09-21T07:33:08.673Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/cloudscheduler.googleapis.com/projectSettings/glp-test?view=CONSUMER_VIEW  
+ 
+[debug] [2019-09-21T07:33:11.162Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.170Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions  
+
+[debug] [2019-09-21T07:33:11.171Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m01-newCommentsIn {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.174Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m02-updateUserURL {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.175Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m04-newReminderIn {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.176Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m05-newFollowers {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.176Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m06-updateFollowers {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.177Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m07-testMails {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.177Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m08-updateAnalytics {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.178Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m09-deletedThoughts {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.178Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m10-deletedThoughts {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.182Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m11-userLikes {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.183Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m12-userClicks {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.183Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m13-unsubscribeUsers {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.183Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m14-userSubscribed {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.184Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m15-userUnsubscribed {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.184Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m16-appNotifications {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.185Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m17-analyticsNotifications {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.185Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m18-mailNotifications {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.186Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m19-followCreated {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.186Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m20-removeUser {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.187Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m21-unshortenURL {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.187Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m22-writeOperations {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.187Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m23-usersDeleted {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.188Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m24-resendWelcome {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.188Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m25-resetPassword {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.189Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m26-newThoughts {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.189Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m27-deletedThoughts {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.189Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m28-newArticles {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.190Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m29-deletedArticles {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.190Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m30-newPodcasts {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.191Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m31-deletedPodcasts {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.191Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m32-newVideos {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.192Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m33-deletedVideos {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.192Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m34-newFeedback {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.192Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m35-bulkUploadUsers {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.193Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m36-userCreated {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.194Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m37-pldpTasksCreated {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.194Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m38-pldpTasksDeleted {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.195Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m39-publishContent {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.195Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m40-sendUserReminders {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.196Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m41-onImageUploaded {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.196Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m42-createPosts {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.196Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m43-removePosts {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.197Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m44-userExists {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.197Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m45-sendUnsentMails {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.197Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m46-cleanFollowers {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.198Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m47-newGroupPosts {"updateMask":"sourceUploadUrl,name,labels,runtime,eventTrigger.resource,eventTrigger.eventType,eventTrigger.service"} 
+
+[debug] [2019-09-21T07:33:11.199Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m48-resendUnsentMails {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.199Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/api {"updateMask":"sourceUploadUrl,name,labels,runtime,httpsTrigger"} 
+
+[debug] [2019-09-21T07:33:11.199Z] >>> HTTP REQUEST DELETE https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/us-central1/functions/m35-newUsers  
+ 
+[debug] [2019-09-21T07:33:11.877Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.881Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.882Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.883Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.889Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.894Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.897Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.897Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.898Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.899Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.899Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.901Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.902Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.902Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.903Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.904Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.905Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.905Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.906Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.907Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.912Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.913Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.914Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.914Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.915Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.916Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.918Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.919Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.920Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.921Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.923Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.935Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.935Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.939Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.941Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.945Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.946Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.946Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.947Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.967Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.981Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.983Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.987Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.993Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:11.995Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:12.013Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:12.022Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:12.037Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:12.039Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:12.044Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:12.046Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/projects/glp-test/locations/-/functions  
+ 
+[debug] [2019-09-21T07:33:12.625Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:12.631Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQ5LWdyb3VwTmV3Tm90aWZpY2F0aW9uL2Nhb2RwOU1DMkxz  
+ 
+[debug] [2019-09-21T07:33:12.632Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTAxLW5ld0NvbW1lbnRzSW4vS1pUOTFpbGRPV2s  
+ 
+[debug] [2019-09-21T07:33:12.632Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTAyLXVwZGF0ZVVzZXJVUkwvcVhRTVFjZXVNM3M  
+ 
+[debug] [2019-09-21T07:33:12.632Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTA0LW5ld1JlbWluZGVySW4vZ0QtSHNwaU96eWM  
+ 
+[debug] [2019-09-21T07:33:12.632Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTA1LW5ld0ZvbGxvd2Vycy9OZUYzbElUdktvVQ  
+ 
+[debug] [2019-09-21T07:33:12.633Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTA2LXVwZGF0ZUZvbGxvd2Vycy8xQTJpblJ4ODN1VQ  
+ 
+[debug] [2019-09-21T07:33:12.633Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTA3LXRlc3RNYWlscy9aNG9KRVduX0JJWQ  
+ 
+[debug] [2019-09-21T07:33:12.633Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTA4LXVwZGF0ZUFuYWx5dGljcy9OUUNudFN1T1ZDSQ  
+ 
+[debug] [2019-09-21T07:33:12.633Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTA5LWRlbGV0ZWRUaG91Z2h0cy9IVXNyR3U4NG1rOA  
+ 
+[debug] [2019-09-21T07:33:12.633Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTEwLWRlbGV0ZWRUaG91Z2h0cy9qWnZWSk9UT2VhZw  
+ 
+[debug] [2019-09-21T07:33:12.633Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTExLXVzZXJMaWtlcy8tTnBYOTBrVFFnRQ  
+ 
+[debug] [2019-09-21T07:33:12.634Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTEyLXVzZXJDbGlja3MvRTNwWnNQNU1KOFE  
+ 
+[debug] [2019-09-21T07:33:12.634Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTEzLXVuc3Vic2NyaWJlVXNlcnMveHhsaUVNSENvRFE  
+ 
+[debug] [2019-09-21T07:33:12.634Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTE0LXVzZXJTdWJzY3JpYmVkLzVxaldOZXRwel9Z  
+ 
+[debug] [2019-09-21T07:33:12.634Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTE1LXVzZXJVbnN1YnNjcmliZWQvV1lNTEdFSEY0bzQ  
+ 
+[debug] [2019-09-21T07:33:12.634Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTE2LWFwcE5vdGlmaWNhdGlvbnMvS0NHNmlyLVk1U1E  
+ 
+[debug] [2019-09-21T07:33:12.634Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTE3LWFuYWx5dGljc05vdGlmaWNhdGlvbnMvTDJJdHd1dF9WUVE  
+ 
+[debug] [2019-09-21T07:33:12.635Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTE4LW1haWxOb3RpZmljYXRpb25zL1hxcjdUXzNYWl80  
+ 
+[debug] [2019-09-21T07:33:12.635Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTE5LWZvbGxvd0NyZWF0ZWQvNEtndWQ4Q3hJa0k  
+ 
+[debug] [2019-09-21T07:33:12.635Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTIwLXJlbW92ZVVzZXIvdU44d3JrTXVHbGs  
+ 
+[debug] [2019-09-21T07:33:12.635Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTIxLXVuc2hvcnRlblVSTC9XV2JDLWtvWkJpOA  
+ 
+[debug] [2019-09-21T07:33:12.635Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTIyLXdyaXRlT3BlcmF0aW9ucy93MnVlTzlHMmtuQQ  
+ 
+[debug] [2019-09-21T07:33:12.636Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTIzLXVzZXJzRGVsZXRlZC9OT3hPcUtVNjNGVQ  
+ 
+[debug] [2019-09-21T07:33:12.636Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTI0LXJlc2VuZFdlbGNvbWUvLWl5NVFSX1V5SkU  
+ 
+[debug] [2019-09-21T07:33:12.636Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTI1LXJlc2V0UGFzc3dvcmQvTXo0WHpQNnZJSVk  
+ 
+[debug] [2019-09-21T07:33:12.636Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTI2LW5ld1Rob3VnaHRzL3pSSTB1WTh3WEVn  
+ 
+[debug] [2019-09-21T07:33:12.636Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTI3LWRlbGV0ZWRUaG91Z2h0cy80MlIxdEhFUFlBNA  
+ 
+[debug] [2019-09-21T07:33:12.637Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTI4LW5ld0FydGljbGVzL0FTbnBIMDc3OE5n  
+ 
+[debug] [2019-09-21T07:33:12.637Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTI5LWRlbGV0ZWRBcnRpY2xlcy9qMzVmZ2pWYk1KWQ  
+ 
+[debug] [2019-09-21T07:33:12.637Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTMwLW5ld1BvZGNhc3RzL21UNmxGdWZiZGRB  
+ 
+[debug] [2019-09-21T07:33:12.638Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTMxLWRlbGV0ZWRQb2RjYXN0cy9haGIxLXBOMUcyTQ  
+ 
+[debug] [2019-09-21T07:33:12.638Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTMyLW5ld1ZpZGVvcy9LbFhKUFpoeGktMA  
+ 
+[debug] [2019-09-21T07:33:12.638Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTMzLWRlbGV0ZWRWaWRlb3MvdVAycHZPM2k3RlU  
+ 
+[debug] [2019-09-21T07:33:12.640Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTM0LW5ld0ZlZWRiYWNrLzNNbHd6dDFRdjUw  
+ 
+[debug] [2019-09-21T07:33:12.640Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTM1LWJ1bGtVcGxvYWRVc2Vycy9rMHhMQ05fYWlIUQ  
+ 
+[debug] [2019-09-21T07:33:12.640Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTM2LXVzZXJDcmVhdGVkL3ROSDNMV2h2SDlJ  
+ 
+[debug] [2019-09-21T07:33:12.640Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTM3LXBsZHBUYXNrc0NyZWF0ZWQvTWVpV0prVkNQWGM  
+ 
+[debug] [2019-09-21T07:33:12.640Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTM4LXBsZHBUYXNrc0RlbGV0ZWQvRHBWUTVlYWdyX3M  
+ 
+[debug] [2019-09-21T07:33:12.641Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTM5LXB1Ymxpc2hDb250ZW50L3FHZE5UQlF4ckRr  
+ 
+[debug] [2019-09-21T07:33:12.641Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQwLXNlbmRVc2VyUmVtaW5kZXJzL3ZrZzJ5UlBVdXU0  
+ 
+[debug] [2019-09-21T07:33:12.641Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQxLW9uSW1hZ2VVcGxvYWRlZC9xQWNvVTNSWXgtbw  
+ 
+[debug] [2019-09-21T07:33:12.641Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQyLWNyZWF0ZVBvc3RzL1NreFZBLUdScnU4  
+ 
+[debug] [2019-09-21T07:33:12.641Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQzLXJlbW92ZVBvc3RzL2RwYXdhSnpzMG5F  
+ 
+[debug] [2019-09-21T07:33:12.641Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQ0LXVzZXJFeGlzdHMvenMtRDlTbzNUZTA  
+ 
+[debug] [2019-09-21T07:33:12.642Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQ1LXNlbmRVbnNlbnRNYWlscy9sZGhWcDVzVTNqSQ  
+ 
+[debug] [2019-09-21T07:33:12.642Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQ2LWNsZWFuRm9sbG93ZXJzL3h0dDgzdVhMbXhj  
+ 
+[debug] [2019-09-21T07:33:12.642Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQ3LW5ld0dyb3VwUG9zdHMvU19lZUViYk9taDA  
+ 
+[debug] [2019-09-21T07:33:12.642Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTQ4LXJlc2VuZFVuc2VudE1haWxzL1VTVUFOQi1peG1R  
+ 
+[debug] [2019-09-21T07:33:12.642Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvYXBpL2duR3dPLUhRUXNV  
+ 
+[debug] [2019-09-21T07:33:12.642Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/Z2xwLXRlc3QvdXMtY2VudHJhbDEvbTM1LW5ld1VzZXJzL1dVZEFlTXNRZlNN  
+ 
+[debug] [2019-09-21T07:33:13.109Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.111Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.111Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.112Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.113Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.114Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.115Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.116Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.117Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.118Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.119Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.120Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.120Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.120Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.121Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.122Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.123Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.123Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.124Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.125Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.125Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.126Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.127Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.127Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.128Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.128Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.129Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.129Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.130Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.130Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.131Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.131Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.132Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.132Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.133Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.133Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.137Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.137Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.138Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.138Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.139Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.140Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.141Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.141Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.142Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.142Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.143Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.143Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.143Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-21T07:33:13.144Z] <<< HTTP RESPONSE 200

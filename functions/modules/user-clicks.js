@@ -46,6 +46,20 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Transaction 2 committed');
                     }
                 });
+            } else if ((clickArea == "openedLink") || (clickArea == "listenedTo") || (clickArea == "viewed")) {
+                let countCompany = admin.database().ref('posts-analytics').child(journalID).child(clickArea.toLowerCase());
+
+                let companyCount = countCompany.transaction(function(current) {
+                    return (current || 0) + 1;
+                }, function(error, committed, snapshot) {
+                    if (error) {
+                        console.log('Transaction failed abnormally! openedLink, listenedTo, viewed : ', error);
+                    } else if (!committed) {
+                        console.log('Not Committed openedLink, listenedTo, viewed: ', committed);
+                    } else {
+                        console.log('Transaction openedLink, listenedTo, viewed committed');
+                    }
+                });
             } else if (clickArea == "openedFromEmail") {
                 let countCompany = admin.database().ref('posts-analytics').child(journalID).child('openedfromemail');
 
@@ -118,6 +132,20 @@ exports.userClicks = functions.database.ref('/user-clicks/{dateRegistered}').onC
                         console.log('Not Committed 6: ', committed);
                     } else {
                         console.log('Transaction 6 committed');
+                    }
+                });
+            } else if ((clickArea == "openedLink") || (clickArea == "listenedTo") || (clickArea == "viewed")) {
+                let countCompany = admin.database().ref('posts-analytics').child(journalID).child(clickArea.toLowerCase());
+
+                let companyCount = countCompany.transaction(function(current) {
+                    return (current || 0) + 1;
+                }, function(error, committed, snapshot) {
+                    if (error) {
+                        console.log('Transaction failed abnormally! openedLink, listenedTo, viewed : ', error);
+                    } else if (!committed) {
+                        console.log('Not Committed openedLink, listenedTo, viewed: ', committed);
+                    } else {
+                        console.log('Transaction openedLink, listenedTo, viewed committed');
                     }
                 });
             } else if (clickArea == "openedFromEmail") {

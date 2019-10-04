@@ -17,6 +17,7 @@ exports.newThoughts = functions.database
     // get comapny id
     var companyID = dailythought.companyID;
     var companyName = dailythought.companyName;
+    var companyID_status = dailythought.companyID_status;
 
     // get title and subtitle from thought object
     var body = dailythought.title;
@@ -101,7 +102,11 @@ exports.newThoughts = functions.database
 
       var subject = journalUserName + " posted a new thought";
 
-      var all = true;
+      if (companyID_status === "corporate_ilead_approved") {
+        var all = false;
+      } else {
+        var all = true;
+      }
 
       var options = {
         subject: subject,

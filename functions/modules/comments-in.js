@@ -68,11 +68,11 @@ exports.newCommentsIn = functions.database
             journalUserID = postObj.journalUserID;
             journalUserName = postObj.journalUserName;
 
-            if (commentObj.postType == "dailyThoughts") {
+            if (commentObj.postType == "thoughts") {
               notificationType = "thought";
               notificationTitle = postObj.subtitle;
               click_action = "filtered-thoughts/#/" + postID;
-            } else if ((commentObj.postType = "news")) {
+            } else if ((commentObj.postType == "articles")) {
               notificationType = "article";
               notificationTitle = postObj.title;
               click_action = "filtered-articles/#/" + postID;

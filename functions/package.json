@@ -35,7 +35,7 @@
     "graphql-tools": "^4.0.4",
     "http": "0.0.0",
     "infinite-loop": "^0.2.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "mkdirp-promise": "^5.0.1",
     "nodemailer-direct-transport": "^3.3.2",
     "nodemailer2": "^2.7.1",

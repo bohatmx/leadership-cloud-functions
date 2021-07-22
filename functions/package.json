@@ -46,7 +46,7 @@
     "tinyurl": "^1.1.2",
     "url-unshort": "^5.0.0",
     "xlsjs": "^1.0.1",
-    "xlsx": "^0.11.19"
+    "xlsx": "^0.17.0"
   },
   "private": true,
   "devDependencies": {

@@ -42,7 +42,7 @@
     "pdfmake": "^0.1.56",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.5.0",
     "tinyurl": "^1.1.2",
     "url-unshort": "^5.0.0",
     "xlsjs": "^1.0.1",
